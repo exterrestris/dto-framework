@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Exterrestris\DtoFramework\Dto\Collection;
 
+use Exterrestris\DtoFramework\Traits\IdenticalComparisonTrait;
 use Exterrestris\DtoFramework\Dto\Collection\Exceptions\AlreadyInCollectionException;
 use Exterrestris\DtoFramework\Dto\Collection\Exceptions\IncompatibleCollectionException;
 use Exterrestris\DtoFramework\Dto\Collection\Exceptions\IncompatibleDtoException;
@@ -20,6 +21,7 @@ use Traversable;
  * @implements IteratorAggregate<int, Dto>
  */
 abstract class AbstractCollection implements CollectionInterface, IteratorAggregate {
+    use IdenticalComparisonTrait;
 
     /**
      * @param class-string<Dto> $dtoType
@@ -140,12 +142,6 @@ abstract class AbstractCollection implements CollectionInterface, IteratorAggreg
 
         return false;
     }
-
-    protected function areIdentical(DtoInterface $a, DtoInterface $b): bool
-    {
-        return strcmp(spl_object_hash($a), spl_object_hash($b)) === 0;
-    }
-
 
     /**
      * @inheritDoc
