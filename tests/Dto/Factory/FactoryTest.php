@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Exterrestris\DtoFramework\Tests\Dto\Factory;
 
+use Closure;
 use Exterrestris\DtoFramework\Dto\AbstractDto;
 use Exterrestris\DtoFramework\Dto\Collection\Collection;
 use Exterrestris\DtoFramework\Dto\Collection\CollectionInterface;
+use Exterrestris\DtoFramework\Dto\Collection\LazyCollection;
 use Exterrestris\DtoFramework\Dto\DtoInterface;
 use Exterrestris\DtoFramework\Dto\Factory\Exceptions\FactoryException;
 use Exterrestris\DtoFramework\Dto\Factory\Exceptions\InvalidTypeException;
@@ -129,5 +131,54 @@ class FactoryTest extends TestCase
         $this->assertFalse($collection->isEmpty());
         $this->assertSame($entity1, $collection->get(0));
         $this->assertSame($entity2, $collection->get(1));
+    }
+
+    public static function createLazyCollectionProvider(): array
+    {
+        $closure = function () {
+            $entities = [new TestEntity(), new TestEntity()];
+
+            foreach ($entities as $i => $entity) {
+                yield $i => $entity;
+            }
+        };
+
+        return [
+            [
+                $closure,
+                2,
+                true,
+                2,
+            ],
+            [
+                $closure,
+                0,
+                true,
+                0,
+            ],
+            [
+                $closure,
+                null,
+                false,
+                2,
+            ],
+        ];
+    }
+
+    #[DataProvider('createLazyCollectionProvider')]
+    public function testCreateLazyCollection(
+        Closure $generatorFn,
+        ?int $entityCount,
+        bool $expectedCountKnown,
+        int $expectedCount
+    ) {
+        $factory = new Factory();
+
+        $collection = $factory->createLazyCollection(TestEntity::class, $generatorFn, $entityCount);
+
+        $this->assertInstanceOf(LazyCollection::class, $collection);
+        $this->assertSame(TestEntity::class, $collection->getDtoType());
+        $this->assertEquals($expectedCountKnown, $collection->isCountKnown());
+        $this->assertEquals($expectedCount, $collection->count());
     }
 }
