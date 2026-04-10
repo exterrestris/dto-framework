@@ -12,6 +12,8 @@ use Exterrestris\DtoFramework\Dto\Collection\CollectionInterface;
 use Exterrestris\DtoFramework\Dto\DtoInterface;
 use Exterrestris\DtoFramework\Serializer\Exceptions\DataExtractorException;
 use Exterrestris\DtoFramework\Serializer\Exceptions\ValueSerializationException;
+use Exterrestris\DtoFramework\Serializer\Rules\NoSerialize;
+use Exterrestris\DtoFramework\Serializer\Rules\NoSerializeIfNull;
 use Exterrestris\DtoFramework\Serializer\Traits\GetPropertyDateFormatTrait;
 use Exterrestris\DtoFramework\Traits\GetAttributeTrait;
 use ReflectionObject;
@@ -23,37 +25,44 @@ class DataExtractor implements DataExtractorInterface
     use GetAttributeTrait;
     use GetPropertyDateFormatTrait;
 
-    public function getData(DtoInterface|CollectionInterface|null $serializable): array|string|null {
+    public function getData(
+        DtoInterface|CollectionInterface|null $serializable,
+        bool $excludeNoSerialize = true
+    ): array|string|null {
         if ($serializable === null) {
             return null;
         }
 
         if ($serializable instanceof CollectionInterface) {
-            return array_map(function ($dto) {
-                return $this->getData($dto);
+            return array_map(function ($dto) use ($excludeNoSerialize) {
+                return $this->getData($dto, $excludeNoSerialize);
             }, $serializable->toArray());
         }
 
         $reflect = new ReflectionObject($serializable);
 
-        return $this->extractData($serializable, $reflect);
+        return $this->extractData($serializable, $reflect, $excludeNoSerialize);
     }
 
     /**
      * @throws DataExtractorException
      */
-    protected function extractData(DtoInterface $dto, ReflectionObject $reflect): array {
+    protected function extractData(
+        DtoInterface $dto,
+        ReflectionObject $reflect,
+        bool $excludeNoSerialize = true
+    ): array {
         $data = [];
 
         foreach ($reflect->getProperties() as $property) {
-            if ($this->isInternal($property)) {
+            if ($this->isInternal($property) || $this->noSerialise($property, $dto) && $excludeNoSerialize) {
                 continue;
             }
 
             if (!$property->isInitialized($dto)) {
                 $data[$property->getName()] = null;
 
-                if ($property->getType()->isBuiltin() && !$property->getType()->allowsNull()) {
+                if ($excludeNoSerialize && $property->getType()->isBuiltin() && !$property->getType()->allowsNull()) {
                     try {
                         if ($property->getType()->getName() !== 'mixed') {
                             settype($data[$property->getName()], $property->getType()->getName());
@@ -65,7 +74,7 @@ class DataExtractor implements DataExtractorInterface
                 continue;
             }
 
-            $data[$property->getName()] = $this->getValue($property, $dto);
+            $data[$property->getName()] = $this->getValue($property, $dto, $excludeNoSerialize);
         }
 
         return $data;
@@ -76,15 +85,25 @@ class DataExtractor implements DataExtractorInterface
         return (bool) $this->getAttribute($property, Internal::class);
     }
 
+    protected function noSerialise(ReflectionProperty $property, DtoInterface $dto): bool
+    {
+        return $this->getAttribute($property, NoSerialize::class) ||
+            $this->getAttribute($property, NoSerializeIfNull::class) && (
+                !$property->isInitialized($dto) || $property->getValue($dto) === null
+            );
+    }
+
     /**
      * @param ReflectionProperty $property
      * @param DtoInterface $dto
+     * @param bool $excludeNoSerialize
      * @return array|string|float|int|bool|null
      * @throws DataExtractorException
      */
     protected function getValue(
         ReflectionProperty $property,
         DtoInterface $dto,
+        bool $excludeNoSerialize = true,
     ): array|string|float|int|bool|null {
         $propertyValue = $property->getValue($dto);
 
@@ -97,7 +116,7 @@ class DataExtractor implements DataExtractorInterface
         }
 
         if ($propertyValue instanceof DtoInterface || $propertyValue instanceof CollectionInterface) {
-            return $this->getData($propertyValue);
+            return $this->getData($propertyValue, $excludeNoSerialize);
         }
 
         if ($propertyValue instanceof DateTimeInterface) {

@@ -27,20 +27,13 @@ class DataExtractorTest extends TestCase
                     'name' => 'test',
                     'title' => 'test',
                     'uninitialized' => '',
-                    'isProcessed' => true,
-                    'processingErrors' => null,
-                    'children' => null,
                 ],
             ],
             [
                 static::createMockEntity('test', null, true)->setIsProcessed(false),
                 [
                     'name' => 'test',
-                    'title' => null,
                     'uninitialized' => '',
-                    'isProcessed' => false,
-                    'processingErrors' => null,
-                    'children' => null,
                 ],
             ],
             [
@@ -49,10 +42,7 @@ class DataExtractorTest extends TestCase
                     ->setChildren(new Collection(ProcessableDtoInterface::class)),
                 [
                     'name' => 'test',
-                    'title' => null,
                     'uninitialized' => '',
-                    'isProcessed' => false,
-                    'processingErrors' => null,
                     'children' => [],
                 ],
             ],
@@ -65,26 +55,16 @@ class DataExtractorTest extends TestCase
                     ])),
                 [
                     'name' => 'test',
-                    'title' => null,
                     'uninitialized' => '',
-                    'isProcessed' => false,
-                    'processingErrors' => null,
                     'children' => [
                         [
                             'name' => 'test',
                             'title' => 'test',
                             'uninitialized' => '',
-                            'isProcessed' => true,
-                            'processingErrors' => null,
-                            'children' => null,
                         ],
                         [
                             'name' => 'test',
-                            'title' => null,
                             'uninitialized' => '',
-                            'isProcessed' => false,
-                            'processingErrors' => null,
-                            'children' => null,
                         ],
                     ],
                 ],
@@ -120,17 +100,10 @@ class DataExtractorTest extends TestCase
                 'name' => 'test',
                 'title' => 'test',
                 'uninitialized' => '',
-                'isProcessed' => true,
-                'processingErrors' => null,
-                'children' => null,
             ],
             [
                 'name' => 'test-2',
-                'title' => null,
                 'uninitialized' => '',
-                'isProcessed' => false,
-                'processingErrors' => null,
-                'children' => null,
             ],
         ], $data);
     }

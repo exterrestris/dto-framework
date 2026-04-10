@@ -8,16 +8,22 @@ use Exterrestris\DtoFramework\Dto\AbstractProcessableDto;
 use Exterrestris\DtoFramework\Dto\Attributes\CollectionType;
 use Exterrestris\DtoFramework\Dto\Attributes\Internal;
 use Exterrestris\DtoFramework\Dto\Collection\CollectionInterface;
+use Exterrestris\DtoFramework\Serializer\Rules\NoSerialize;
+use Exterrestris\DtoFramework\Serializer\Rules\NoSerializeIfNull;
 
 class TestEntity extends AbstractProcessableDto implements TestEntityInterface
 {
     protected string $name;
+    #[NoSerializeIfNull]
     protected ?string $title = null;
     #[Internal]
     protected bool $internal;
     protected string $uninitialized;
+    #[NoSerialize]
     protected ?bool $isProcessed = null;
+    #[NoSerialize]
     protected ?array $processingErrors = null;
+    #[NoSerializeIfNull]
     #[CollectionType(TestEntity::class)]
     protected ?CollectionInterface $children = null;
 

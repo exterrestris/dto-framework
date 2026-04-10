@@ -12,8 +12,12 @@ interface DataExtractorInterface
 {
     /**
      * @param DtoInterface|CollectionInterface|null $serializable
+     * @param bool $excludeNoSerialize
      * @return array|string|null
      * @throws DataExtractorException
      */
-    public function getData(DtoInterface|CollectionInterface|null $serializable): array|string|null;
+    public function getData(
+        DtoInterface|CollectionInterface|null $serializable,
+        bool $excludeNoSerialize = true
+    ): array|string|null;
 }
