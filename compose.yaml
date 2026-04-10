@@ -1,0 +1,19 @@
+services:
+  php:
+    image:
+      php:8.2-xdebug
+    build:
+      dockerfile_inline: |
+        FROM php:8.2-cli
+  
+        COPY --from=ghcr.io/mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
+  
+        RUN install-php-extensions xdebug
+    ports:
+      - "9003"
+    volumes:
+      - ./:/var/www/html/
+  composer:
+    image: composer/composer:latest
+    volumes:
+      - ./:/app
