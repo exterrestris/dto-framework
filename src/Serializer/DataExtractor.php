@@ -10,6 +10,7 @@ use Error;
 use Exterrestris\DtoFramework\Dto\Attributes\Internal;
 use Exterrestris\DtoFramework\Dto\Collection\CollectionInterface;
 use Exterrestris\DtoFramework\Dto\DtoInterface;
+use Exterrestris\DtoFramework\Serializer\Config\OverrideDataExtractor;
 use Exterrestris\DtoFramework\Serializer\Exceptions\DataExtractorException;
 use Exterrestris\DtoFramework\Serializer\Exceptions\ValueSerializationException;
 use Exterrestris\DtoFramework\Serializer\Rules\NoSerialize;
@@ -42,8 +43,10 @@ class DataExtractor implements DataExtractorInterface
         }
 
         $reflect = new ReflectionObject($serializable);
+        $overrideExtractor = $this->getAttribute($reflect, OverrideDataExtractor::class);
 
-        return $this->extractData($serializable, $reflect, $excludeNoSerialize);
+        return $overrideExtractor?->getDataExtractor()->getData($serializable, $excludeNoSerialize)
+            ?? $this->extractData($serializable, $reflect, $excludeNoSerialize);
     }
 
     /**

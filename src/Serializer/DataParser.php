@@ -14,7 +14,10 @@ use Exterrestris\DtoFramework\Dto\Attributes\Internal;
 use Exterrestris\DtoFramework\Dto\Collection\CollectionInterface;
 use Exterrestris\DtoFramework\Dto\DtoInterface;
 use Exterrestris\DtoFramework\Dto\Factory\FactoryInterface;
+use Exterrestris\DtoFramework\Serializer\Config\UseDataParserPreprocessor;
 use Exterrestris\DtoFramework\Serializer\Exceptions\DataParserException;
+use Exterrestris\DtoFramework\Serializer\Exceptions\DataParserPreprocessorException;
+use Exterrestris\DtoFramework\Serializer\Exceptions\DataPreprocessingException;
 use Exterrestris\DtoFramework\Serializer\Exceptions\InvalidDataTypeException;
 use Exterrestris\DtoFramework\Serializer\Exceptions\InvalidDataValueException;
 use Exterrestris\DtoFramework\Serializer\Exceptions\NullValueException;
@@ -49,6 +52,11 @@ class DataParser implements DataParserInterface
      * @var array<class-string<DtoInterface>, array<string, ValueConverter>>
      */
     private array $valueConverters = [];
+
+    /**
+     * @var array<class-string<DtoInterface>, ?DataParserPreprocessorInterface>
+     */
+    private array $preprocessorCache = [];
 
     public function __construct(
         protected readonly FactoryInterface $dtoFactory,
@@ -334,13 +342,29 @@ class DataParser implements DataParserInterface
         return $dtoData;
     }
 
+    private function getDataPreprocessor(string $dtoType): ?DataParserPreprocessorInterface
+    {
+        if (!array_key_exists($dtoType, $this->preprocessorCache)) {
+            $this->preprocessorCache[$dtoType] = $this->getAttribute(
+                new ReflectionObject($this->dtoFactory->create($dtoType)),
+                UseDataParserPreprocessor::class
+            )?->getDataPreprocessor();
+        }
+
+        return $this->preprocessorCache[$dtoType];
+    }
+
     protected function preprocessData(mixed $rawData, string $dtoType): object|array|null
     {
         if ($rawData === null) {
             return null;
         }
 
-        return $rawData;
+        try {
+            return $this->getDataPreprocessor($dtoType)?->preprocess($rawData, $dtoType) ?? $rawData;
+        } catch (DataParserPreprocessorException $e) {
+            throw new DataPreprocessingException($e->getMessage(), previous: $e);
+        }
     }
 
     /**

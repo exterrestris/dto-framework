@@ -8,6 +8,7 @@ use Exterrestris\DtoFramework\Dto\Collection\Collection;
 use Exterrestris\DtoFramework\Dto\Factory\Factory;
 use Exterrestris\DtoFramework\Serializer\DataParser;
 use Exterrestris\DtoFramework\Serializer\Exceptions\DataParserException;
+use Exterrestris\DtoFramework\Tests\Mocks\CustomSerializationEntity;
 use Exterrestris\DtoFramework\Tests\Mocks\TestEntity;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -385,6 +386,102 @@ class DataParserTest extends TestCase
         $this->assertNull($collection->get(0)->getProcessingErrors());
         $this->assertInstanceOf(Collection::class, $collection->get(0)->getChildren());
         $this->assertEquals(0, $collection->get(0)->getChildren()->count());
+    }
+
+    public function testParseIntoEntityWithCustomPreprocessor()
+    {
+        $data = [
+            'test' => 'title',
+        ];
+
+        $dataParser = $this->createDataParser();
+
+        $entity = $dataParser->parseInto($data, CustomSerializationEntity::class);
+
+        $this->assertInstanceOf(CustomSerializationEntity::class, $entity);
+        $this->assertEquals('test', $entity->getName());
+        $this->assertEquals('title', $entity->getTitle());
+        $this->assertNull($entity->isProcessed());
+        $this->assertNull($entity->getProcessingErrors());
+    }
+
+    public function testParseIntoEntityWithCustomPreprocessorCollection()
+    {
+        $data = [
+            [
+                'test' => 'title',
+            ],
+            [
+                'another' => 'long title',
+            ],
+        ];
+
+        $dataParser = $this->createDataParser();
+
+        $collection = $dataParser->parseInto($data, CustomSerializationEntity::class);
+
+        $this->assertInstanceOf(Collection::class, $collection);
+        $this->assertEquals(2, $collection->count());
+
+        $this->assertInstanceOf(CustomSerializationEntity::class, $collection->get(0));
+        $this->assertEquals('test', $collection->get(0)->getName());
+        $this->assertEquals('title', $collection->get(0)->getTitle());
+        $this->assertNull($collection->get(0)->isProcessed());
+        $this->assertNull($collection->get(0)->getProcessingErrors());
+
+        $this->assertInstanceOf(CustomSerializationEntity::class, $collection->get(1));
+        $this->assertEquals('another', $collection->get(1)->getName());
+        $this->assertEquals('long title', $collection->get(1)->getTitle());
+        $this->assertNull($collection->get(1)->isProcessed());
+        $this->assertNull($collection->get(1)->getProcessingErrors());
+    }
+
+    public function testTryParseIntoEntityWithCustomPreprocessor()
+    {
+        $data = [
+            'test' => 'title',
+        ];
+
+        $dataParser = $this->createDataParser();
+
+        $entity = $dataParser->tryParseInto($data, CustomSerializationEntity::class);
+
+        $this->assertInstanceOf(CustomSerializationEntity::class, $entity);
+        $this->assertEquals('test', $entity->getName());
+        $this->assertEquals('title', $entity->getTitle());
+        $this->assertNull($entity->isProcessed());
+        $this->assertNull($entity->getProcessingErrors());
+    }
+
+    public function testTryParseIntoEntityWithCustomPreprocessorCollection()
+    {
+        $data = [
+            [
+                'test' => 'title',
+            ],
+            [
+                'another' => 'long title',
+            ],
+        ];
+
+        $dataParser = $this->createDataParser();
+
+        $collection = $dataParser->tryParseInto($data, CustomSerializationEntity::class);
+
+        $this->assertInstanceOf(Collection::class, $collection);
+        $this->assertEquals(2, $collection->count());
+
+        $this->assertInstanceOf(CustomSerializationEntity::class, $collection->get(0));
+        $this->assertEquals('test', $collection->get(0)->getName());
+        $this->assertEquals('title', $collection->get(0)->getTitle());
+        $this->assertNull($collection->get(0)->isProcessed());
+        $this->assertNull($collection->get(0)->getProcessingErrors());
+
+        $this->assertInstanceOf(CustomSerializationEntity::class, $collection->get(1));
+        $this->assertEquals('another', $collection->get(1)->getName());
+        $this->assertEquals('long title', $collection->get(1)->getTitle());
+        $this->assertNull($collection->get(1)->isProcessed());
+        $this->assertNull($collection->get(1)->getProcessingErrors());
     }
 
     private function createDataParser(): DataParser
