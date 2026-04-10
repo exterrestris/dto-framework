@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Exterrestris\DtoFramework\Dto\Collection;
 
+use Exterrestris\DtoFramework\Comparators\ComparatorInterface;
 use Exterrestris\DtoFramework\Traits\IdenticalComparisonTrait;
 use Exterrestris\DtoFramework\Dto\Collection\Exceptions\AlreadyInCollectionException;
 use Exterrestris\DtoFramework\Dto\Collection\Exceptions\IncompatibleCollectionException;
@@ -228,6 +229,30 @@ abstract class AbstractCollection implements CollectionInterface, IteratorAggreg
     /**
      * @inheritDoc
      */
+    public function matchAll(DtoInterface $dto, ComparatorInterface $comparator): CollectionInterface
+    {
+        if ($comparator->couldMatch($this->dtoType)) {
+            return $this->filter($comparator->generateIsEqualToClosure($dto));
+        }
+
+        return $this->newCollection();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function match(DtoInterface $dto, ComparatorInterface $comparator): ?DtoInterface
+    {
+        if ($comparator->couldMatch($this->dtoType)) {
+            return $this->find($comparator->generateIsEqualToClosure($dto));
+        }
+
+        return null;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function split(callable $callback): array
     {
         $segments = [];
@@ -261,6 +286,60 @@ abstract class AbstractCollection implements CollectionInterface, IteratorAggreg
         }
 
         return $merged;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function diff(
+        CollectionInterface $collection,
+        ?ComparatorInterface $comparator = null,
+    ): CollectionInterface {
+        if (!$this->couldMatch($collection, $comparator)) {
+            return $this;
+        } elseif ($collection === $this) {
+            return $this->newCollection();
+        }
+
+        $diff = array_udiff($this->toArray(), $collection->toArray(), $this->compareFn($comparator));
+
+        return $this->newCollection(array_values($diff));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function intersect(
+        CollectionInterface $collection,
+        ?ComparatorInterface $comparator = null,
+    ): CollectionInterface {
+        if (!$this->couldMatch($collection, $comparator)) {
+            return $this->newCollection();
+        } elseif ($collection === $this) {
+            return $this;
+        }
+
+        $intersect = array_uintersect($this->toArray(), $collection->toArray(), $this->compareFn($comparator));
+
+        return $this->newCollection(array_values($intersect));
+    }
+
+    private function couldMatch(CollectionInterface $collection, ?ComparatorInterface $comparator): bool
+    {
+        return $collection->isOfType($this->dtoType) || $comparator && $comparator->couldMatch($this->dtoType);
+    }
+
+    /**
+     * @param ?ComparatorInterface $comparator
+     * @return callable
+     */
+    protected function compareFn(?ComparatorInterface $comparator): callable
+    {
+        if ($comparator instanceof ComparatorInterface) {
+            return $comparator->compare(...);
+        }
+
+        return $this->compareIdenticality(...);
     }
 
     /**

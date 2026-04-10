@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Exterrestris\DtoFramework\Tests\Dto\Collection;
 
+use Exterrestris\DtoFramework\Comparators\EquivalentComparator;
 use Exterrestris\DtoFramework\Dto\Collection\Collection;
 use Exterrestris\DtoFramework\Dto\Collection\CollectionInterface;
 use Exterrestris\DtoFramework\Dto\DtoInterface;
@@ -15,9 +16,11 @@ use Exterrestris\DtoFramework\Dto\Collection\Exceptions\IncompatibleCollectionEx
 use Exterrestris\DtoFramework\Dto\Collection\Exceptions\IncompatibleDtoException;
 use Exterrestris\DtoFramework\Dto\AbstractProcessableDto;
 use Exterrestris\DtoFramework\Dto\ProcessableDtoInterface;
+use Exterrestris\DtoFramework\Serializer\DataExtractor;
 use Exterrestris\DtoFramework\Tests\Mocks\TestDto;
 use Exterrestris\DtoFramework\Tests\Mocks\TestEntity;
 use Exterrestris\DtoFramework\Tests\Mocks\TestEntityInterface;
+use Exterrestris\DtoFramework\Tests\Mocks\CustomSerializationEntity;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -244,6 +247,68 @@ class CollectionTest extends TestCase
         $this->assertCount(0, $notFiltered);
     }
 
+    public function testMatchAll()
+    {
+        $entity1 = (new TestEntity())->setName('Test');
+        $entity2 = (new TestEntity())->setName('Test 2');
+        $entity3 = (new TestEntity())->setName('Test');
+        $entity4 = (new TestEntity())->setName('Test 3');
+        $entity5 = new TestDto();
+
+        $collection = new Collection(TestEntity::class, [
+            $entity1,
+            $entity2,
+            $entity3,
+        ]);
+
+        $comparator = new EquivalentComparator(new DataExtractor());
+
+        $matched = $collection->matchAll($entity1, $comparator);
+
+        $this->assertInstanceOf(Collection::class, $matched);
+        $this->assertNotSame($collection, $matched);
+        $this->assertCount(2, $matched);
+        $this->assertSame($entity1, $matched->get(0));
+        $this->assertSame($entity3, $matched->get(1));
+
+        $notMatched = $collection->matchAll($entity4, $comparator);
+
+        $this->assertInstanceOf(Collection::class, $notMatched);
+        $this->assertNotSame($collection, $notMatched);
+        $this->assertCount(0, $notMatched);
+
+        $cannotMatch = $collection->matchAll($entity5, $comparator);
+
+        $this->assertInstanceOf(Collection::class, $cannotMatch);
+        $this->assertNotSame($collection, $cannotMatch);
+        $this->assertCount(0, $cannotMatch);
+    }
+
+    public function testMatch()
+    {
+        $entity1 = (new TestEntity())->setName('Test');
+        $entity2 = (new TestEntity())->setName('Test 2');
+        $entity3 = (new TestEntity())->setName('Test');
+        $entity4 = (new TestEntity())->setName('Test 3');
+        $entity5 = new TestDto();
+
+        $collection = new Collection(TestEntity::class, [
+            $entity2,
+            $entity3,
+        ]);
+
+        $comparator = new EquivalentComparator(new DataExtractor());
+
+        $entity = $collection->match($entity1, $comparator);
+
+        $this->assertInstanceOf(TestEntity::class, $entity);
+        $this->assertSame($entity3, $entity);
+
+        $this->assertNull($collection->match($entity4, $comparator));
+
+        $this->assertNull($collection->match($entity5, $comparator));
+    }
+
     public function testSplit()
     {
         $entity1 = (new TestEntity())->setName('Test');
@@ -332,6 +397,169 @@ class CollectionTest extends TestCase
         $this->expectException(IncompatibleCollectionException::class);
 
         $collection1->merge($collection2);
+    }
+
+    public function testDiff()
+    {
+        $entity1 = (new TestEntity())->setName('Test');
+        $entity2 = (new TestEntity())->setName('Test 2');
+        $entity3 = (new TestEntity())->setName('Test');
+
+        $collection1 = new Collection(TestEntity::class, [
+            $entity1,
+            $entity2,
+            $entity3,
+        ]);
+
+        $collection2 = new Collection(TestEntity::class, [
+            $entity3,
+        ]);
+
+        $diff = $collection1->diff($collection2);
+
+        $this->assertInstanceOf(Collection::class, $diff);
+        $this->assertNotSame($collection1, $diff);
+        $this->assertCount(2, $diff);
+        $this->assertSame($entity1, $diff->get(0));
+        $this->assertSame($entity2, $diff->get(1));
+    }
+
+    public function testDiffWithSelf()
+    {
+        $entity1 = (new TestEntity())->setName('Test');
+        $entity2 = (new TestEntity())->setName('Test 2');
+        $entity3 = (new TestEntity())->setName('Test');
+
+        $collection = new Collection(TestEntity::class, [
+            $entity1,
+            $entity2,
+            $entity3,
+        ]);
+
+        $diff = $collection->diff($collection);
+
+        $this->assertInstanceOf(Collection::class, $diff);
+        $this->assertNotSame($collection, $diff);
+        $this->assertCount(0, $diff);
+    }
+
+    public function testDiffWithComparator()
+    {
+        $entity1 = (new TestEntity())->setName('Test');
+        $entity2 = (new TestEntity())->setName('Test 2');
+        $entity3 = (new TestEntity())->setName('Test');
+
+        $collection1 = new Collection(TestEntity::class, [
+            $entity1,
+            $entity2,
+            $entity3,
+        ]);
+
+        $collection2 = new Collection(TestEntity::class, [
+            $entity3,
+        ]);
+
+        $comparator = new EquivalentComparator(new DataExtractor());
+
+        $diff = $collection1->diff($collection2, $comparator);
+
+        $this->assertInstanceOf(Collection::class, $diff);
+        $this->assertNotSame($collection1, $diff);
+        $this->assertCount(1, $diff);
+        $this->assertSame($entity2, $diff->get(0));
+    }
+
+    public function testDiffWithDifferentCollectionType()
+    {
+        $entity = (new TestEntity())->setName('Test');
+        $collection1 = new Collection(TestEntity::class, [$entity]);
+        $collection2 = new Collection(CustomSerializationEntity::class);
+
+        $diff = $collection1->diff($collection2);
+
+        $this->assertInstanceOf(Collection::class, $diff);
+        $this->assertSame($collection1, $diff);
+    }
+
+    public function testIntersect()
+    {
+        $entity1 = (new TestEntity())->setName('Test');
+        $entity2 = (new TestEntity())->setName('Test 2');
+        $entity3 = (new TestEntity())->setName('Test');
+
+        $collection1 = new Collection(TestEntity::class, [
+            $entity1,
+            $entity2,
+            $entity3,
+        ]);
+
+        $collection2 = new Collection(TestEntity::class, [
+            $entity3,
+        ]);
+
+        $intersect = $collection1->intersect($collection2);
+
+        $this->assertInstanceOf(Collection::class, $intersect);
+        $this->assertNotSame($collection1, $intersect);
+        $this->assertCount(1, $intersect);
+        $this->assertSame($entity3, $intersect->get(0));
+    }
+
+    public function testIntersectWithSelf()
+    {
+        $entity1 = (new TestEntity())->setName('Test');
+        $entity2 = (new TestEntity())->setName('Test 2');
+        $entity3 = (new TestEntity())->setName('Test');
+
+        $collection = new Collection(TestEntity::class, [
+            $entity1,
+            $entity2,
+            $entity3,
+        ]);
+
+        $intersect = $collection->intersect($collection);
+
+        $this->assertSame($collection, $intersect);
+    }
+
+    public function testIntersectWithComparator()
+    {
+        $entity1 = (new TestEntity())->setName('Test');
+        $entity2 = (new TestEntity())->setName('Test 2');
+        $entity3 = (new TestEntity())->setName('Test');
+
+        $collection1 = new Collection(TestEntity::class, [
+            $entity1,
+            $entity2,
+            $entity3,
+        ]);
+
+        $collection2 = new Collection(TestEntity::class, [
+            $entity3,
+        ]);
+
+        $comparator = new EquivalentComparator(new DataExtractor());
+
+        $intersect = $collection1->intersect($collection2, $comparator);
+
+        $this->assertInstanceOf(Collection::class, $intersect);
+        $this->assertNotSame($collection1, $intersect);
+        $this->assertCount(2, $intersect);
+        $this->assertSame($entity1, $intersect->get(0));
+        $this->assertSame($entity3, $intersect->get(1));
+    }
+
+    public function testIntersectWithDifferentCollectionType()
+    {
+        $entity = (new TestEntity())->setName('Test');
+        $collection1 = new Collection(TestEntity::class, [$entity]);
+        $collection2 = new Collection(CustomSerializationEntity::class);
+
+        $intersect = $collection1->intersect($collection2);
+
+        $this->assertInstanceOf(Collection::class, $intersect);
+        $this->assertNotSame($collection1, $intersect);
+        $this->assertCount(0, $intersect);
     }
 
     public function testIteration()
