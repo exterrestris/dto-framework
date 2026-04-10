@@ -22,22 +22,22 @@ class DataParserTest extends TestCase
         return [
             [
                 [
-                    'name' => 'test',
+                    'fullName' => 'test',
                     'title' => null,
-                    'isProcessed' => false,
+                    'processed' => false,
                     'processingErrors' => null,
                     'children' => [
                         [
-                            'name' => 'test',
+                            'fullName' => 'test',
                             'title' => 'test',
-                            'isProcessed' => true,
+                            'processed' => true,
                             'processingErrors' => null,
                             'children' => null,
                         ],
                         [
-                            'name' => 'test',
+                            'fullName' => 'test',
                             'title' => null,
-                            'isProcessed' => false,
+                            'processed' => false,
                             'processingErrors' => null,
                             'children' => null,
                         ],
@@ -46,28 +46,55 @@ class DataParserTest extends TestCase
             ],
             [
                 (object) [
-                    'name' => 'test',
+                    'fullName' => 'test',
                     'title' => null,
-                    'isProcessed' => false,
+                    'processed' => false,
                     'processingErrors' => null,
                     'children' => [
                         (object) [
-                            'name' => 'test',
+                            'fullName' => 'test',
                             'title' => 'test',
-                            'isProcessed' => true,
+                            'processed' => true,
                             'processingErrors' => null,
                             'children' => null,
                         ],
                         (object) [
-                            'name' => 'test',
+                            'fullName' => 'test',
                             'title' => null,
-                            'isProcessed' => false,
+                            'processed' => false,
                             'processingErrors' => null,
                             'children' => null,
                         ],
                     ],
                 ]
-            ]
+            ],
+            [
+                [
+                    'name' => 'skip',
+                    'fullName' => 'test',
+                    'title' => null,
+                    'processed' => false,
+                    'processingErrors' => null,
+                    'children' => [
+                        [
+                            'name' => 'skip',
+                            'fullName' => 'test',
+                            'title' => 'test',
+                            'processed' => true,
+                            'processingErrors' => null,
+                            'children' => null,
+                        ],
+                        [
+                            'name' => 'skip',
+                            'fullName' => 'test',
+                            'title' => null,
+                            'processed' => false,
+                            'processingErrors' => null,
+                            'children' => null,
+                        ],
+                    ],
+                ]
+            ],
         ];
     }
 
@@ -105,31 +132,31 @@ class DataParserTest extends TestCase
             [
                 [
                     [
-                        'name' => 'test',
+                        'fullName' => 'test',
                         'title' => null,
-                        'isProcessed' => false,
+                        'processed' => false,
                         'processingErrors' => null,
                         'children' => [
                             [
-                                'name' => 'test',
+                                'fullName' => 'test',
                                 'title' => 'test',
-                                'isProcessed' => true,
+                                'processed' => true,
                                 'processingErrors' => null,
                                 'children' => null,
                             ],
                             [
-                                'name' => 'test',
+                                'fullName' => 'test',
                                 'title' => null,
-                                'isProcessed' => false,
+                                'processed' => false,
                                 'processingErrors' => null,
                                 'children' => null,
                             ],
                         ],
                     ],
                     [
-                        'name' => 'test 2',
+                        'fullName' => 'test 2',
                         'title' => 'title',
-                        'isProcessed' => true,
+                        'processed' => true,
                         'processingErrors' => null,
                         'children' => [],
                     ],
@@ -138,31 +165,31 @@ class DataParserTest extends TestCase
             [
                 [
                     (object) [
-                        'name' => 'test',
+                        'fullName' => 'test',
                         'title' => null,
-                        'isProcessed' => false,
+                        'processed' => false,
                         'processingErrors' => null,
                         'children' => [
                             (object) [
-                                'name' => 'test',
+                                'fullName' => 'test',
                                 'title' => 'test',
-                                'isProcessed' => true,
+                                'processed' => true,
                                 'processingErrors' => null,
                                 'children' => null,
                             ],
                             (object) [
-                                'name' => 'test',
+                                'fullName' => 'test',
                                 'title' => null,
-                                'isProcessed' => false,
+                                'processed' => false,
                                 'processingErrors' => null,
                                 'children' => null,
                             ],
                         ],
                     ],
                     (object) [
-                        'name' => 'test 2',
+                        'fullName' => 'test 2',
                         'title' => 'title',
-                        'isProcessed' => true,
+                        'processed' => true,
                         'processingErrors' => null,
                         'children' => [],
                     ],
@@ -202,7 +229,7 @@ class DataParserTest extends TestCase
     public function testParseIntoFromInvalidEntityData()
     {
         $entityData = [
-            'name' => 'test',
+            'fullName' => 'test',
             'title' => null,
             'processed' => 'false',
             'processingErrors' => null,
@@ -222,16 +249,16 @@ class DataParserTest extends TestCase
             [
                 [
                     [
-                        'name' => 'test',
+                        'fullName' => 'test',
                         'title' => null,
-                        'isProcessed' => 'false',
+                        'processed' => 'false',
                         'processingErrors' => null,
                         'children' => 0,
                     ],
                     [
-                        'name' => 'test 2',
+                        'fullName' => 'test 2',
                         'title' => 'title',
-                        'isProcessed' => true,
+                        'processed' => true,
                         'processingErrors' => null,
                         'children' => [],
                     ],
@@ -240,16 +267,16 @@ class DataParserTest extends TestCase
             [
                 [
                     [
-                        'name' => 'test 2',
+                        'fullName' => 'test 2',
                         'title' => 'title',
-                        'isProcessed' => true,
+                        'processed' => true,
                         'processingErrors' => null,
                         'children' => [],
                     ],
                     [
-                        'name' => 'test',
+                        'fullName' => 'test',
                         'title' => null,
-                        'isProcessed' => 'false',
+                        'processed' => 'false',
                         'processingErrors' => null,
                         'children' => 0,
                     ],
@@ -327,7 +354,7 @@ class DataParserTest extends TestCase
     public function testTryParseIntoFromInvalidEntityData()
     {
         $entityData = [
-            'name' => 'test',
+            'fullName' => 'test',
             'title' => null,
             'processed' => 'false',
             'processingErrors' => null,

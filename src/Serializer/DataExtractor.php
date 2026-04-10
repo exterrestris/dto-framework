@@ -15,6 +15,7 @@ use Exterrestris\DtoFramework\Serializer\Exceptions\ValueSerializationException;
 use Exterrestris\DtoFramework\Serializer\Rules\NoSerialize;
 use Exterrestris\DtoFramework\Serializer\Rules\NoSerializeIfNull;
 use Exterrestris\DtoFramework\Serializer\Traits\GetPropertyDateFormatTrait;
+use Exterrestris\DtoFramework\Serializer\Traits\GetPropertyMappingTrait;
 use Exterrestris\DtoFramework\Traits\GetAttributeTrait;
 use ReflectionObject;
 use ReflectionProperty;
@@ -23,6 +24,7 @@ use stdClass;
 class DataExtractor implements DataExtractorInterface
 {
     use GetAttributeTrait;
+    use GetPropertyMappingTrait;
     use GetPropertyDateFormatTrait;
 
     public function getData(
@@ -60,12 +62,12 @@ class DataExtractor implements DataExtractorInterface
             }
 
             if (!$property->isInitialized($dto)) {
-                $data[$property->getName()] = null;
+                $data[$this->mapNameTo($property)] = null;
 
                 if ($excludeNoSerialize && $property->getType()->isBuiltin() && !$property->getType()->allowsNull()) {
                     try {
                         if ($property->getType()->getName() !== 'mixed') {
-                            settype($data[$property->getName()], $property->getType()->getName());
+                            settype($data[$this->mapNameTo($property)], $property->getType()->getName());
                         }
                     } catch (Error) {
                     }
@@ -74,7 +76,7 @@ class DataExtractor implements DataExtractorInterface
                 continue;
             }
 
-            $data[$property->getName()] = $this->getValue($property, $dto, $excludeNoSerialize);
+            $data[$this->mapNameTo($property)] = $this->getValue($property, $dto, $excludeNoSerialize);
         }
 
         return $data;

@@ -24,7 +24,7 @@ class DataExtractorTest extends TestCase
             [
                 static::createMockEntity('test', 'test', true)->setIsProcessed(true),
                 [
-                    'name' => 'test',
+                    'fullName' => 'test',
                     'title' => 'test',
                     'uninitialized' => '',
                 ],
@@ -32,7 +32,7 @@ class DataExtractorTest extends TestCase
             [
                 static::createMockEntity('test', null, true)->setIsProcessed(false),
                 [
-                    'name' => 'test',
+                    'fullName' => 'test',
                     'uninitialized' => '',
                 ],
             ],
@@ -41,7 +41,7 @@ class DataExtractorTest extends TestCase
                     ->setIsProcessed(false)
                     ->setChildren(new Collection(ProcessableDtoInterface::class)),
                 [
-                    'name' => 'test',
+                    'fullName' => 'test',
                     'uninitialized' => '',
                     'children' => [],
                 ],
@@ -54,16 +54,16 @@ class DataExtractorTest extends TestCase
                         static::createMockEntity('test', null)->setIsProcessed(false),
                     ])),
                 [
-                    'name' => 'test',
+                    'fullName' => 'test',
                     'uninitialized' => '',
                     'children' => [
                         [
-                            'name' => 'test',
+                            'fullName' => 'test',
                             'title' => 'test',
                             'uninitialized' => '',
                         ],
                         [
-                            'name' => 'test',
+                            'fullName' => 'test',
                             'uninitialized' => '',
                         ],
                     ],
@@ -97,12 +97,12 @@ class DataExtractorTest extends TestCase
         $this->assertIsArray($data);
         $this->assertSame([
             [
-                'name' => 'test',
+                'fullName' => 'test',
                 'title' => 'test',
                 'uninitialized' => '',
             ],
             [
-                'name' => 'test-2',
+                'fullName' => 'test-2',
                 'uninitialized' => '',
             ],
         ], $data);

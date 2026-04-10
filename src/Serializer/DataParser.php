@@ -22,6 +22,7 @@ use Exterrestris\DtoFramework\Serializer\Exceptions\UnparsableDataTypeException;
 use Exterrestris\DtoFramework\Serializer\Exceptions\ValueParserException;
 use Exterrestris\DtoFramework\Serializer\Rules\NullIfEmpty;
 use Exterrestris\DtoFramework\Serializer\Traits\GetPropertyDateFormatTrait;
+use Exterrestris\DtoFramework\Serializer\Traits\GetPropertyMappingTrait;
 use Exterrestris\DtoFramework\Traits\GetAttributeTrait;
 use Psr\Log\LoggerInterface;
 use ReflectionObject;
@@ -36,6 +37,7 @@ use ValueError;
 class DataParser implements DataParserInterface
 {
     use GetAttributeTrait;
+    use GetPropertyMappingTrait;
     use GetPropertyDateFormatTrait;
 
     /**
@@ -269,8 +271,8 @@ class DataParser implements DataParserInterface
                 continue;
             }
 
-            $this->propertyMaps[$dtoType][$property->getName()] = $property->getName();
-            $this->valueConverters[$dtoType][$property->getName()] = $this->getNullSafeValueConverter(
+            $this->propertyMaps[$dtoType][$this->mapNameFrom($property)] = $property->getName();
+            $this->valueConverters[$dtoType][$this->mapNameFrom($property)] = $this->getNullSafeValueConverter(
                 $property
             );
         }
@@ -318,11 +320,15 @@ class DataParser implements DataParserInterface
         $valueMapper = $this->getValueMappers($dtoType);
 
         foreach ($rawData as $dataProperty => $dataValue) {
+            if (!isset($propertyMap[$dataProperty])) {
+                continue;
+            }
+
             if (isset($valueMapper[$dataProperty])) {
                 $dataValue = $valueMapper[$dataProperty]($dataValue);
             }
 
-            $dtoData[$propertyMap[$dataProperty] ?? $dataProperty] = $dataValue;
+            $dtoData[$propertyMap[$dataProperty]] = $dataValue;
         }
 
         return $dtoData;
