@@ -1,0 +1,42 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Exterrestris\DtoFramework\Validator\Rules;
+
+use Attribute;
+use Exterrestris\DtoFramework\Dto\DtoInterface;
+use Exterrestris\DtoFramework\Validator\Exceptions\PropertyValidationException;
+use Exterrestris\DtoFramework\Validator\PropertyValidator;
+
+#[Attribute(Attribute::TARGET_PROPERTY)]
+readonly class NumberLessThanOrEqualTo implements PropertyValidator
+{
+    public function __construct(
+        private int|float $maxValue
+    ) {
+    }
+
+    public function validateProperty(mixed $value, DtoInterface $dto, string $dtoProperty): void
+    {
+        if ($value === null) {
+            return;
+        }
+
+        if (!is_numeric($value)) {
+            throw new PropertyValidationException(
+                $this,
+                $dtoProperty,
+                sprintf('Value must be a number less than or equal to %s', $this->maxValue),
+            );
+        }
+
+        if ($value > $this->maxValue) {
+            throw new PropertyValidationException(
+                $this,
+                $dtoProperty,
+                sprintf('Value must be less than or equal to %s', $this->maxValue),
+            );
+        }
+    }
+}
