@@ -14,8 +14,8 @@ use Exterrestris\DtoFramework\Dto\Factory\Exceptions\FactoryException;
 use Exterrestris\DtoFramework\Dto\Factory\Exceptions\InvalidTypeException;
 use Exterrestris\DtoFramework\Dto\Factory\Exceptions\UnknownTypeException;
 use Exterrestris\DtoFramework\Dto\Factory\Factory;
-use Exterrestris\DtoFramework\Tests\Mocks\TestEntity;
-use Exterrestris\DtoFramework\Tests\Mocks\TestEntityInterface;
+use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockDto;
+use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockDtoInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\UsesClass;
@@ -30,12 +30,12 @@ class FactoryTest extends TestCase
     {
         return [
             [
-                TestEntity::class,
-                TestEntity::class,
+                MockDto::class,
+                MockDto::class,
             ],
             [
-                TestEntityInterface::class,
-                TestEntity::class,
+                MockDtoInterface::class,
+                MockDto::class,
             ],
         ];
     }
@@ -47,10 +47,10 @@ class FactoryTest extends TestCase
 
         $this->assertInstanceOf($expectedDtoType, $factory->create($createDtoType));
 
-        $entity = $factory->create($createDtoType, ['name' => 'test']);
+        $dto = $factory->create($createDtoType, ['name' => 'test']);
 
-        $this->assertInstanceOf($expectedDtoType, $entity);
-        $this->assertEquals('test', $entity->getName());
+        $this->assertInstanceOf($expectedDtoType, $dto);
+        $this->assertEquals('test', $dto->getName());
     }
 
     public static function createThrowProvider(): array
@@ -101,10 +101,10 @@ class FactoryTest extends TestCase
     {
         $factory = new Factory();
 
-        $collection = $factory->createCollection(TestEntity::class);
+        $collection = $factory->createCollection(MockDto::class);
 
         $this->assertInstanceOf(Collection::class, $collection);
-        $this->assertEquals(TestEntity::class, $collection->getDtoType());
+        $this->assertEquals(MockDto::class, $collection->getDtoType());
         $this->assertTrue($collection->isEmpty());
     }
 
@@ -112,34 +112,34 @@ class FactoryTest extends TestCase
     {
         return [
             [
-                (new TestEntity())->setName('test')->setTitle('test'),
-                (new TestEntity())->setName('test'),
-                TestEntityInterface::class,
+                (new MockDto())->setName('test')->setTitle('test'),
+                (new MockDto())->setName('test'),
+                MockDtoInterface::class,
             ],
         ];
     }
 
     #[DataProvider('createCollectionForProvider')]
-    public function testCreateCollectionFor(DtoInterface $entity1, DtoInterface $entity2, string $expectedType)
+    public function testCreateCollectionFor(DtoInterface $dto1, DtoInterface $dto2, string $expectedType)
     {
         $factory = new Factory();
 
-        $collection = $factory->createCollectionFor($entity1, $entity2);
+        $collection = $factory->createCollectionFor($dto1, $dto2);
 
         $this->assertInstanceOf(Collection::class, $collection);
         $this->assertEquals($expectedType, $collection->getDtoType());
         $this->assertFalse($collection->isEmpty());
-        $this->assertSame($entity1, $collection->get(0));
-        $this->assertSame($entity2, $collection->get(1));
+        $this->assertSame($dto1, $collection->get(0));
+        $this->assertSame($dto2, $collection->get(1));
     }
 
     public static function createLazyCollectionProvider(): array
     {
         $closure = function () {
-            $entities = [new TestEntity(), new TestEntity()];
+            $entities = [new MockDto(), new MockDto()];
 
-            foreach ($entities as $i => $entity) {
-                yield $i => $entity;
+            foreach ($entities as $i => $dto) {
+                yield $i => $dto;
             }
         };
 
@@ -168,16 +168,16 @@ class FactoryTest extends TestCase
     #[DataProvider('createLazyCollectionProvider')]
     public function testCreateLazyCollection(
         Closure $generatorFn,
-        ?int $entityCount,
+        ?int $dtoCount,
         bool $expectedCountKnown,
         int $expectedCount
     ) {
         $factory = new Factory();
 
-        $collection = $factory->createLazyCollection(TestEntity::class, $generatorFn, $entityCount);
+        $collection = $factory->createLazyCollection(MockDto::class, $generatorFn, $dtoCount);
 
         $this->assertInstanceOf(LazyCollection::class, $collection);
-        $this->assertSame(TestEntity::class, $collection->getDtoType());
+        $this->assertSame(MockDto::class, $collection->getDtoType());
         $this->assertEquals($expectedCountKnown, $collection->isCountKnown());
         $this->assertEquals($expectedCount, $collection->count());
     }

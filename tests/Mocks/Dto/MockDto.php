@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Exterrestris\DtoFramework\Tests\Mocks;
+namespace Exterrestris\DtoFramework\Tests\Mocks\Dto;
 
 use Exterrestris\DtoFramework\Dto\AbstractProcessableDto;
 use Exterrestris\DtoFramework\Dto\Attributes\CollectionType;
@@ -12,11 +12,12 @@ use Exterrestris\DtoFramework\Serializer\Rules\Map;
 use Exterrestris\DtoFramework\Serializer\Rules\MapFrom;
 use Exterrestris\DtoFramework\Serializer\Rules\NoSerialize;
 use Exterrestris\DtoFramework\Serializer\Rules\NoSerializeIfNull;
+use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockDtoInterface;
 use Exterrestris\DtoFramework\Tests\Mocks\Validator\Rules\Title;
 use Exterrestris\DtoFramework\Validator\Rules\MatchRegex;
 use Exterrestris\DtoFramework\Validator\Rules\StringMaxLengthPreference;
 
-class TestEntity extends AbstractProcessableDto implements TestEntityInterface
+class MockDto extends AbstractProcessableDto implements MockDtoInterface
 {
     #[StringMaxLengthPreference(15, 25)]
     #[MatchRegex('/^[a-z ]+$/')]
@@ -34,7 +35,7 @@ class TestEntity extends AbstractProcessableDto implements TestEntityInterface
     #[NoSerialize]
     protected ?array $processingErrors = null;
     #[NoSerializeIfNull]
-    #[CollectionType(TestEntity::class)]
+    #[CollectionType(MockDto::class)]
     protected ?CollectionInterface $children = null;
 
     public function getName(): string
@@ -42,7 +43,7 @@ class TestEntity extends AbstractProcessableDto implements TestEntityInterface
         return $this->name;
     }
 
-    public function setName(string $name): TestEntity
+    public function setName(string $name): MockDto
     {
         $new = clone $this;
         $new->name = $name;
@@ -54,7 +55,7 @@ class TestEntity extends AbstractProcessableDto implements TestEntityInterface
         return $this->title;
     }
 
-    public function setTitle(?string $title): TestEntity
+    public function setTitle(?string $title): MockDto
     {
         $new = clone $this;
         $new->title = $title;
@@ -66,7 +67,7 @@ class TestEntity extends AbstractProcessableDto implements TestEntityInterface
         return $this->internal;
     }
 
-    public function setInternal(bool $internal): TestEntity
+    public function setInternal(bool $internal): MockDto
     {
         $new = clone $this;
         $new->internal = $internal;
@@ -78,7 +79,7 @@ class TestEntity extends AbstractProcessableDto implements TestEntityInterface
         return $this->uninitialized;
     }
 
-    public function setUninitialized(string $uninitialized): TestEntity
+    public function setUninitialized(string $uninitialized): MockDto
     {
         $new = clone $this;
         $new->uninitialized = $uninitialized;

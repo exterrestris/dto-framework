@@ -63,13 +63,13 @@ class RequireOneOfTest extends TestCase
     }
 
     #[DataProvider('passValidationProvider')]
-    public function testValidatePasses(DtoInterface $entity, string $entityProperty): void
+    public function testValidatePasses(DtoInterface $dto, string $dtoProperty): void
     {
         $this->expectNotToPerformAssertions();
 
         $validator = $this->getValidator();
 
-        $validator->validateProperty((new ReflectionObject($entity))->getProperty($entityProperty), $entity);
+        $validator->validateProperty((new ReflectionObject($dto))->getProperty($dtoProperty), $dto);
     }
 
     /**
@@ -98,19 +98,19 @@ class RequireOneOfTest extends TestCase
     }
 
     #[DataProvider('failValidationProvider')]
-    public function testValidateFails(DtoInterface $entity, string $entityProperty): void
+    public function testValidateFails(DtoInterface $dto, string $dtoProperty): void
     {
         $validator = $this->getValidator();
 
         try {
-            $validator->validateProperty((new ReflectionObject($entity))->getProperty($entityProperty), $entity);
+            $validator->validateProperty((new ReflectionObject($dto))->getProperty($dtoProperty), $dto);
             $this->fail('Exception not thrown');
         } catch (Throwable $exception) {
             $this->assertInstanceOf(PropertyValidatorException::class, $exception);
             $this->assertInstanceOf(RequireOneOfValidationException::class, $exception);
 
             $this->assertSame($validator, $exception->getValidator());
-            $this->assertEquals($entityProperty, $exception->getProperty());
+            $this->assertEquals($dtoProperty, $exception->getProperty());
         }
     }
 

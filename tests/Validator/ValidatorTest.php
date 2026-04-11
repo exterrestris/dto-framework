@@ -8,8 +8,8 @@ use Exterrestris\DtoFramework\Dto\Attributes\CollectionType;
 use Exterrestris\DtoFramework\Dto\Collection\Collection;
 use Exterrestris\DtoFramework\Dto\Collection\CollectionInterface;
 use Exterrestris\DtoFramework\Dto\DtoInterface;
-use Exterrestris\DtoFramework\Tests\Mocks\TestEntity;
-use Exterrestris\DtoFramework\Tests\Mocks\TestEntityInterface;
+use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockDto;
+use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockDtoInterface;
 use Exterrestris\DtoFramework\Validator\Exceptions\InvalidCollectionDtoException;
 use Exterrestris\DtoFramework\Validator\Exceptions\InvalidCollectionException;
 use Exterrestris\DtoFramework\Validator\Exceptions\InvalidDtoException;
@@ -32,33 +32,33 @@ class ValidatorTest extends TestCase
     {
         return [
             [
-                (new TestEntity())->setName('very very long name')->setUninitialized('init'),
+                (new MockDto())->setName('very very long name')->setUninitialized('init'),
                 false,
             ],
             [
-                (new TestEntity())->setName('long name')->setUninitialized('init'),
+                (new MockDto())->setName('long name')->setUninitialized('init'),
                 true,
             ],
             [
-                (new Collection(TestEntity::class))
-                    ->add((new TestEntity())->setName('very very long name')->setUninitialized('init')),
+                (new Collection(MockDto::class))
+                    ->add((new MockDto())->setName('very very long name')->setUninitialized('init')),
                 false,
             ],
             [
-                (new Collection(TestEntity::class))
-                    ->add((new TestEntity())->setName('long name')->setUninitialized('init')),
+                (new Collection(MockDto::class))
+                    ->add((new MockDto())->setName('long name')->setUninitialized('init')),
                 true,
             ],
             [
-                (new Collection(TestEntity::class))
-                    ->add((new TestEntity())->setName('very very long name')->setUninitialized('init'))
-                    ->add((new TestEntity())->setName('another very long name')->setUninitialized('init')),
+                (new Collection(MockDto::class))
+                    ->add((new MockDto())->setName('very very long name')->setUninitialized('init'))
+                    ->add((new MockDto())->setName('another very long name')->setUninitialized('init')),
                 false,
             ],
             [
-                (new Collection(TestEntity::class))
-                    ->add((new TestEntity())->setName('long name')->setUninitialized('init'))
-                    ->add((new TestEntity())->setName('another name')->setUninitialized('init')),
+                (new Collection(MockDto::class))
+                    ->add((new MockDto())->setName('long name')->setUninitialized('init'))
+                    ->add((new MockDto())->setName('another name')->setUninitialized('init')),
                 true,
             ],
         ];
@@ -76,7 +76,7 @@ class ValidatorTest extends TestCase
     {
         return [
             [
-                (new TestEntity())->setName('very very very very long name')->setUninitialized('init'),
+                (new MockDto())->setName('very very very very long name')->setUninitialized('init'),
                 false,
                 [
                     'name' => [
@@ -86,7 +86,7 @@ class ValidatorTest extends TestCase
                 [],
             ],
             [
-                (new TestEntity())->setName('very + very long name')->setUninitialized('init'),
+                (new MockDto())->setName('very + very long name')->setUninitialized('init'),
                 true,
                 [
                     'name' => [
@@ -97,7 +97,7 @@ class ValidatorTest extends TestCase
                 [],
             ],
             [
-                (new TestEntity())->setName('very very long name')->setTitle('0'),
+                (new MockDto())->setName('very very long name')->setTitle('0'),
                 true,
                 [
                     'name' => [
@@ -112,7 +112,7 @@ class ValidatorTest extends TestCase
                 ],
             ],
             [
-                (new TestEntity())->setName('long name'),
+                (new MockDto())->setName('long name'),
                 true,
                 [],
                 [
@@ -120,7 +120,7 @@ class ValidatorTest extends TestCase
                 ],
             ],
             [
-                (new TestEntity())->setChildren(new Collection(TestEntityInterface::class)),
+                (new MockDto())->setChildren(new Collection(MockDtoInterface::class)),
                 true,
                 [
                     'children' => [
@@ -154,7 +154,7 @@ class ValidatorTest extends TestCase
         try {
             $validator->validate($dto, $enforcePreferences);
 
-            $this->fail('EntityValidationException not thrown');
+            $this->fail('InvalidDtoException not thrown');
         } catch (InvalidDtoException $e) {
             $this->assertSame($dto, $e->getInvalidDto());
 
@@ -196,8 +196,8 @@ class ValidatorTest extends TestCase
     {
         return [
             [
-                (new Collection(TestEntity::class))
-                    ->add((new TestEntity())->setName('very very very very long name')->setUninitialized('init')),
+                (new Collection(MockDto::class))
+                    ->add((new MockDto())->setName('very very very very long name')->setUninitialized('init')),
                 false,
                 [
                     0 => [
@@ -211,9 +211,9 @@ class ValidatorTest extends TestCase
                 ],
             ],
             [
-                (new Collection(TestEntity::class))
-                    ->add((new TestEntity())->setName('long name')->setUninitialized('init'))
-                    ->add((new TestEntity())->setName('very very very very long name')->setUninitialized('init')),
+                (new Collection(MockDto::class))
+                    ->add((new MockDto())->setName('long name')->setUninitialized('init'))
+                    ->add((new MockDto())->setName('very very very very long name')->setUninitialized('init')),
                 false,
                 [
                     1 => [
@@ -227,8 +227,8 @@ class ValidatorTest extends TestCase
                 ],
             ],
             [
-                (new Collection(TestEntity::class))
-                    ->add((new TestEntity())->setName('very + very long name')->setUninitialized('init')),
+                (new Collection(MockDto::class))
+                    ->add((new MockDto())->setName('very + very long name')->setUninitialized('init')),
                 true,
                 [
                     0 => [
@@ -243,8 +243,8 @@ class ValidatorTest extends TestCase
                 ],
             ],
             [
-                (new Collection(TestEntity::class))
-                    ->add((new TestEntity())->setName('very very long name')),
+                (new Collection(MockDto::class))
+                    ->add((new MockDto())->setName('very very long name')),
                 true,
                 [
                     0 => [
@@ -260,8 +260,8 @@ class ValidatorTest extends TestCase
                 ],
             ],
             [
-                (new Collection(TestEntity::class))
-                    ->add((new TestEntity())->setName('long name')),
+                (new Collection(MockDto::class))
+                    ->add((new MockDto())->setName('long name')),
                 true,
                 [
                     0 => [
@@ -273,8 +273,8 @@ class ValidatorTest extends TestCase
                 ],
             ],
             [
-                (new Collection(TestEntity::class))
-                    ->add((new TestEntity())->setChildren(new Collection(TestEntityInterface::class))),
+                (new Collection(MockDto::class))
+                    ->add((new MockDto())->setChildren(new Collection(MockDtoInterface::class))),
                 true,
                 [
                     0 => [
@@ -291,17 +291,17 @@ class ValidatorTest extends TestCase
                 ],
             ],
             [
-                (new Collection(TestEntity::class))
-                    ->add((new TestEntity())->setChildren(new Collection(TestEntityInterface::class)))
+                (new Collection(MockDto::class))
+                    ->add((new MockDto())->setChildren(new Collection(MockDtoInterface::class)))
                     ->add(
-                        (new TestEntity())
-                            ->setChildren(new Collection(TestEntity::class))
+                        (new MockDto())
+                            ->setChildren(new Collection(MockDto::class))
                             ->setName('long name')
                             ->setUninitialized('init')
                     )
                     ->add(
-                        (new TestEntity())
-                            ->setChildren(new Collection(TestEntityInterface::class))
+                        (new MockDto())
+                            ->setChildren(new Collection(MockDtoInterface::class))
                             ->setName('name')
                     ),
                 true,
@@ -349,7 +349,7 @@ class ValidatorTest extends TestCase
         try {
             $validator->validate($collection, $enforcePreferences);
 
-            $this->fail('EntityValidationException not thrown');
+            $this->fail('InvalidDtoException not thrown');
         } catch (InvalidCollectionException $e) {
             $this->assertSame($collection, $e->getInvalidCollection());
 

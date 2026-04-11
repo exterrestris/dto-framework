@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Exterrestris\DtoFramework\Tests\Validator\Rules;
 
 use Exterrestris\DtoFramework\Dto\DtoInterface;
-use Exterrestris\DtoFramework\Tests\Mocks\TestEntity;
+use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockDto;
 use Exterrestris\DtoFramework\Validator\Exceptions\PropertyValidatorException;
 use Exterrestris\DtoFramework\Validator\PropertyValidator;
 use Exterrestris\DtoFramework\Validator\ValueValidator;

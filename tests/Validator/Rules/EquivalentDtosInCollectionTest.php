@@ -44,96 +44,96 @@ class EquivalentDtosInCollectionTest extends DependentPropertyValidatorTestCase
             [
                 ['property', null, NullDependentValue::PassIfNull],
                 null,
-                static::getMockEntityCollection()->add(static::getMockCollectionEntity()->setProperty('value')),
+                static::getMockCollection()->add(static::getMockCollectionDto()->setProperty('value')),
             ],
             [
                 ['property', 'alternate', NullDependentValue::PassIfNull],
                 null,
-                static::getMockEntityCollection()->add(static::getMockCollectionEntity()->setProperty('value')),
+                static::getMockCollection()->add(static::getMockCollectionDto()->setProperty('value')),
             ],
             [
                 ['property', null, NullDependentValue::PassIfNull],
-                static::getMockEntityCollection()->add(static::getMockCollectionEntity()->setProperty('value')),
-                static::getMockEntityCollection()->add(static::getMockCollectionEntity()->setProperty('value')),
+                static::getMockCollection()->add(static::getMockCollectionDto()->setProperty('value')),
+                static::getMockCollection()->add(static::getMockCollectionDto()->setProperty('value')),
             ],
             [
                 ['property', null, NullDependentValue::PassIfValueIsNull],
-                static::getMockEntityCollection()->add(static::getMockCollectionEntity()->setProperty('value')),
-                static::getMockEntityCollection()->add(static::getMockCollectionEntity()->setProperty('value')),
+                static::getMockCollection()->add(static::getMockCollectionDto()->setProperty('value')),
+                static::getMockCollection()->add(static::getMockCollectionDto()->setProperty('value')),
             ],
             [
                 ['property', null, NullDependentValue::FailIfNull],
-                static::getMockEntityCollection()->add(static::getMockCollectionEntity()->setProperty('value')),
-                static::getMockEntityCollection()->add(static::getMockCollectionEntity()->setProperty('value')),
+                static::getMockCollection()->add(static::getMockCollectionDto()->setProperty('value')),
+                static::getMockCollection()->add(static::getMockCollectionDto()->setProperty('value')),
             ],
             [
                 ['property', 'alternate', NullDependentValue::PassIfNull],
-                static::getMockEntityCollection()->add(static::getMockCollectionEntity()->setAlternate('value')),
-                static::getMockEntityCollection()->add(static::getMockCollectionEntity()->setProperty('value')),
+                static::getMockCollection()->add(static::getMockCollectionDto()->setAlternate('value')),
+                static::getMockCollection()->add(static::getMockCollectionDto()->setProperty('value')),
             ],
             [
                 ['property', 'alternate', NullDependentValue::PassIfValueIsNull],
-                static::getMockEntityCollection()->add(static::getMockCollectionEntity()->setAlternate('value')),
-                static::getMockEntityCollection()->add(static::getMockCollectionEntity()->setProperty('value')),
+                static::getMockCollection()->add(static::getMockCollectionDto()->setAlternate('value')),
+                static::getMockCollection()->add(static::getMockCollectionDto()->setProperty('value')),
             ],
             [
                 ['property', 'alternate', NullDependentValue::FailIfNull],
-                static::getMockEntityCollection()->add(static::getMockCollectionEntity()->setAlternate('value')),
-                static::getMockEntityCollection()->add(static::getMockCollectionEntity()->setProperty('value')),
+                static::getMockCollection()->add(static::getMockCollectionDto()->setAlternate('value')),
+                static::getMockCollection()->add(static::getMockCollectionDto()->setProperty('value')),
             ],
             [
                 ['property', null, NullDependentValue::PassIfNull],
-                static::getMockEntityCollection()
-                    ->add(static::getMockCollectionEntity()->setProperty('value'))
-                    ->add(static::getMockCollectionEntity()->setProperty('value2')),
-                static::getMockEntityCollection()
-                    ->add(static::getMockCollectionEntity()->setProperty('value'))
-                    ->add(static::getMockCollectionEntity()->setProperty('value2')),
+                static::getMockCollection()
+                    ->add(static::getMockCollectionDto()->setProperty('value'))
+                    ->add(static::getMockCollectionDto()->setProperty('value2')),
+                static::getMockCollection()
+                    ->add(static::getMockCollectionDto()->setProperty('value'))
+                    ->add(static::getMockCollectionDto()->setProperty('value2')),
             ],
             [
                 ['property', null, NullDependentValue::PassIfValueIsNull],
-                static::getMockEntityCollection()
-                    ->add(static::getMockCollectionEntity()->setProperty('value'))
-                    ->add(static::getMockCollectionEntity()->setProperty('value2')),
-                static::getMockEntityCollection()
-                    ->add(static::getMockCollectionEntity()->setProperty('value'))
-                    ->add(static::getMockCollectionEntity()->setProperty('value2')),
+                static::getMockCollection()
+                    ->add(static::getMockCollectionDto()->setProperty('value'))
+                    ->add(static::getMockCollectionDto()->setProperty('value2')),
+                static::getMockCollection()
+                    ->add(static::getMockCollectionDto()->setProperty('value'))
+                    ->add(static::getMockCollectionDto()->setProperty('value2')),
             ],
             [
                 ['property', null, NullDependentValue::FailIfNull],
-                static::getMockEntityCollection()
-                    ->add(static::getMockCollectionEntity()->setProperty('value'))
-                    ->add(static::getMockCollectionEntity()->setProperty('value2')),
-                static::getMockEntityCollection()
-                    ->add(static::getMockCollectionEntity()->setProperty('value'))
-                    ->add(static::getMockCollectionEntity()->setProperty('value2')),
+                static::getMockCollection()
+                    ->add(static::getMockCollectionDto()->setProperty('value'))
+                    ->add(static::getMockCollectionDto()->setProperty('value2')),
+                static::getMockCollection()
+                    ->add(static::getMockCollectionDto()->setProperty('value'))
+                    ->add(static::getMockCollectionDto()->setProperty('value2')),
             ],
             [
                 ['property', 'alternate', NullDependentValue::PassIfNull],
-                static::getMockEntityCollection()
-                    ->add(static::getMockCollectionEntity()->setAlternate('value'))
-                    ->add(static::getMockCollectionEntity()->setAlternate('value2')),
-                static::getMockEntityCollection()
-                    ->add(static::getMockCollectionEntity()->setProperty('value'))
-                    ->add(static::getMockCollectionEntity()->setProperty('value2')),
+                static::getMockCollection()
+                    ->add(static::getMockCollectionDto()->setAlternate('value'))
+                    ->add(static::getMockCollectionDto()->setAlternate('value2')),
+                static::getMockCollection()
+                    ->add(static::getMockCollectionDto()->setProperty('value'))
+                    ->add(static::getMockCollectionDto()->setProperty('value2')),
             ],
             [
                 ['property', 'alternate', NullDependentValue::PassIfValueIsNull],
-                static::getMockEntityCollection()
-                    ->add(static::getMockCollectionEntity()->setAlternate('value'))
-                    ->add(static::getMockCollectionEntity()->setAlternate('value2')),
-                static::getMockEntityCollection()
-                    ->add(static::getMockCollectionEntity()->setProperty('value'))
-                    ->add(static::getMockCollectionEntity()->setProperty('value2')),
+                static::getMockCollection()
+                    ->add(static::getMockCollectionDto()->setAlternate('value'))
+                    ->add(static::getMockCollectionDto()->setAlternate('value2')),
+                static::getMockCollection()
+                    ->add(static::getMockCollectionDto()->setProperty('value'))
+                    ->add(static::getMockCollectionDto()->setProperty('value2')),
             ],
             [
                 ['property', 'alternate', NullDependentValue::FailIfNull],
-                static::getMockEntityCollection()
-                    ->add(static::getMockCollectionEntity()->setAlternate('value'))
-                    ->add(static::getMockCollectionEntity()->setAlternate('value2')),
-                static::getMockEntityCollection()
-                    ->add(static::getMockCollectionEntity()->setProperty('value'))
-                    ->add(static::getMockCollectionEntity()->setProperty('value2')),
+                static::getMockCollection()
+                    ->add(static::getMockCollectionDto()->setAlternate('value'))
+                    ->add(static::getMockCollectionDto()->setAlternate('value2')),
+                static::getMockCollection()
+                    ->add(static::getMockCollectionDto()->setProperty('value'))
+                    ->add(static::getMockCollectionDto()->setProperty('value2')),
             ],
         ];
     }
@@ -149,209 +149,209 @@ class EquivalentDtosInCollectionTest extends DependentPropertyValidatorTestCase
             [
                 ['property', null, NullDependentValue::PassIfValueIsNull],
                 null,
-                static::getMockEntityCollection()->add(static::getMockCollectionEntity()->setProperty('value')),
+                static::getMockCollection()->add(static::getMockCollectionDto()->setProperty('value')),
             ],
             [
                 ['property', null, NullDependentValue::FailIfNull],
                 null,
-                static::getMockEntityCollection()->add(static::getMockCollectionEntity()->setProperty('value')),
+                static::getMockCollection()->add(static::getMockCollectionDto()->setProperty('value')),
             ],
             [
                 ['property', 'alternate', NullDependentValue::PassIfValueIsNull],
                 null,
-                static::getMockEntityCollection()->add(static::getMockCollectionEntity()->setProperty('value')),
+                static::getMockCollection()->add(static::getMockCollectionDto()->setProperty('value')),
             ],
             [
                 ['property', 'alternate', NullDependentValue::FailIfNull],
                 null,
-                static::getMockEntityCollection()->add(static::getMockCollectionEntity()->setProperty('value')),
+                static::getMockCollection()->add(static::getMockCollectionDto()->setProperty('value')),
             ],
             [
                 ['property', null, NullDependentValue::PassIfNull],
-                static::getMockEntityCollection()->add(static::getMockCollectionEntity()->setProperty('value2')),
-                static::getMockEntityCollection()->add(static::getMockCollectionEntity()->setProperty('value')),
+                static::getMockCollection()->add(static::getMockCollectionDto()->setProperty('value2')),
+                static::getMockCollection()->add(static::getMockCollectionDto()->setProperty('value')),
             ],
             [
                 ['property', null, NullDependentValue::PassIfValueIsNull],
-                static::getMockEntityCollection()->add(static::getMockCollectionEntity()->setProperty('value2')),
-                static::getMockEntityCollection()->add(static::getMockCollectionEntity()->setProperty('value')),
+                static::getMockCollection()->add(static::getMockCollectionDto()->setProperty('value2')),
+                static::getMockCollection()->add(static::getMockCollectionDto()->setProperty('value')),
             ],
             [
                 ['property', null, NullDependentValue::FailIfNull],
-                static::getMockEntityCollection()->add(static::getMockCollectionEntity()->setProperty('value2')),
-                static::getMockEntityCollection()->add(static::getMockCollectionEntity()->setProperty('value')),
+                static::getMockCollection()->add(static::getMockCollectionDto()->setProperty('value2')),
+                static::getMockCollection()->add(static::getMockCollectionDto()->setProperty('value')),
             ],
             [
                 ['property', 'alternate', NullDependentValue::PassIfNull],
-                static::getMockEntityCollection()->add(static::getMockCollectionEntity()->setAlternate('value2')),
-                static::getMockEntityCollection()->add(static::getMockCollectionEntity()->setProperty('value')),
+                static::getMockCollection()->add(static::getMockCollectionDto()->setAlternate('value2')),
+                static::getMockCollection()->add(static::getMockCollectionDto()->setProperty('value')),
             ],
             [
                 ['property', 'alternate', NullDependentValue::PassIfValueIsNull],
-                static::getMockEntityCollection()->add(static::getMockCollectionEntity()->setAlternate('value2')),
-                static::getMockEntityCollection()->add(static::getMockCollectionEntity()->setProperty('value')),
+                static::getMockCollection()->add(static::getMockCollectionDto()->setAlternate('value2')),
+                static::getMockCollection()->add(static::getMockCollectionDto()->setProperty('value')),
             ],
             [
                 ['property', 'alternate', NullDependentValue::FailIfNull],
-                static::getMockEntityCollection()->add(static::getMockCollectionEntity()->setAlternate('value2')),
-                static::getMockEntityCollection()->add(static::getMockCollectionEntity()->setProperty('value')),
+                static::getMockCollection()->add(static::getMockCollectionDto()->setAlternate('value2')),
+                static::getMockCollection()->add(static::getMockCollectionDto()->setProperty('value')),
             ],
             [
                 ['property', 'alternate', NullDependentValue::PassIfNull],
-                static::getMockEntityCollection()->add(
-                    static::getMockCollectionEntity()
+                static::getMockCollection()->add(
+                    static::getMockCollectionDto()
                         ->setProperty('value')
                         ->setAlternate('value2')
                 ),
-                static::getMockEntityCollection()->add(static::getMockCollectionEntity()->setProperty('value')),
+                static::getMockCollection()->add(static::getMockCollectionDto()->setProperty('value')),
             ],
             [
                 ['property', 'alternate', NullDependentValue::PassIfValueIsNull],
-                static::getMockEntityCollection()->add(
-                    static::getMockCollectionEntity()
+                static::getMockCollection()->add(
+                    static::getMockCollectionDto()
                         ->setProperty('value')
                         ->setAlternate('value2')
                 ),
-                static::getMockEntityCollection()->add(static::getMockCollectionEntity()->setProperty('value')),
+                static::getMockCollection()->add(static::getMockCollectionDto()->setProperty('value')),
             ],
             [
                 ['property', 'alternate', NullDependentValue::FailIfNull],
-                static::getMockEntityCollection()->add(
-                    static::getMockCollectionEntity()
+                static::getMockCollection()->add(
+                    static::getMockCollectionDto()
                         ->setProperty('value')
                         ->setAlternate('value2')
                 ),
-                static::getMockEntityCollection()->add(static::getMockCollectionEntity()->setProperty('value')),
+                static::getMockCollection()->add(static::getMockCollectionDto()->setProperty('value')),
             ],
             [
                 ['property', null, NullDependentValue::PassIfNull],
-                static::getMockEntityCollection()
-                    ->add(static::getMockCollectionEntity()->setProperty('value2'))
-                    ->add(static::getMockCollectionEntity()->setProperty('value3')),
-                static::getMockEntityCollection()
-                    ->add(static::getMockCollectionEntity()->setProperty('value'))
-                    ->add(static::getMockCollectionEntity()->setProperty('value2')),
+                static::getMockCollection()
+                    ->add(static::getMockCollectionDto()->setProperty('value2'))
+                    ->add(static::getMockCollectionDto()->setProperty('value3')),
+                static::getMockCollection()
+                    ->add(static::getMockCollectionDto()->setProperty('value'))
+                    ->add(static::getMockCollectionDto()->setProperty('value2')),
             ],
             [
                 ['property', null, NullDependentValue::PassIfValueIsNull],
-                static::getMockEntityCollection()
-                    ->add(static::getMockCollectionEntity()->setProperty('value2'))
-                    ->add(static::getMockCollectionEntity()->setProperty('value3')),
-                static::getMockEntityCollection()
-                    ->add(static::getMockCollectionEntity()->setProperty('value'))
-                    ->add(static::getMockCollectionEntity()->setProperty('value2')),
+                static::getMockCollection()
+                    ->add(static::getMockCollectionDto()->setProperty('value2'))
+                    ->add(static::getMockCollectionDto()->setProperty('value3')),
+                static::getMockCollection()
+                    ->add(static::getMockCollectionDto()->setProperty('value'))
+                    ->add(static::getMockCollectionDto()->setProperty('value2')),
             ],
             [
                 ['property', null, NullDependentValue::FailIfNull],
-                static::getMockEntityCollection()
-                    ->add(static::getMockCollectionEntity()->setProperty('value2'))
-                    ->add(static::getMockCollectionEntity()->setProperty('value3')),
-                static::getMockEntityCollection()
-                    ->add(static::getMockCollectionEntity()->setProperty('value'))
-                    ->add(static::getMockCollectionEntity()->setProperty('value2')),
+                static::getMockCollection()
+                    ->add(static::getMockCollectionDto()->setProperty('value2'))
+                    ->add(static::getMockCollectionDto()->setProperty('value3')),
+                static::getMockCollection()
+                    ->add(static::getMockCollectionDto()->setProperty('value'))
+                    ->add(static::getMockCollectionDto()->setProperty('value2')),
             ],
             [
                 ['property', 'alternate', NullDependentValue::PassIfNull],
-                static::getMockEntityCollection()
-                    ->add(static::getMockCollectionEntity()->setProperty('value2'))
-                    ->add(static::getMockCollectionEntity()->setProperty('value3')),
-                static::getMockEntityCollection()
-                    ->add(static::getMockCollectionEntity()->setAlternate('value'))
-                    ->add(static::getMockCollectionEntity()->setAlternate('value2')),
+                static::getMockCollection()
+                    ->add(static::getMockCollectionDto()->setProperty('value2'))
+                    ->add(static::getMockCollectionDto()->setProperty('value3')),
+                static::getMockCollection()
+                    ->add(static::getMockCollectionDto()->setAlternate('value'))
+                    ->add(static::getMockCollectionDto()->setAlternate('value2')),
             ],
             [
                 ['property', 'alternate', NullDependentValue::PassIfValueIsNull],
-                static::getMockEntityCollection()
-                    ->add(static::getMockCollectionEntity()->setProperty('value2'))
-                    ->add(static::getMockCollectionEntity()->setProperty('value3')),
-                static::getMockEntityCollection()
-                    ->add(static::getMockCollectionEntity()->setAlternate('value'))
-                    ->add(static::getMockCollectionEntity()->setAlternate('value2')),
+                static::getMockCollection()
+                    ->add(static::getMockCollectionDto()->setProperty('value2'))
+                    ->add(static::getMockCollectionDto()->setProperty('value3')),
+                static::getMockCollection()
+                    ->add(static::getMockCollectionDto()->setAlternate('value'))
+                    ->add(static::getMockCollectionDto()->setAlternate('value2')),
             ],
             [
                 ['property', 'alternate', NullDependentValue::FailIfNull],
-                static::getMockEntityCollection()
-                    ->add(static::getMockCollectionEntity()->setProperty('value2'))
-                    ->add(static::getMockCollectionEntity()->setProperty('value3')),
-                static::getMockEntityCollection()
-                    ->add(static::getMockCollectionEntity()->setAlternate('value'))
-                    ->add(static::getMockCollectionEntity()->setAlternate('value2')),
+                static::getMockCollection()
+                    ->add(static::getMockCollectionDto()->setProperty('value2'))
+                    ->add(static::getMockCollectionDto()->setProperty('value3')),
+                static::getMockCollection()
+                    ->add(static::getMockCollectionDto()->setAlternate('value'))
+                    ->add(static::getMockCollectionDto()->setAlternate('value2')),
             ],
             [
                 ['property', 'alternate', NullDependentValue::PassIfNull],
-                static::getMockEntityCollection()
-                    ->add(static::getMockCollectionEntity()->setProperty('value2'))
-                    ->add(static::getMockCollectionEntity()->setProperty('value3')),
-                static::getMockEntityCollection()
-                    ->add(static::getMockCollectionEntity()->setProperty('value2')->setAlternate('value'))
-                    ->add(static::getMockCollectionEntity()->setProperty('value3')->setAlternate('value2')),
+                static::getMockCollection()
+                    ->add(static::getMockCollectionDto()->setProperty('value2'))
+                    ->add(static::getMockCollectionDto()->setProperty('value3')),
+                static::getMockCollection()
+                    ->add(static::getMockCollectionDto()->setProperty('value2')->setAlternate('value'))
+                    ->add(static::getMockCollectionDto()->setProperty('value3')->setAlternate('value2')),
             ],
             [
                 ['property', 'alternate', NullDependentValue::PassIfValueIsNull],
-                static::getMockEntityCollection()
-                    ->add(static::getMockCollectionEntity()->setProperty('value2'))
-                    ->add(static::getMockCollectionEntity()->setProperty('value3')),
-                static::getMockEntityCollection()
-                    ->add(static::getMockCollectionEntity()->setProperty('value2')->setAlternate('value'))
-                    ->add(static::getMockCollectionEntity()->setProperty('value3')->setAlternate('value2')),
+                static::getMockCollection()
+                    ->add(static::getMockCollectionDto()->setProperty('value2'))
+                    ->add(static::getMockCollectionDto()->setProperty('value3')),
+                static::getMockCollection()
+                    ->add(static::getMockCollectionDto()->setProperty('value2')->setAlternate('value'))
+                    ->add(static::getMockCollectionDto()->setProperty('value3')->setAlternate('value2')),
             ],
             [
                 ['property', 'alternate', NullDependentValue::FailIfNull],
-                static::getMockEntityCollection()
-                    ->add(static::getMockCollectionEntity()->setProperty('value2'))
-                    ->add(static::getMockCollectionEntity()->setProperty('value3')),
-                static::getMockEntityCollection()
-                    ->add(static::getMockCollectionEntity()->setProperty('value2')->setAlternate('value'))
-                    ->add(static::getMockCollectionEntity()->setProperty('value3')->setAlternate('value2')),
+                static::getMockCollection()
+                    ->add(static::getMockCollectionDto()->setProperty('value2'))
+                    ->add(static::getMockCollectionDto()->setProperty('value3')),
+                static::getMockCollection()
+                    ->add(static::getMockCollectionDto()->setProperty('value2')->setAlternate('value'))
+                    ->add(static::getMockCollectionDto()->setProperty('value3')->setAlternate('value2')),
             ],
             [
                 ['property', null, NullDependentValue::PassIfNull],
-                static::getMockEntityCollection()
-                    ->add(static::getMockCollectionEntity()->setProperty('value'))
-                    ->add(static::getMockCollectionEntity()->setProperty('value2')),
-                static::getMockEntityCollection()->add(static::getMockCollectionEntity()->setProperty('value')),
+                static::getMockCollection()
+                    ->add(static::getMockCollectionDto()->setProperty('value'))
+                    ->add(static::getMockCollectionDto()->setProperty('value2')),
+                static::getMockCollection()->add(static::getMockCollectionDto()->setProperty('value')),
             ],
             [
                 ['property', null, NullDependentValue::PassIfValueIsNull],
-                static::getMockEntityCollection()
-                    ->add(static::getMockCollectionEntity()->setProperty('value'))
-                    ->add(static::getMockCollectionEntity()->setProperty('value2')),
-                static::getMockEntityCollection()->add(static::getMockCollectionEntity()->setProperty('value')),
+                static::getMockCollection()
+                    ->add(static::getMockCollectionDto()->setProperty('value'))
+                    ->add(static::getMockCollectionDto()->setProperty('value2')),
+                static::getMockCollection()->add(static::getMockCollectionDto()->setProperty('value')),
             ],
             [
                 ['property', null, NullDependentValue::FailIfNull],
-                static::getMockEntityCollection()
-                    ->add(static::getMockCollectionEntity()->setProperty('value'))
-                    ->add(static::getMockCollectionEntity()->setProperty('value2')),
-                static::getMockEntityCollection()->add(static::getMockCollectionEntity()->setProperty('value')),
+                static::getMockCollection()
+                    ->add(static::getMockCollectionDto()->setProperty('value'))
+                    ->add(static::getMockCollectionDto()->setProperty('value2')),
+                static::getMockCollection()->add(static::getMockCollectionDto()->setProperty('value')),
             ],
             [
                 ['property', 'alternate', NullDependentValue::PassIfNull],
-                static::getMockEntityCollection()
-                    ->add(static::getMockCollectionEntity()->setProperty('value'))
-                    ->add(static::getMockCollectionEntity()->setProperty('value2')),
-                static::getMockEntityCollection()->add(static::getMockCollectionEntity()->setAlternate('value')),
+                static::getMockCollection()
+                    ->add(static::getMockCollectionDto()->setProperty('value'))
+                    ->add(static::getMockCollectionDto()->setProperty('value2')),
+                static::getMockCollection()->add(static::getMockCollectionDto()->setAlternate('value')),
             ],
             [
                 ['property', 'alternate', NullDependentValue::PassIfValueIsNull],
-                static::getMockEntityCollection()
-                    ->add(static::getMockCollectionEntity()->setProperty('value'))
-                    ->add(static::getMockCollectionEntity()->setProperty('value2')),
-                static::getMockEntityCollection()->add(static::getMockCollectionEntity()->setAlternate('value')),
+                static::getMockCollection()
+                    ->add(static::getMockCollectionDto()->setProperty('value'))
+                    ->add(static::getMockCollectionDto()->setProperty('value2')),
+                static::getMockCollection()->add(static::getMockCollectionDto()->setAlternate('value')),
             ],
             [
                 ['property', 'alternate', NullDependentValue::FailIfNull],
-                static::getMockEntityCollection()
-                    ->add(static::getMockCollectionEntity()->setProperty('value'))
-                    ->add(static::getMockCollectionEntity()->setProperty('value2')),
-                static::getMockEntityCollection()->add(static::getMockCollectionEntity()->setAlternate('value')),
+                static::getMockCollection()
+                    ->add(static::getMockCollectionDto()->setProperty('value'))
+                    ->add(static::getMockCollectionDto()->setProperty('value2')),
+                static::getMockCollection()->add(static::getMockCollectionDto()->setAlternate('value')),
             ],
 
 
         ];
     }
 
-    protected static function getMockCollectionEntity(): DtoInterface
+    protected static function getMockCollectionDto(): DtoInterface
     {
         return new class() implements DtoInterface {
             protected string $property;
@@ -371,7 +371,7 @@ class EquivalentDtosInCollectionTest extends DependentPropertyValidatorTestCase
         };
     }
 
-    protected static function getMockEntityCollection(): CollectionInterface
+    protected static function getMockCollection(): CollectionInterface
     {
         return new class() extends Collection {
             protected readonly string $dtoType;

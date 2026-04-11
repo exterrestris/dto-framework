@@ -24,7 +24,7 @@ abstract class DependentPropertyValidatorTestCase extends TestCase
     {
         $this->expectNotToPerformAssertions();
 
-        $dto = $this->getMockEntity($value, $dependsOnValue);
+        $dto = $this->getMockDto($value, $dependsOnValue);
         $validator = $this->getValidator($validatorParams);
 
         $validator->validateProperty(((new ReflectionObject($dto))->getProperty('property')), $dto);
@@ -42,7 +42,7 @@ abstract class DependentPropertyValidatorTestCase extends TestCase
         mixed $value,
         ?string $exceptionMessage = null
     ): void {
-        $dto = $this->getMockEntity($value, $dependsOnValue);
+        $dto = $this->getMockDto($value, $dependsOnValue);
         $validator = $this->getValidator($validatorParams);
 
         try {
@@ -60,7 +60,7 @@ abstract class DependentPropertyValidatorTestCase extends TestCase
         }
     }
 
-    protected function getMockEntity(mixed $propertyValue, mixed $dependsOnValue): DtoInterface
+    protected function getMockDto(mixed $propertyValue, mixed $dependsOnValue): DtoInterface
     {
         return new class($propertyValue, $dependsOnValue) implements DtoInterface {
 

@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Exterrestris\DtoFramework\Tests\Mocks\CustomSerializationEntity;
+namespace Exterrestris\DtoFramework\Tests\Mocks\Dto\MockCustomSerializationDto;
 
 use Exterrestris\DtoFramework\Serializer\DataParserPreprocessorInterface;
 use Exterrestris\DtoFramework\Serializer\Exceptions\UnsupportedDtoTypeException;
-use Exterrestris\DtoFramework\Tests\Mocks\CustomSerializationEntity;
+use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockCustomSerializationDto;
 
 class DataParserPreprocessor implements DataParserPreprocessorInterface
 {
     public function preprocess(mixed $data, string $dtoType): ?array
     {
-        if (!is_a($dtoType, CustomSerializationEntity::class, true)) {
+        if (!is_a($dtoType, MockCustomSerializationDto::class, true)) {
             throw new UnsupportedDtoTypeException();
         }
 

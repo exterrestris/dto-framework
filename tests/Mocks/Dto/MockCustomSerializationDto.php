@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Exterrestris\DtoFramework\Tests\Mocks;
+namespace Exterrestris\DtoFramework\Tests\Mocks\Dto;
 
 use Exterrestris\DtoFramework\Dto\AbstractDto;
 use Exterrestris\DtoFramework\Serializer\Config\OverrideDataExtractor;
 use Exterrestris\DtoFramework\Serializer\Config\UseDataParserPreprocessor;
-use Exterrestris\DtoFramework\Tests\Mocks\CustomSerializationEntity\DataExtractor;
-use Exterrestris\DtoFramework\Tests\Mocks\CustomSerializationEntity\DataParserPreprocessor as CustomPreprocessor;
+use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockCustomSerializationDto\DataExtractor;
+use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockCustomSerializationDto\DataParserPreprocessor as CustomPreprocessor;
 
 #[OverrideDataExtractor(DataExtractor::class)]
 #[UseDataParserPreprocessor(CustomPreprocessor::class)]
-class CustomSerializationEntity extends AbstractDto {
+class MockCustomSerializationDto extends AbstractDto {
     protected string $name;
     protected string $title;
     protected ?bool $isProcessed = null;

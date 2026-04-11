@@ -8,8 +8,8 @@ use Exterrestris\DtoFramework\Dto\Collection\Collection;
 use Exterrestris\DtoFramework\Dto\DtoInterface;
 use Exterrestris\DtoFramework\Dto\ProcessableDtoInterface;
 use Exterrestris\DtoFramework\Serializer\DataExtractor;
-use Exterrestris\DtoFramework\Tests\Mocks\TestEntity;
-use Exterrestris\DtoFramework\Tests\Mocks\CustomSerializationEntity;
+use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockDto;
+use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockCustomSerializationDto;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -73,11 +73,11 @@ class DataExtractorTest extends TestCase
     }
 
     #[DataProvider('getDataFromEntityProvider')]
-    public function testGetDataFromEntity(DtoInterface $entity, array $expected)
+    public function testGetDataFromEntity(DtoInterface $dto, array $expected)
     {
         $dataExtractor = new DataExtractor();
 
-        $data = $dataExtractor->getData($entity);
+        $data = $dataExtractor->getData($dto);
 
         $this->assertIsArray($data);
         $this->assertSame($expected, $data);
@@ -110,11 +110,11 @@ class DataExtractorTest extends TestCase
 
     public function testGetDataWithCustomExtractor()
     {
-        $entity = $this->createMockEntityWithDataExtractor('test', 'Test Entity');
+        $dto = $this->createMockEntityWithDataExtractor('test', 'Test Entity');
 
         $dataExtractor = new DataExtractor();
 
-        $data = $dataExtractor->getData($entity);
+        $data = $dataExtractor->getData($dto);
 
         $this->assertIsArray($data);
         $this->assertSame([
@@ -124,7 +124,7 @@ class DataExtractorTest extends TestCase
 
     public function testGetDataFromCollectionWithCustomExtractor()
     {
-        $collection = (new Collection(CustomSerializationEntity::class))->add(
+        $collection = (new Collection(MockCustomSerializationDto::class))->add(
             $this->createMockEntityWithDataExtractor('test-1', 'Test Entity 1'),
             $this->createMockEntityWithDataExtractor('test-2', 'Test Entity 2'),
         );
@@ -140,13 +140,13 @@ class DataExtractorTest extends TestCase
         ], $data);
     }
 
-    private static function createMockEntity(?string $name, ?string $title, bool $internal = false): TestEntity
+    private static function createMockEntity(?string $name, ?string $title, bool $internal = false): MockDto
     {
-        return (new TestEntity())->setName($name)->setTitle($title)->setInternal($internal);
+        return (new MockDto())->setName($name)->setTitle($title)->setInternal($internal);
     }
 
-    private function createMockEntityWithDataExtractor(?string $name, ?string $title): CustomSerializationEntity
+    private function createMockEntityWithDataExtractor(?string $name, ?string $title): MockCustomSerializationDto
     {
-        return (new CustomSerializationEntity())->setName($name)->setTitle($title);
+        return (new MockCustomSerializationDto())->setName($name)->setTitle($title);
     }
 }

@@ -18,67 +18,67 @@ class InterfaceComparatorTest extends ComparatorTestCase
 {
     public static function compareProvider(): array
     {
-        $mockEntity1 = static::createMockEntity('name', 'title');
-        $mockEntity2 = static::createMockEntity('name', 'title');
-        $mockEntity3 = static::createMockEntity('name2', 'title')->setIsProcessed(false);
-        $mockEntity4 = static::createMockEntity('name', 'title2')->setIsProcessed(true);
-        $mockEntity5 = static::createMockEntity('name', null);
-        $mockEntity6 = static::createMockEntity('name', 'title', true);
+        $mockDto1 = static::createMockDto('name', 'title');
+        $mockDto2 = static::createMockDto('name', 'title');
+        $mockDto3 = static::createMockDto('name2', 'title')->setIsProcessed(false);
+        $mockDto4 = static::createMockDto('name', 'title2')->setIsProcessed(true);
+        $mockDto5 = static::createMockDto('name', null);
+        $mockDto6 = static::createMockDto('name', 'title', true);
 
         return [
             [
-                $mockEntity1,
-                $mockEntity1,
+                $mockDto1,
+                $mockDto1,
                 0,
             ],
             [
-                $mockEntity1,
-                $mockEntity2,
+                $mockDto1,
+                $mockDto2,
                 0,
             ],
             [
-                $mockEntity2,
-                $mockEntity1,
+                $mockDto2,
+                $mockDto1,
                 0,
             ],
             [
-                $mockEntity3,
-                $mockEntity2,
+                $mockDto3,
+                $mockDto2,
                 -1,
             ],
             [
-                $mockEntity2,
-                $mockEntity3,
+                $mockDto2,
+                $mockDto3,
                 -1,
             ],
             [
-                $mockEntity1,
-                $mockEntity4,
+                $mockDto1,
+                $mockDto4,
                 -1,
             ],
             [
-                $mockEntity4,
-                $mockEntity1,
+                $mockDto4,
+                $mockDto1,
                 1,
             ],
             [
-                $mockEntity5,
-                $mockEntity2,
+                $mockDto5,
+                $mockDto2,
                 0,
             ],
             [
-                $mockEntity2,
-                $mockEntity5,
+                $mockDto2,
+                $mockDto5,
                 0,
             ],
             [
-                $mockEntity1,
-                $mockEntity6,
+                $mockDto1,
+                $mockDto6,
                 0,
             ],
             [
-                $mockEntity6,
-                $mockEntity1,
+                $mockDto6,
+                $mockDto1,
                 0,
             ],
         ];
@@ -86,25 +86,25 @@ class InterfaceComparatorTest extends ComparatorTestCase
 
     public static function areEqualProvider(): array
     {
-        $mockEntity1 = static::createMockEntity('name', 'title')->setIsProcessed(true);
-        $mockEntity2 = static::createMockEntity('name', 'title')->setIsProcessed(false);
+        $mockDto1 = static::createMockDto('name', 'title')->setIsProcessed(true);
+        $mockDto2 = static::createMockDto('name', 'title')->setIsProcessed(false);
 
         return [
             [
-                static::createMockEntity('name', 'title'),
-                static::createMockEntity('name', 'title'),
+                static::createMockDto('name', 'title'),
+                static::createMockDto('name', 'title'),
             ],
             [
-                static::createMockEntity('name', 'title')->setIsProcessed(true),
-                static::createMockEntity('name2', 'title')->setIsProcessed(true),
+                static::createMockDto('name', 'title')->setIsProcessed(true),
+                static::createMockDto('name2', 'title')->setIsProcessed(true),
             ],
             [
-                $mockEntity1,
-                $mockEntity1,
+                $mockDto1,
+                $mockDto1,
             ],
             [
-                $mockEntity2,
-                static::createMockEntity('name', 'title', true)->setIsProcessed(false),
+                $mockDto2,
+                static::createMockDto('name', 'title', true)->setIsProcessed(false),
             ],
         ];
     }
@@ -113,12 +113,12 @@ class InterfaceComparatorTest extends ComparatorTestCase
     {
         return [
             [
-                static::createMockEntity('name', 'title')->setIsProcessed(true),
-                static::createMockEntity('name', 'title')->setIsProcessed(false),
+                static::createMockDto('name', 'title')->setIsProcessed(true),
+                static::createMockDto('name', 'title')->setIsProcessed(false),
             ],
             [
-                static::createMockEntity('name', 'title')->setIsProcessed(true),
-                static::createMockEntity('name', 'title'),
+                static::createMockDto('name', 'title')->setIsProcessed(true),
+                static::createMockDto('name', 'title'),
             ],
         ];
     }
@@ -127,9 +127,9 @@ class InterfaceComparatorTest extends ComparatorTestCase
     {
         return [
             [
-                static::createMockEntity('name', 'title')->setIsProcessed(false),
-                static::createMockEntity('name', 'title2')->setIsProcessed(false),
-                static::createMockEntity('name2', 'title2')->setIsProcessed(true),
+                static::createMockDto('name', 'title')->setIsProcessed(false),
+                static::createMockDto('name', 'title2')->setIsProcessed(false),
+                static::createMockDto('name2', 'title2')->setIsProcessed(true),
             ],
         ];
     }
@@ -155,7 +155,7 @@ class InterfaceComparatorTest extends ComparatorTestCase
         return new InterfaceComparator(ProcessableDtoInterface::class, $dataExtractor);
     }
 
-    private static function createMockEntity(?string $name, ?string $title, bool $internal = false): ProcessableDtoInterface
+    private static function createMockDto(?string $name, ?string $title, bool $internal = false): ProcessableDtoInterface
     {
         return new class($name, $title, $internal) implements ProcessableDtoInterface {
             protected ?string $name;

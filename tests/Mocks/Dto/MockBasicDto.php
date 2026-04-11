@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Exterrestris\DtoFramework\Tests\Mocks;
+namespace Exterrestris\DtoFramework\Tests\Mocks\Dto;
 
 use Exterrestris\DtoFramework\Dto\AbstractDto;
 use Exterrestris\DtoFramework\Validator\Rules\NotEmpty;
 
-class TestDto extends AbstractDto
+class MockBasicDto extends AbstractDto
 {
     #[NotEmpty]
     protected string $name;

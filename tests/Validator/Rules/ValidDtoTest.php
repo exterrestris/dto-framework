@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Exterrestris\DtoFramework\Tests\Validator\Rules;
 
 use Exterrestris\DtoFramework\Dto\DtoInterface;
-use Exterrestris\DtoFramework\Tests\Mocks\TestHierarchicalDto;
+use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockHierarchicalDto;
 use Exterrestris\DtoFramework\Validator\PropertyValidator;
 use Exterrestris\DtoFramework\Validator\Rules\ValidDto;
 use Exterrestris\DtoFramework\Validator\ValueValidator;
@@ -19,7 +19,7 @@ class ValidDtoTest extends PropertyValueValidatorTestCase
 {
     protected static function createDtoFromValue(mixed $value): DtoInterface
     {
-        return new TestHierarchicalDto([
+        return new MockHierarchicalDto([
             'name' => 'Jack Doe',
             'parent' => $value,
         ]);
@@ -39,16 +39,16 @@ class ValidDtoTest extends PropertyValueValidatorTestCase
             ],
             [
                 [],
-                new TestHierarchicalDto([
+                new MockHierarchicalDto([
                     'name' => 'John Doe',
                     'parent' => null,
                 ]),
             ],
             [
                 [],
-                new TestHierarchicalDto([
+                new MockHierarchicalDto([
                     'name' => 'John Doe',
-                    'parent' => new TestHierarchicalDto([
+                    'parent' => new MockHierarchicalDto([
                         'name' => 'Jane Doe',
                     ]),
                 ]),
@@ -76,15 +76,15 @@ class ValidDtoTest extends PropertyValueValidatorTestCase
             ],
             [
                 [],
-                new TestHierarchicalDto([
+                new MockHierarchicalDto([
                     'name' => 'John Doe',
-                    'parent' => new TestHierarchicalDto([
+                    'parent' => new MockHierarchicalDto([
                         'name' => '',
                     ]),
                 ]),
                 <<<'MESSAGE'
-                1 Exterrestris\DtoFramework\Tests\Mocks\TestHierarchicalDto property is invalid
-                - parent: 1 Exterrestris\DtoFramework\Tests\Mocks\TestHierarchicalDto property is invalid
+                1 MockHierarchicalDto property is invalid
+                - parent: 1 MockHierarchicalDto property is invalid
                   - name: Value must not be empty
                 MESSAGE,
             ],

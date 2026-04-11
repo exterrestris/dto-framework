@@ -17,10 +17,10 @@ use Exterrestris\DtoFramework\Dto\Collection\Exceptions\IncompatibleDtoException
 use Exterrestris\DtoFramework\Dto\AbstractProcessableDto;
 use Exterrestris\DtoFramework\Dto\ProcessableDtoInterface;
 use Exterrestris\DtoFramework\Serializer\DataExtractor;
-use Exterrestris\DtoFramework\Tests\Mocks\TestDto;
-use Exterrestris\DtoFramework\Tests\Mocks\TestEntity;
-use Exterrestris\DtoFramework\Tests\Mocks\TestEntityInterface;
-use Exterrestris\DtoFramework\Tests\Mocks\CustomSerializationEntity;
+use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockBasicDto;
+use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockDto;
+use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockDtoInterface;
+use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockCustomSerializationDto;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -41,16 +41,16 @@ class CollectionTest extends TestCase
     }
 
     #[DataProvider('constructWithInvalidTypeProvider')]
-    public function testConstructWithInvalidType(string $entityType)
+    public function testConstructWithInvalidType(string $dtoType)
     {
         $this->expectException(InvalidTypeException::class);
 
-        new Collection($entityType);
+        new Collection($dtoType);
     }
 
     public function testConstructWithValidItems()
     {
-        $collection = new Collection(TestEntity::class, [new TestEntity()]);
+        $collection = new Collection(MockDto::class, [new MockDto()]);
 
         $this->assertInstanceOf(Collection::class, $collection);
     }
@@ -59,50 +59,50 @@ class CollectionTest extends TestCase
     {
         $this->expectException(IncompatibleDtoException::class);
 
-        new Collection(TestEntity::class, [new TestDto()]);
+        new Collection(MockDto::class, [new MockBasicDto()]);
     }
 
     public function testIsOfType()
     {
-        $specificCollection = new Collection(TestEntity::class);
-        $typeCollection = new Collection(TestEntityInterface::class);
+        $specificCollection = new Collection(MockDto::class);
+        $typeCollection = new Collection(MockDtoInterface::class);
         $genericCollection = new Collection(ProcessableDtoInterface::class);
 
-        $this->assertTrue($specificCollection->isOfType(TestEntity::class));
-        $this->assertTrue($specificCollection->isOfType(TestEntityInterface::class));
+        $this->assertTrue($specificCollection->isOfType(MockDto::class));
+        $this->assertTrue($specificCollection->isOfType(MockDtoInterface::class));
         $this->assertTrue($specificCollection->isOfType(AbstractProcessableDto::class));
         $this->assertTrue($specificCollection->isOfType(ProcessableDtoInterface::class));
 
-        $this->assertFalse($typeCollection->isOfType(TestEntity::class));
-        $this->assertTrue($typeCollection->isOfType(TestEntityInterface::class));
+        $this->assertFalse($typeCollection->isOfType(MockDto::class));
+        $this->assertTrue($typeCollection->isOfType(MockDtoInterface::class));
         $this->assertFalse($typeCollection->isOfType(AbstractProcessableDto::class));
         $this->assertTrue($typeCollection->isOfType(ProcessableDtoInterface::class));
 
-        $this->assertFalse($genericCollection->isOfType(TestEntity::class));
-        $this->assertFalse($genericCollection->isOfType(TestEntityInterface::class));
+        $this->assertFalse($genericCollection->isOfType(MockDto::class));
+        $this->assertFalse($genericCollection->isOfType(MockDtoInterface::class));
         $this->assertFalse($genericCollection->isOfType(AbstractProcessableDto::class));
         $this->assertTrue($genericCollection->isOfType(ProcessableDtoInterface::class));
     }
 
     public function testGetEntityType()
     {
-        $collection = new Collection(TestEntity::class);
+        $collection = new Collection(MockDto::class);
 
-        $this->assertEquals(TestEntity::class, $collection->getDtoType());
+        $this->assertEquals(MockDto::class, $collection->getDtoType());
     }
 
     public function testContains()
     {
-        $entity = new TestEntity();
-        $collection = new Collection(TestEntity::class, [$entity]);
+        $dto = new MockDto();
+        $collection = new Collection(MockDto::class, [$dto]);
 
-        $this->assertTrue($collection->contains($entity));
-        $this->assertFalse($collection->contains(new TestEntity()));
+        $this->assertTrue($collection->contains($dto));
+        $this->assertFalse($collection->contains(new MockDto()));
     }
 
     public function testClear()
     {
-        $collection = new Collection(TestEntity::class, [new TestEntity()]);
+        $collection = new Collection(MockDto::class, [new MockDto()]);
         $cleared = $collection->clear();
 
         $this->assertInstanceOf(Collection::class, $cleared);
@@ -113,18 +113,18 @@ class CollectionTest extends TestCase
 
     public function testFirst()
     {
-        $entity = new TestEntity();
-        $collection = new Collection(TestEntity::class, [$entity]);
-        $emptyCollection = new Collection(TestEntity::class);
+        $dto = new MockDto();
+        $collection = new Collection(MockDto::class, [$dto]);
+        $emptyCollection = new Collection(MockDto::class);
 
-        $this->assertSame($entity, $collection->first());
+        $this->assertSame($dto, $collection->first());
         $this->assertNull($emptyCollection->first());
     }
 
     public function testIsEmpty()
     {
-        $emptyCollection = new Collection(TestEntity::class);
-        $collection = new Collection(TestEntity::class, [new TestEntity()]);
+        $emptyCollection = new Collection(MockDto::class);
+        $collection = new Collection(MockDto::class, [new MockDto()]);
 
         $this->assertTrue($emptyCollection->isEmpty());
         $this->assertFalse($collection->isEmpty());
@@ -132,14 +132,14 @@ class CollectionTest extends TestCase
 
     public function testMapToUniqueArray()
     {
-        $collection = new Collection(TestEntity::class, [
-            (new TestEntity())->setName('Test'),
-            (new TestEntity())->setName('Test'),
-            (new TestEntity())->setName('Test 2'),
+        $collection = new Collection(MockDto::class, [
+            (new MockDto())->setName('Test'),
+            (new MockDto())->setName('Test'),
+            (new MockDto())->setName('Test 2'),
         ]);
 
-        $array = $collection->mapToUniqueArray(static function (TestEntity $entity) {
-            return $entity->getName();
+        $array = $collection->mapToUniqueArray(static function (MockDto $dto) {
+            return $dto->getName();
         });
 
         $this->assertIsArray($array);
@@ -150,14 +150,14 @@ class CollectionTest extends TestCase
 
     public function testMapToArray()
     {
-        $collection = new Collection(TestEntity::class, [
-            (new TestEntity())->setName('Test'),
-            (new TestEntity())->setName('Test'),
-            (new TestEntity())->setName('Test 2'),
+        $collection = new Collection(MockDto::class, [
+            (new MockDto())->setName('Test'),
+            (new MockDto())->setName('Test'),
+            (new MockDto())->setName('Test 2'),
         ]);
 
-        $array = $collection->mapToArray(static function (TestEntity $entity) {
-            return $entity->getName();
+        $array = $collection->mapToArray(static function (MockDto $dto) {
+            return $dto->getName();
         });
 
         $this->assertIsArray($array);
@@ -168,25 +168,25 @@ class CollectionTest extends TestCase
 
     public function testFind()
     {
-        $entity1 = (new TestEntity())->setName('Test');
-        $entity2 = (new TestEntity())->setName('Test 2');
-        $entity3 = (new TestEntity())->setName('Test');
+        $dto1 = (new MockDto())->setName('Test');
+        $dto2 = (new MockDto())->setName('Test 2');
+        $dto3 = (new MockDto())->setName('Test');
 
-        $collection = new Collection(TestEntity::class, [
-            $entity1,
-            $entity2,
-            $entity3,
+        $collection = new Collection(MockDto::class, [
+            $dto1,
+            $dto2,
+            $dto3,
         ]);
 
-        $entity = $collection->find(static function (TestEntity $entity) {
-            return $entity->getName() === 'Test';
+        $dto = $collection->find(static function (MockDto $dto) {
+            return $dto->getName() === 'Test';
         });
 
-        $this->assertInstanceOf(TestEntity::class, $entity);
-        $this->assertSame($entity1, $entity);
+        $this->assertInstanceOf(MockDto::class, $dto);
+        $this->assertSame($dto1, $dto);
 
-        $missing = $collection->find(static function (TestEntity $entity) {
-            return $entity->getName() === 'Test 3';
+        $missing = $collection->find(static function (MockDto $dto) {
+            return $dto->getName() === 'Test 3';
         });
 
         $this->assertNull($missing);
@@ -194,14 +194,14 @@ class CollectionTest extends TestCase
 
     public function testChunk()
     {
-        $entity1 = (new TestEntity())->setName('Test');
-        $entity2 = (new TestEntity())->setName('Test 2');
-        $entity3 = (new TestEntity())->setName('Test');
+        $dto1 = (new MockDto())->setName('Test');
+        $dto2 = (new MockDto())->setName('Test 2');
+        $dto3 = (new MockDto())->setName('Test');
 
-        $collection = new Collection(TestEntity::class, [
-            $entity1,
-            $entity2,
-            $entity3,
+        $collection = new Collection(MockDto::class, [
+            $dto1,
+            $dto2,
+            $dto3,
         ]);
 
         $chunked = $collection->chunk(2);
@@ -210,37 +210,37 @@ class CollectionTest extends TestCase
         $this->assertCount(2, $chunked);
 
         $this->assertInstanceOf(Collection::class, $chunked[0]);
-        $this->assertSame($entity1, $chunked[0]->get(0));
-        $this->assertSame($entity2, $chunked[0]->get(1));
+        $this->assertSame($dto1, $chunked[0]->get(0));
+        $this->assertSame($dto2, $chunked[0]->get(1));
 
         $this->assertInstanceOf(Collection::class, $chunked[1]);
-        $this->assertSame($entity3, $chunked[1]->get(0));
+        $this->assertSame($dto3, $chunked[1]->get(0));
     }
 
     public function testFilter()
     {
-        $entity1 = (new TestEntity())->setName('Test');
-        $entity2 = (new TestEntity())->setName('Test 2');
-        $entity3 = (new TestEntity())->setName('Test');
+        $dto1 = (new MockDto())->setName('Test');
+        $dto2 = (new MockDto())->setName('Test 2');
+        $dto3 = (new MockDto())->setName('Test');
 
-        $collection = new Collection(TestEntity::class, [
-            $entity1,
-            $entity2,
-            $entity3,
+        $collection = new Collection(MockDto::class, [
+            $dto1,
+            $dto2,
+            $dto3,
         ]);
 
-        $filtered = $collection->filter(static function (TestEntity $entity) {
-            return $entity->getName() === 'Test';
+        $filtered = $collection->filter(static function (MockDto $dto) {
+            return $dto->getName() === 'Test';
         });
 
         $this->assertInstanceOf(Collection::class, $filtered);
         $this->assertNotSame($collection, $filtered);
         $this->assertCount(2, $filtered);
-        $this->assertSame($entity1, $filtered->get(0));
-        $this->assertSame($entity3, $filtered->get(1));
+        $this->assertSame($dto1, $filtered->get(0));
+        $this->assertSame($dto3, $filtered->get(1));
 
-        $notFiltered = $collection->filter(static function (TestEntity $entity) {
-            return $entity->getName() === 'Test 3';
+        $notFiltered = $collection->filter(static function (MockDto $dto) {
+            return $dto->getName() === 'Test 3';
         });
 
         $this->assertInstanceOf(Collection::class, $notFiltered);
@@ -249,35 +249,35 @@ class CollectionTest extends TestCase
 
     public function testMatchAll()
     {
-        $entity1 = (new TestEntity())->setName('Test');
-        $entity2 = (new TestEntity())->setName('Test 2');
-        $entity3 = (new TestEntity())->setName('Test');
-        $entity4 = (new TestEntity())->setName('Test 3');
-        $entity5 = new TestDto();
+        $dto1 = (new MockDto())->setName('Test');
+        $dto2 = (new MockDto())->setName('Test 2');
+        $dto3 = (new MockDto())->setName('Test');
+        $dto4 = (new MockDto())->setName('Test 3');
+        $dto5 = new MockBasicDto();
 
-        $collection = new Collection(TestEntity::class, [
-            $entity1,
-            $entity2,
-            $entity3,
+        $collection = new Collection(MockDto::class, [
+            $dto1,
+            $dto2,
+            $dto3,
         ]);
 
         $comparator = new EquivalentComparator(new DataExtractor());
 
-        $matched = $collection->matchAll($entity1, $comparator);
+        $matched = $collection->matchAll($dto1, $comparator);
 
         $this->assertInstanceOf(Collection::class, $matched);
         $this->assertNotSame($collection, $matched);
         $this->assertCount(2, $matched);
-        $this->assertSame($entity1, $matched->get(0));
-        $this->assertSame($entity3, $matched->get(1));
+        $this->assertSame($dto1, $matched->get(0));
+        $this->assertSame($dto3, $matched->get(1));
 
-        $notMatched = $collection->matchAll($entity4, $comparator);
+        $notMatched = $collection->matchAll($dto4, $comparator);
 
         $this->assertInstanceOf(Collection::class, $notMatched);
         $this->assertNotSame($collection, $notMatched);
         $this->assertCount(0, $notMatched);
 
-        $cannotMatch = $collection->matchAll($entity5, $comparator);
+        $cannotMatch = $collection->matchAll($dto5, $comparator);
 
         $this->assertInstanceOf(Collection::class, $cannotMatch);
         $this->assertNotSame($collection, $cannotMatch);
@@ -286,43 +286,43 @@ class CollectionTest extends TestCase
 
     public function testMatch()
     {
-        $entity1 = (new TestEntity())->setName('Test');
-        $entity2 = (new TestEntity())->setName('Test 2');
-        $entity3 = (new TestEntity())->setName('Test');
-        $entity4 = (new TestEntity())->setName('Test 3');
-        $entity5 = new TestDto();
+        $dto1 = (new MockDto())->setName('Test');
+        $dto2 = (new MockDto())->setName('Test 2');
+        $dto3 = (new MockDto())->setName('Test');
+        $dto4 = (new MockDto())->setName('Test 3');
+        $dto5 = new MockBasicDto();
 
-        $collection = new Collection(TestEntity::class, [
-            $entity2,
-            $entity3,
+        $collection = new Collection(MockDto::class, [
+            $dto2,
+            $dto3,
         ]);
 
         $comparator = new EquivalentComparator(new DataExtractor());
 
-        $entity = $collection->match($entity1, $comparator);
+        $dto = $collection->match($dto1, $comparator);
 
-        $this->assertInstanceOf(TestEntity::class, $entity);
-        $this->assertSame($entity3, $entity);
+        $this->assertInstanceOf(MockDto::class, $dto);
+        $this->assertSame($dto3, $dto);
 
-        $this->assertNull($collection->match($entity4, $comparator));
+        $this->assertNull($collection->match($dto4, $comparator));
 
-        $this->assertNull($collection->match($entity5, $comparator));
+        $this->assertNull($collection->match($dto5, $comparator));
     }
 
     public function testSplit()
     {
-        $entity1 = (new TestEntity())->setName('Test');
-        $entity2 = (new TestEntity())->setName('Test 2');
-        $entity3 = (new TestEntity())->setName('Test');
+        $dto1 = (new MockDto())->setName('Test');
+        $dto2 = (new MockDto())->setName('Test 2');
+        $dto3 = (new MockDto())->setName('Test');
 
-        $collection = new Collection(TestEntity::class, [
-            $entity1,
-            $entity2,
-            $entity3,
+        $collection = new Collection(MockDto::class, [
+            $dto1,
+            $dto2,
+            $dto3,
         ]);
 
-        $split = $collection->split(function (TestEntity $entity) {
-            return $entity->getName();
+        $split = $collection->split(function (MockDto $dto) {
+            return $dto->getName();
         });
 
         $this->assertIsArray($split);
@@ -331,68 +331,68 @@ class CollectionTest extends TestCase
         $this->assertArrayHasKey('Test', $split);
         $this->assertInstanceOf(Collection::class, $split['Test']);
         $this->assertCount(2, $split['Test']);
-        $this->assertSame($entity1, $split['Test']->get(0));
-        $this->assertSame($entity3, $split['Test']->get(1));
+        $this->assertSame($dto1, $split['Test']->get(0));
+        $this->assertSame($dto3, $split['Test']->get(1));
 
         $this->assertArrayHasKey('Test 2', $split);
         $this->assertCount(1, $split['Test 2']);
-        $this->assertSame($entity2, $split['Test 2']->get(0));
+        $this->assertSame($dto2, $split['Test 2']->get(0));
     }
 
     public function testMerge()
     {
-        $entity1 = (new TestEntity())->setName('Test');
-        $entity2 = (new TestEntity())->setName('Test 2');
-        $entity3 = (new TestEntity())->setName('Test');
+        $dto1 = (new MockDto())->setName('Test');
+        $dto2 = (new MockDto())->setName('Test 2');
+        $dto3 = (new MockDto())->setName('Test');
 
-        $collection1 = new Collection(TestEntity::class, [
-            $entity1,
-            $entity2,
+        $collection1 = new Collection(MockDto::class, [
+            $dto1,
+            $dto2,
         ]);
 
-        $collection2 = new Collection(TestEntity::class, [
-            $entity3,
+        $collection2 = new Collection(MockDto::class, [
+            $dto3,
         ]);
 
         $this->assertSame($collection1, $collection1->merge($collection1));
-        $this->assertSame($collection1, $collection1->merge(new Collection(TestEntity::class)));
+        $this->assertSame($collection1, $collection1->merge(new Collection(MockDto::class)));
 
-        $merged = $collection1->merge($collection1, new Collection(TestEntity::class), $collection2);
+        $merged = $collection1->merge($collection1, new Collection(MockDto::class), $collection2);
 
         $this->assertInstanceOf(Collection::class, $merged);
         $this->assertEquals($collection1->getDtoType(), $merged->getDtoType());
         $this->assertCount(3, $merged);
-        $this->assertSame($entity1, $merged->get(0));
-        $this->assertSame($entity2, $merged->get(1));
-        $this->assertSame($entity3, $merged->get(2));
+        $this->assertSame($dto1, $merged->get(0));
+        $this->assertSame($dto2, $merged->get(1));
+        $this->assertSame($dto3, $merged->get(2));
 
         /**
-         * A collection of {@see TestEntity} can be merged into a collection of {@see TestEntityInterface} as
-         * {@see TestEntityInterface} is a superset of {@see TestEntity}, however the inverse is not true
+         * A collection of {@see MockDto} can be merged into a collection of {@see MockDtoInterface} as
+         * {@see MockDtoInterface} is a superset of {@see MockDto}, however the inverse is not true
          */
-        $collection3 = new Collection(TestEntityInterface::class);
+        $collection3 = new Collection(MockDtoInterface::class);
 
         $merged = $collection3->merge($collection1);
         $this->assertInstanceOf(Collection::class, $merged);
         $this->assertEquals($collection3->getDtoType(), $merged->getDtoType());
         $this->assertCount(2, $merged);
-        $this->assertSame($entity1, $merged->get(0));
-        $this->assertSame($entity2, $merged->get(1));
+        $this->assertSame($dto1, $merged->get(0));
+        $this->assertSame($dto2, $merged->get(1));
     }
 
     public static function mergeIncompatibleCollectionTypeProvider(): array
     {
         return [
-            [TestDto::class],
-            [TestEntityInterface::class],
+            [MockBasicDto::class],
+            [MockDtoInterface::class],
         ];
     }
 
     #[DataProvider('mergeIncompatibleCollectionTypeProvider')]
     public function testMergeIncompatibleCollectionType()
     {
-        $collection1 = new Collection(TestEntity::class);
-        $collection2 = new Collection(TestDto::class);
+        $collection1 = new Collection(MockDto::class);
+        $collection2 = new Collection(MockBasicDto::class);
 
         $this->expectException(IncompatibleCollectionException::class);
 
@@ -401,18 +401,18 @@ class CollectionTest extends TestCase
 
     public function testDiff()
     {
-        $entity1 = (new TestEntity())->setName('Test');
-        $entity2 = (new TestEntity())->setName('Test 2');
-        $entity3 = (new TestEntity())->setName('Test');
+        $dto1 = (new MockDto())->setName('Test');
+        $dto2 = (new MockDto())->setName('Test 2');
+        $dto3 = (new MockDto())->setName('Test');
 
-        $collection1 = new Collection(TestEntity::class, [
-            $entity1,
-            $entity2,
-            $entity3,
+        $collection1 = new Collection(MockDto::class, [
+            $dto1,
+            $dto2,
+            $dto3,
         ]);
 
-        $collection2 = new Collection(TestEntity::class, [
-            $entity3,
+        $collection2 = new Collection(MockDto::class, [
+            $dto3,
         ]);
 
         $diff = $collection1->diff($collection2);
@@ -420,20 +420,20 @@ class CollectionTest extends TestCase
         $this->assertInstanceOf(Collection::class, $diff);
         $this->assertNotSame($collection1, $diff);
         $this->assertCount(2, $diff);
-        $this->assertSame($entity1, $diff->get(0));
-        $this->assertSame($entity2, $diff->get(1));
+        $this->assertSame($dto1, $diff->get(0));
+        $this->assertSame($dto2, $diff->get(1));
     }
 
     public function testDiffWithSelf()
     {
-        $entity1 = (new TestEntity())->setName('Test');
-        $entity2 = (new TestEntity())->setName('Test 2');
-        $entity3 = (new TestEntity())->setName('Test');
+        $dto1 = (new MockDto())->setName('Test');
+        $dto2 = (new MockDto())->setName('Test 2');
+        $dto3 = (new MockDto())->setName('Test');
 
-        $collection = new Collection(TestEntity::class, [
-            $entity1,
-            $entity2,
-            $entity3,
+        $collection = new Collection(MockDto::class, [
+            $dto1,
+            $dto2,
+            $dto3,
         ]);
 
         $diff = $collection->diff($collection);
@@ -445,18 +445,18 @@ class CollectionTest extends TestCase
 
     public function testDiffWithComparator()
     {
-        $entity1 = (new TestEntity())->setName('Test');
-        $entity2 = (new TestEntity())->setName('Test 2');
-        $entity3 = (new TestEntity())->setName('Test');
+        $dto1 = (new MockDto())->setName('Test');
+        $dto2 = (new MockDto())->setName('Test 2');
+        $dto3 = (new MockDto())->setName('Test');
 
-        $collection1 = new Collection(TestEntity::class, [
-            $entity1,
-            $entity2,
-            $entity3,
+        $collection1 = new Collection(MockDto::class, [
+            $dto1,
+            $dto2,
+            $dto3,
         ]);
 
-        $collection2 = new Collection(TestEntity::class, [
-            $entity3,
+        $collection2 = new Collection(MockDto::class, [
+            $dto3,
         ]);
 
         $comparator = new EquivalentComparator(new DataExtractor());
@@ -466,14 +466,14 @@ class CollectionTest extends TestCase
         $this->assertInstanceOf(Collection::class, $diff);
         $this->assertNotSame($collection1, $diff);
         $this->assertCount(1, $diff);
-        $this->assertSame($entity2, $diff->get(0));
+        $this->assertSame($dto2, $diff->get(0));
     }
 
     public function testDiffWithDifferentCollectionType()
     {
-        $entity = (new TestEntity())->setName('Test');
-        $collection1 = new Collection(TestEntity::class, [$entity]);
-        $collection2 = new Collection(CustomSerializationEntity::class);
+        $dto = (new MockDto())->setName('Test');
+        $collection1 = new Collection(MockDto::class, [$dto]);
+        $collection2 = new Collection(MockCustomSerializationDto::class);
 
         $diff = $collection1->diff($collection2);
 
@@ -483,18 +483,18 @@ class CollectionTest extends TestCase
 
     public function testIntersect()
     {
-        $entity1 = (new TestEntity())->setName('Test');
-        $entity2 = (new TestEntity())->setName('Test 2');
-        $entity3 = (new TestEntity())->setName('Test');
+        $dto1 = (new MockDto())->setName('Test');
+        $dto2 = (new MockDto())->setName('Test 2');
+        $dto3 = (new MockDto())->setName('Test');
 
-        $collection1 = new Collection(TestEntity::class, [
-            $entity1,
-            $entity2,
-            $entity3,
+        $collection1 = new Collection(MockDto::class, [
+            $dto1,
+            $dto2,
+            $dto3,
         ]);
 
-        $collection2 = new Collection(TestEntity::class, [
-            $entity3,
+        $collection2 = new Collection(MockDto::class, [
+            $dto3,
         ]);
 
         $intersect = $collection1->intersect($collection2);
@@ -502,19 +502,19 @@ class CollectionTest extends TestCase
         $this->assertInstanceOf(Collection::class, $intersect);
         $this->assertNotSame($collection1, $intersect);
         $this->assertCount(1, $intersect);
-        $this->assertSame($entity3, $intersect->get(0));
+        $this->assertSame($dto3, $intersect->get(0));
     }
 
     public function testIntersectWithSelf()
     {
-        $entity1 = (new TestEntity())->setName('Test');
-        $entity2 = (new TestEntity())->setName('Test 2');
-        $entity3 = (new TestEntity())->setName('Test');
+        $dto1 = (new MockDto())->setName('Test');
+        $dto2 = (new MockDto())->setName('Test 2');
+        $dto3 = (new MockDto())->setName('Test');
 
-        $collection = new Collection(TestEntity::class, [
-            $entity1,
-            $entity2,
-            $entity3,
+        $collection = new Collection(MockDto::class, [
+            $dto1,
+            $dto2,
+            $dto3,
         ]);
 
         $intersect = $collection->intersect($collection);
@@ -524,18 +524,18 @@ class CollectionTest extends TestCase
 
     public function testIntersectWithComparator()
     {
-        $entity1 = (new TestEntity())->setName('Test');
-        $entity2 = (new TestEntity())->setName('Test 2');
-        $entity3 = (new TestEntity())->setName('Test');
+        $dto1 = (new MockDto())->setName('Test');
+        $dto2 = (new MockDto())->setName('Test 2');
+        $dto3 = (new MockDto())->setName('Test');
 
-        $collection1 = new Collection(TestEntity::class, [
-            $entity1,
-            $entity2,
-            $entity3,
+        $collection1 = new Collection(MockDto::class, [
+            $dto1,
+            $dto2,
+            $dto3,
         ]);
 
-        $collection2 = new Collection(TestEntity::class, [
-            $entity3,
+        $collection2 = new Collection(MockDto::class, [
+            $dto3,
         ]);
 
         $comparator = new EquivalentComparator(new DataExtractor());
@@ -545,15 +545,15 @@ class CollectionTest extends TestCase
         $this->assertInstanceOf(Collection::class, $intersect);
         $this->assertNotSame($collection1, $intersect);
         $this->assertCount(2, $intersect);
-        $this->assertSame($entity1, $intersect->get(0));
-        $this->assertSame($entity3, $intersect->get(1));
+        $this->assertSame($dto1, $intersect->get(0));
+        $this->assertSame($dto3, $intersect->get(1));
     }
 
     public function testIntersectWithDifferentCollectionType()
     {
-        $entity = (new TestEntity())->setName('Test');
-        $collection1 = new Collection(TestEntity::class, [$entity]);
-        $collection2 = new Collection(CustomSerializationEntity::class);
+        $dto = (new MockDto())->setName('Test');
+        $collection1 = new Collection(MockDto::class, [$dto]);
+        $collection2 = new Collection(MockCustomSerializationDto::class);
 
         $intersect = $collection1->intersect($collection2);
 
@@ -564,27 +564,27 @@ class CollectionTest extends TestCase
 
     public function testIteration()
     {
-        $entity1 = (new TestEntity())->setName('Test');
-        $entity2 = (new TestEntity())->setName('Test 2');
-        $entity3 = (new TestEntity())->setName('Test');
+        $dto1 = (new MockDto())->setName('Test');
+        $dto2 = (new MockDto())->setName('Test 2');
+        $dto3 = (new MockDto())->setName('Test');
 
-        $collection = new Collection(TestEntity::class, [
-            $entity1,
-            $entity2,
-            $entity3,
+        $collection = new Collection(MockDto::class, [
+            $dto1,
+            $dto2,
+            $dto3,
         ]);
 
-        foreach ($collection as $index => $entity) {
-            $this->assertInstanceOf(TestEntity::class, $entity);
-            $this->assertSame($collection->get($index), $entity);
+        foreach ($collection as $index => $dto) {
+            $this->assertInstanceOf(MockDto::class, $dto);
+            $this->assertSame($collection->get($index), $dto);
         }
     }
 
     public function testAddEntity()
     {
-        $entity = new TestEntity();
-        $emptyCollection = new Collection(TestEntity::class);
-        $collection = $emptyCollection->add($entity);
+        $dto = new MockDto();
+        $emptyCollection = new Collection(MockDto::class);
+        $collection = $emptyCollection->add($dto);
 
         $this->assertInstanceOf(Collection::class, $collection);
         $this->assertNotSame($emptyCollection, $collection);
@@ -593,10 +593,10 @@ class CollectionTest extends TestCase
 
     public function testAddEntityAlreadyInCollection()
     {
-        $entity = new TestEntity();
-        $collection = new Collection(TestEntity::class, [$entity]);
+        $dto = new MockDto();
+        $collection = new Collection(MockDto::class, [$dto]);
 
-        $newCollection = $collection->add($entity);
+        $newCollection = $collection->add($dto);
 
         $this->assertInstanceOf(Collection::class, $newCollection);
         $this->assertSame($collection, $newCollection);
@@ -604,8 +604,8 @@ class CollectionTest extends TestCase
 
     public function testAddMultipleEntities()
     {
-        $emptyCollection = new Collection(TestEntity::class);
-        $collection = $emptyCollection->add(new TestEntity(), new TestEntity());
+        $emptyCollection = new Collection(MockDto::class);
+        $collection = $emptyCollection->add(new MockDto(), new MockDto());
 
         $this->assertInstanceOf(Collection::class, $collection);
         $this->assertNotSame($emptyCollection, $collection);
@@ -614,19 +614,19 @@ class CollectionTest extends TestCase
 
     public function testAddInvalidEntityType()
     {
-        $collection = new Collection(TestEntity::class);
+        $collection = new Collection(MockDto::class);
 
         $this->expectException(IncompatibleDtoException::class);
 
-        $collection->add(new TestDto());
+        $collection->add(new MockBasicDto());
     }
 
     public function testRemoveEntity()
     {
-        $entity = new TestEntity();
-        $collection = new Collection(TestEntity::class, [$entity]);
+        $dto = new MockDto();
+        $collection = new Collection(MockDto::class, [$dto]);
 
-        $newCollection = $collection->remove($entity);
+        $newCollection = $collection->remove($dto);
 
         $this->assertInstanceOf(Collection::class, $newCollection);
         $this->assertNotSame($collection, $newCollection);
@@ -635,11 +635,11 @@ class CollectionTest extends TestCase
 
     public function testRemoveMultipleEntities()
     {
-        $entity1 = new TestEntity();
-        $entity2 = new TestEntity();
-        $collection = new Collection(TestEntity::class, [$entity1, $entity2]);
+        $dto1 = new MockDto();
+        $dto2 = new MockDto();
+        $collection = new Collection(MockDto::class, [$dto1, $dto2]);
 
-        $newCollection = $collection->remove($entity1, $entity2);
+        $newCollection = $collection->remove($dto1, $dto2);
 
         $this->assertInstanceOf(Collection::class, $newCollection);
         $this->assertNotSame($collection, $newCollection);
@@ -648,20 +648,20 @@ class CollectionTest extends TestCase
 
     public function testRemoveEntityNotInCollection()
     {
-        $entity = new TestEntity();
-        $collection = new Collection(TestEntity::class);
+        $dto = new MockDto();
+        $collection = new Collection(MockDto::class);
 
         $this->expectException(NotInCollectionException::class);
 
-        $collection->remove($entity);
+        $collection->remove($dto);
     }
 
     public function testReplaceEntity()
     {
-        $oldEntity = new TestEntity(['name' => 'Test']);
-        $newEntity = new TestEntity(['name' => 'Test 2']);
+        $oldEntity = new MockDto(['name' => 'Test']);
+        $newEntity = new MockDto(['name' => 'Test 2']);
 
-        $collection = new Collection(TestEntity::class, [new TestEntity(), $oldEntity]);
+        $collection = new Collection(MockDto::class, [new MockDto(), $oldEntity]);
 
         $newCollection = $collection->replace($oldEntity, $newEntity);
 
@@ -673,9 +673,9 @@ class CollectionTest extends TestCase
 
     public function testReplaceEntityNotInCollection()
     {
-        $oldEntity = new TestEntity(['name' => 'Test']);
-        $newEntity = new TestEntity(['name' => 'Test 2']);
-        $collection = new Collection(TestEntity::class, [$newEntity]);
+        $oldEntity = new MockDto(['name' => 'Test']);
+        $newEntity = new MockDto(['name' => 'Test 2']);
+        $collection = new Collection(MockDto::class, [$newEntity]);
 
         $this->expectException(NotInCollectionException::class);
 
@@ -684,20 +684,20 @@ class CollectionTest extends TestCase
 
     public function testReplaceEntityWithInvalidType()
     {
-        $validEntity = new TestEntity();
-        $collection = new Collection(TestEntity::class, [$validEntity]);
+        $validEntity = new MockDto();
+        $collection = new Collection(MockDto::class, [$validEntity]);
 
         $this->expectException(IncompatibleDtoException::class);
 
-        $collection->replace($validEntity, new TestDto());
+        $collection->replace($validEntity, new MockBasicDto());
     }
 
     public function testReplaceEntityWithEntityAlreadyInCollection()
     {
-        $oldEntity = new TestEntity(['name' => 'Test']);
-        $newEntity = new TestEntity(['name' => 'Test 2']);
+        $oldEntity = new MockDto(['name' => 'Test']);
+        $newEntity = new MockDto(['name' => 'Test 2']);
 
-        $collection = new Collection(TestEntity::class, [$oldEntity, $newEntity]);
+        $collection = new Collection(MockDto::class, [$oldEntity, $newEntity]);
 
         $this->expectException(AlreadyInCollectionException::class);
 
@@ -706,25 +706,25 @@ class CollectionTest extends TestCase
 
     public function testGet()
     {
-        $entity = new TestEntity();
-        $collection = new Collection(TestEntity::class, [$entity]);
+        $dto = new MockDto();
+        $collection = new Collection(MockDto::class, [$dto]);
 
-        $this->assertSame($entity, $collection->get(0));
+        $this->assertSame($dto, $collection->get(0));
     }
 
     public static function getInvalidIndexProvider(): array
     {
         return [
             [
-                new Collection(TestEntity::class),
+                new Collection(MockDto::class),
                 0,
             ],
             [
-                new Collection(TestEntity::class),
+                new Collection(MockDto::class),
                 -1,
             ],
             [
-                new Collection(TestEntity::class, [new TestEntity()]),
+                new Collection(MockDto::class, [new MockDto()]),
                 10,
             ],
         ];
@@ -740,8 +740,8 @@ class CollectionTest extends TestCase
 
     public function testCount()
     {
-        $collection = new Collection(TestEntity::class, [
-            new TestEntity(),
+        $collection = new Collection(MockDto::class, [
+            new MockDto(),
         ]);
 
         $this->assertEquals(1, $collection->count());
@@ -750,67 +750,67 @@ class CollectionTest extends TestCase
 
     public function testMap()
     {
-        $entity1 = (new TestEntity())->setName('Test');
-        $entity2 = (new TestEntity())->setName('Test 2');
-        $entity3 = (new TestEntity())->setName('Test');
+        $dto1 = (new MockDto())->setName('Test');
+        $dto2 = (new MockDto())->setName('Test 2');
+        $dto3 = (new MockDto())->setName('Test');
 
-        $collection = new Collection(TestEntity::class, [
-            $entity1,
-            $entity2,
-            $entity3,
+        $collection = new Collection(MockDto::class, [
+            $dto1,
+            $dto2,
+            $dto3,
         ]);
 
-        $mapped = $collection->map(static function (TestEntity $entity): TestEntity {
-            return $entity->setTitle('Map');
+        $mapped = $collection->map(static function (MockDto $dto): MockDto {
+            return $dto->setTitle('Map');
         });
 
         $this->assertInstanceOf(Collection::class, $mapped);
         $this->assertNotSame($collection, $mapped);
         $this->assertEquals($collection->count(), $mapped->count());
 
-        foreach ($mapped as $i => $entity) {
-            $this->assertInstanceOf(TestEntity::class, $entity);
-            $this->assertEquals($collection->get($i)->getName(), $entity->getName());
-            $this->assertEquals('Map', $entity->getTitle());
+        foreach ($mapped as $i => $dto) {
+            $this->assertInstanceOf(MockDto::class, $dto);
+            $this->assertEquals($collection->get($i)->getName(), $dto->getName());
+            $this->assertEquals('Map', $dto->getTitle());
         }
     }
 
     public function testMapToNewEntityType()
     {
-        $entity1 = (new TestEntity())->setName('Test');
-        $entity2 = (new TestEntity())->setName('Test 2');
-        $entity3 = (new TestEntity())->setName('Test');
+        $dto1 = (new MockDto())->setName('Test');
+        $dto2 = (new MockDto())->setName('Test 2');
+        $dto3 = (new MockDto())->setName('Test');
 
-        $collection = new Collection(TestEntity::class, [
-            $entity1,
-            $entity2,
-            $entity3,
+        $collection = new Collection(MockDto::class, [
+            $dto1,
+            $dto2,
+            $dto3,
         ]);
 
-        $mapped = $collection->map(static function (TestEntity $entity): TestDto {
-            return (new TestDto())->setName($entity->getName());
-        }, TestDto::class);
+        $mapped = $collection->map(static function (MockDto $dto): MockBasicDto {
+            return (new MockBasicDto())->setName($dto->getName());
+        }, MockBasicDto::class);
 
         $this->assertInstanceOf(Collection::class, $mapped);
         $this->assertNotSame($collection, $mapped);
         $this->assertEquals($collection->count(), $mapped->count());
-        $this->assertEquals(TestDto::class, $mapped->getDtoType());
+        $this->assertEquals(MockBasicDto::class, $mapped->getDtoType());
 
-        foreach ($mapped as $i => $entity) {
-            $this->assertInstanceOf(TestDto::class, $entity);
-            $this->assertEquals($collection->get($i)->getName(), $entity->getName());
+        foreach ($mapped as $i => $dto) {
+            $this->assertInstanceOf(MockBasicDto::class, $dto);
+            $this->assertEquals($collection->get($i)->getName(), $dto->getName());
         }
     }
 
     public function testToArray()
     {
-        $entity = new TestEntity();
-        $collection = new Collection(TestEntity::class, [$entity]);
+        $dto = new MockDto();
+        $collection = new Collection(MockDto::class, [$dto]);
 
         $array = $collection->toArray();
 
         $this->assertIsArray($array);
         $this->assertCount(1, $array);
-        $this->assertContains($entity, $array);
+        $this->assertContains($dto, $array);
     }
 }

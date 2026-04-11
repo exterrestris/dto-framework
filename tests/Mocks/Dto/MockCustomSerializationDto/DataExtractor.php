@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Exterrestris\DtoFramework\Tests\Mocks\CustomSerializationEntity;
+namespace Exterrestris\DtoFramework\Tests\Mocks\Dto\MockCustomSerializationDto;
 
 use Exterrestris\DtoFramework\Dto\Collection\CollectionInterface;
 use Exterrestris\DtoFramework\Dto\DtoInterface;

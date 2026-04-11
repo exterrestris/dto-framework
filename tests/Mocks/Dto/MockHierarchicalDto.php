@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Exterrestris\DtoFramework\Tests\Mocks;
+namespace Exterrestris\DtoFramework\Tests\Mocks\Dto;
 
 use Exterrestris\DtoFramework\Dto\AbstractDto;
 use Exterrestris\DtoFramework\Dto\Attributes\CollectionType;
@@ -11,14 +11,14 @@ use Exterrestris\DtoFramework\Validator\Rules\NotEmpty;
 use Exterrestris\DtoFramework\Validator\Rules\ValidCollection;
 use Exterrestris\DtoFramework\Validator\Rules\ValidDto;
 
-class TestHierarchicalDto extends AbstractDto
+class MockHierarchicalDto extends AbstractDto
 {
     #[NotEmpty]
     protected string $name;
     #[ValidDto]
-    protected ?TestHierarchicalDto $parent = null;
+    protected ?MockHierarchicalDto $parent = null;
     #[ValidCollection]
-    #[CollectionType(TestHierarchicalDto::class)]
+    #[CollectionType(MockHierarchicalDto::class)]
     protected ?Collection $children = null;
 
     public function getName(): string
@@ -31,12 +31,12 @@ class TestHierarchicalDto extends AbstractDto
         return $this->with('name', $name);
     }
 
-    public function getParent(): ?TestHierarchicalDto
+    public function getParent(): ?MockHierarchicalDto
     {
         return $this->parent;
     }
 
-    public function setParent(?TestHierarchicalDto $parent): TestHierarchicalDto
+    public function setParent(?MockHierarchicalDto $parent): MockHierarchicalDto
     {
         return $this->with('parent', $parent);
     }
@@ -46,7 +46,7 @@ class TestHierarchicalDto extends AbstractDto
         return $this->children;
     }
 
-    public function setChildren(?Collection $children): TestHierarchicalDto
+    public function setChildren(?Collection $children): MockHierarchicalDto
     {
         return $this->with('children', $children);
     }
