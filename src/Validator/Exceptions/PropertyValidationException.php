@@ -41,7 +41,15 @@ class PropertyValidationException extends DomainException implements PropertyVal
         return $this->property;
     }
 
-    public static function createFromValueException(
+    public static function fromValueValidatorException(
+        ValueValidatorException $exception,
+        PropertyValidator $validator,
+        string $property
+    ): static {
+        return new static($validator, $property, $exception->getMessage(), $exception);
+    }
+
+    public static function fromValueException(
         ValueException $exception,
         PropertyValidator $validator,
         string $property

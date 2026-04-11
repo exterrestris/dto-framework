@@ -6,12 +6,16 @@ namespace Exterrestris\DtoFramework\Tests\Validator\Rules;
 
 use Exterrestris\DtoFramework\Validator\PropertyValidator;
 use Exterrestris\DtoFramework\Validator\Rules\Iso3166Alpha2CountryCode;
+use Exterrestris\DtoFramework\Validator\ValueValidator;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 #[CoversClass(Iso3166Alpha2CountryCode::class)]
-class Iso3166Alpha2CountryCodeTest extends PropertyValidatorTestCase
+#[Group('validation')]
+#[Group('validator-rules')]
+class Iso3166Alpha2CountryCodeTest extends PropertyValueValidatorTestCase
 {
-    public static function passValidationProvider(): array
+    public static function valuePassesValidationProvider(): array
     {
         return [
             [
@@ -33,7 +37,7 @@ class Iso3166Alpha2CountryCodeTest extends PropertyValidatorTestCase
         ];
     }
 
-    public static function failValidationProvider(): array
+    public static function valueFailsValidationProvider(): array
     {
         return [
             [
@@ -51,7 +55,7 @@ class Iso3166Alpha2CountryCodeTest extends PropertyValidatorTestCase
         ];
     }
 
-    protected function getValidator(array $params): PropertyValidator
+    protected function getValidator(array $params): ValueValidator&PropertyValidator
     {
         return new Iso3166Alpha2CountryCode();
     }

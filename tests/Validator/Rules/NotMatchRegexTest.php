@@ -6,12 +6,16 @@ namespace Exterrestris\DtoFramework\Tests\Validator\Rules;
 
 use Exterrestris\DtoFramework\Validator\PropertyValidator;
 use Exterrestris\DtoFramework\Validator\Rules\NotMatchRegex;
+use Exterrestris\DtoFramework\Validator\ValueValidator;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 #[CoversClass(NotMatchRegex::class)]
-class NotMatchRegexTest extends PropertyValidatorTestCase
+#[Group('validation')]
+#[Group('validator-rules')]
+class NotMatchRegexTest extends PropertyValueValidatorTestCase
 {
-    public static function passValidationProvider(): array
+    public static function valuePassesValidationProvider(): array
     {
         return [
             [
@@ -29,7 +33,7 @@ class NotMatchRegexTest extends PropertyValidatorTestCase
         ];
     }
 
-    public static function failValidationProvider(): array
+    public static function valueFailsValidationProvider(): array
     {
         return [
             [
@@ -49,7 +53,7 @@ class NotMatchRegexTest extends PropertyValidatorTestCase
         ];
     }
 
-    protected function getValidator(array $params): PropertyValidator
+    protected function getValidator(array $params): ValueValidator&PropertyValidator
     {
         return new NotMatchRegex(...$params);
     }

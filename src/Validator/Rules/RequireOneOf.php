@@ -12,6 +12,7 @@ use Exterrestris\DtoFramework\Validator\Exceptions\RequireOneOfValidationExcepti
 use Exterrestris\DtoFramework\Validator\PropertyValidator;
 use ReflectionException;
 use ReflectionObject;
+use ReflectionProperty;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
 readonly class RequireOneOf implements PropertyValidator
@@ -23,32 +24,32 @@ readonly class RequireOneOf implements PropertyValidator
     ) {
     }
 
-    public function validateProperty(mixed $value, DtoInterface $dto, string $dtoProperty): void
+    public function validateProperty(ReflectionProperty $dtoProperty, DtoInterface $forDto): void
     {
-        $reflect = new ReflectionObject($dto);
+        $reflect = new ReflectionObject($forDto);
         $requireOneOfProperties = [];
 
-        if ($value) {
+        if ($dtoProperty->getValue($forDto)) {
             return;
         }
 
         try {
-            $validateGroup = $this->getAttribute($reflect->getProperty($dtoProperty), self::class)->getGroup();
+            $validateGroup = $this->getAttribute($dtoProperty, self::class)->getGroup();
 
             foreach ($reflect->getProperties() as $reflectionProperty) {
                 $requireOneOf = $this->getAttribute($reflectionProperty, self::class);
 
                 if ($requireOneOf && $requireOneOf->getGroup() === $validateGroup) {
-                    $requireOneOfProperties[$reflectionProperty->getName()] = $reflectionProperty->isInitialized($dto)
-                        && $reflectionProperty->getValue($dto) !== null;
+                    $requireOneOfProperties[$reflectionProperty->getName()] = $reflectionProperty->isInitialized($forDto)
+                        && $reflectionProperty->getValue($forDto) !== null;
                 }
             }
 
             if ($requireOneOfProperties && !array_filter($requireOneOfProperties)) {
-                throw new RequireOneOfValidationException($this, $dtoProperty, array_keys($requireOneOfProperties));
+                throw new RequireOneOfValidationException($this, $dtoProperty->getName(), array_keys($requireOneOfProperties));
             }
         } catch (ReflectionException $e) {
-            throw new PropertyValidationException($this, $dtoProperty, 'Property does not exist on DTO', $e);
+            throw new PropertyValidationException($this, $dtoProperty->getName(), 'Property does not exist on DTO', $e);
         }
     }
 

@@ -11,12 +11,16 @@ use Exterrestris\DtoFramework\Tests\Mocks\TestDto;
 use Exterrestris\DtoFramework\Tests\Mocks\TestEntity;
 use Exterrestris\DtoFramework\Tests\Mocks\TestEntityInterface;
 use Exterrestris\DtoFramework\Tests\Mocks\CustomSerializationEntity;
-use Exterrestris\DtoFramework\Tests\Validator\Rules\PropertyValidatorTestCase;
+use Exterrestris\DtoFramework\Tests\Validator\Rules\PropertyValueValidatorTestCase;
 use Exterrestris\DtoFramework\Validator\PropertyValidator;
+use Exterrestris\DtoFramework\Validator\ValueValidator;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 #[CoversClass(CollectionType::class)]
-class CollectionTypeTest extends PropertyValidatorTestCase
+#[Group('validation')]
+#[Group('validator-rules')]
+class CollectionTypeTest extends PropertyValueValidatorTestCase
 {
 
     public function testGetEntityType()
@@ -26,10 +30,7 @@ class CollectionTypeTest extends PropertyValidatorTestCase
         $this->assertEquals(TestEntity::class, $attribute->getDtoType());
     }
 
-    /**
-     * @inheritDoc
-     */
-    public static function passValidationProvider(): array
+    public static function valuePassesValidationProvider(): array
     {
         return [
             [
@@ -71,10 +72,7 @@ class CollectionTypeTest extends PropertyValidatorTestCase
         ];
     }
 
-    /**
-     * @inheritDoc
-     */
-    public static function failValidationProvider(): array
+    public static function valueFailsValidationProvider(): array
     {
         return [
             [
@@ -96,7 +94,7 @@ class CollectionTypeTest extends PropertyValidatorTestCase
         ];
     }
 
-    protected function getValidator(array $params): PropertyValidator
+    protected function getValidator(array $params): ValueValidator&PropertyValidator
     {
         return new CollectionType(...$params);
     }

@@ -35,7 +35,7 @@ readonly class EquivalentDtosInCollection extends AbstractDependentPropertyPrope
         $this->dependentDtoProperty = $dependentDtoProperty ?? $dtoProperty;
     }
 
-    protected function validateValue(mixed $value, mixed $dependentValue): void
+    protected function validateValueAgainst(mixed $value, mixed $dependentValue): void
     {
         if ($value === null) {
             if ($dependentValue !== null) {

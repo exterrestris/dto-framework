@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Exterrestris\DtoFramework\Validator\Rules;
 
 use Attribute;
-use Exterrestris\DtoFramework\Dto\DtoInterface;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
 readonly class Iso4217CurrencyCode extends IsInList
@@ -194,8 +193,8 @@ readonly class Iso4217CurrencyCode extends IsInList
         ]);
     }
 
-    public function validateProperty(mixed $value, DtoInterface $dto, string $dtoProperty): void
+    public function validateValue(mixed $value): void
     {
-        parent::validateProperty(is_string($value) ? strtoupper($value) : $value, $dto, $dtoProperty);
+        parent::validateValue(is_string($value) ? strtoupper($value) : $value);
     }
 }

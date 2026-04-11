@@ -9,8 +9,11 @@ use Exterrestris\DtoFramework\Validator\PropertyValidator;
 use Exterrestris\DtoFramework\Validator\Rules\Configuration\NullDependentValueBehaviour as NullDependentValue;
 use Exterrestris\DtoFramework\Validator\Rules\DateAfterProperty;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 #[CoversClass(DateAfterProperty::class)]
+#[Group('validation')]
+#[Group('validator-rules')]
 class DateAfterPropertyTest extends DependentPropertyValidatorTestCase
 {
     public static function passValidationProvider(): array

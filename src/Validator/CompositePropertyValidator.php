@@ -6,6 +6,7 @@ namespace Exterrestris\DtoFramework\Validator;
 
 use Exterrestris\DtoFramework\Dto\DtoInterface;
 use Exterrestris\DtoFramework\Validator\Exceptions\CompositePropertyValidatorException;
+use ReflectionProperty;
 
 interface CompositePropertyValidator extends PropertyValidator
 {
@@ -15,11 +16,10 @@ interface CompositePropertyValidator extends PropertyValidator
     public function getValidators(): array;
 
     /**
-     * @param mixed $value
-     * @param DtoInterface $dto
-     * @param string $dtoProperty
+     * @param ReflectionProperty $dtoProperty
+     * @param DtoInterface $forDto
      * @return void
      * @throws CompositePropertyValidatorException
      */
-    public function validateProperty(mixed $value, DtoInterface $dto, string $dtoProperty): void;
+    public function validateProperty(ReflectionProperty $dtoProperty, DtoInterface $forDto): void;
 }

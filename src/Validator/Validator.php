@@ -6,11 +6,13 @@ namespace Exterrestris\DtoFramework\Validator;
 
 use Exterrestris\DtoFramework\Dto\Collection\CollectionInterface;
 use Exterrestris\DtoFramework\Dto\DtoInterface;
-use Exterrestris\DtoFramework\Traits\GetAttributeTrait;
+use Exterrestris\DtoFramework\Validator\Traits\ValidateCollectionTrait;
+use Exterrestris\DtoFramework\Validator\Traits\ValidateDtoTrait;
 
-readonly class Validator extends AbstractValidator implements ValidatorInterface
+readonly class Validator implements ValidatorInterface
 {
-    use GetAttributeTrait;
+    use ValidateCollectionTrait;
+    use ValidateDtoTrait;
 
     /**
      * @inheritDoc

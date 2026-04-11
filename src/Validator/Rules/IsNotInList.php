@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace Exterrestris\DtoFramework\Validator\Rules;
 
 use Attribute;
-use Exterrestris\DtoFramework\Dto\DtoInterface;
-use Exterrestris\DtoFramework\Validator\Exceptions\PropertyValidationException;
-use Exterrestris\DtoFramework\Validator\PropertyValidator;
+use Exterrestris\DtoFramework\Validator\AbstractPropertyValueValidator;
+use Exterrestris\DtoFramework\Validator\Exceptions\ValueValidationException;
 use Exterrestris\DtoFramework\Validator\Rules\Traits\CompileArrayValuesTrait;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-readonly class IsNotInList implements PropertyValidator
+readonly class IsNotInList extends AbstractPropertyValueValidator
 {
     use CompileArrayValuesTrait;
 
@@ -20,16 +19,15 @@ readonly class IsNotInList implements PropertyValidator
     ) {
     }
 
-    public function validateProperty(mixed $value, DtoInterface $dto, string $dtoProperty): void
+    public function validateValue(mixed $value): void
     {
         if ($value === null) {
             return;
         }
 
         if (in_array($value, $this->allowedValues)) {
-            throw new PropertyValidationException(
+            throw new ValueValidationException(
                 $this,
-                $dtoProperty,
                 sprintf('Value must not be %s', $this->compileValues($this->allowedValues)),
             );
         }

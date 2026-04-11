@@ -5,12 +5,11 @@ declare(strict_types=1);
 namespace Exterrestris\DtoFramework\Validator\Rules;
 
 use Attribute;
-use Exterrestris\DtoFramework\Dto\DtoInterface;
-use Exterrestris\DtoFramework\Validator\Exceptions\PropertyValidationException;
-use Exterrestris\DtoFramework\Validator\PropertyValidator;
+use Exterrestris\DtoFramework\Validator\AbstractPropertyValueValidator;
+use Exterrestris\DtoFramework\Validator\Exceptions\ValueValidationException;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-readonly class NotMatchRegex implements PropertyValidator
+readonly class NotMatchRegex extends AbstractPropertyValueValidator
 {
     public function __construct(
         private string $pattern,
@@ -18,16 +17,15 @@ readonly class NotMatchRegex implements PropertyValidator
     ) {
     }
 
-    public function validateProperty(mixed $value, DtoInterface $dto, string $dtoProperty): void
+    public function validateValue(mixed $value): void
     {
         if ($value === null) {
             return;
         }
 
         if (preg_match($this->pattern, $value) === 1) {
-            throw new PropertyValidationException(
+            throw new ValueValidationException(
                 $this,
-                $dtoProperty,
                 $this->message ?? sprintf('Value must not match regex pattern "%s"', $this->pattern),
             );
         }

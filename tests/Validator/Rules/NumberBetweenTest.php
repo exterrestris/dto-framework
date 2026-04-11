@@ -6,12 +6,16 @@ namespace Exterrestris\DtoFramework\Tests\Validator\Rules;
 
 use Exterrestris\DtoFramework\Validator\PropertyValidator;
 use Exterrestris\DtoFramework\Validator\Rules\NumberBetween;
+use Exterrestris\DtoFramework\Validator\ValueValidator;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 #[CoversClass(NumberBetween::class)]
-class NumberBetweenTest extends PropertyValidatorTestCase
+#[Group('validation')]
+#[Group('validator-rules')]
+class NumberBetweenTest extends PropertyValueValidatorTestCase
 {
-    public static function passValidationProvider(): array
+    public static function valuePassesValidationProvider(): array
     {
         return [
             [
@@ -41,7 +45,7 @@ class NumberBetweenTest extends PropertyValidatorTestCase
         ];
     }
 
-    public static function failValidationProvider(): array
+    public static function valueFailsValidationProvider(): array
     {
         return [
             [
@@ -67,7 +71,7 @@ class NumberBetweenTest extends PropertyValidatorTestCase
         ];
     }
 
-    protected function getValidator(array $params): PropertyValidator
+    protected function getValidator(array $params): ValueValidator&PropertyValidator
     {
         return new NumberBetween(...$params);
     }

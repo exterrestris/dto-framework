@@ -8,8 +8,11 @@ use Exterrestris\DtoFramework\Validator\PropertyValidator;
 use Exterrestris\DtoFramework\Validator\Rules\Configuration\NullDependentValueBehaviour as NullDependentValue;
 use Exterrestris\DtoFramework\Validator\Rules\NotEmptyWhen;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 #[CoversClass(NotEmptyWhen::class)]
+#[Group('validation')]
+#[Group('validator-rules')]
 class NotEmptyWhenTest extends DependentPropertyValidatorTestCase
 {
     public static function passValidationProvider(): array

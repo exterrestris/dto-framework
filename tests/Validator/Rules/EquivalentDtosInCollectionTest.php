@@ -11,8 +11,11 @@ use Exterrestris\DtoFramework\Validator\PropertyValidator;
 use Exterrestris\DtoFramework\Validator\Rules\Configuration\NullDependentValueBehaviour as NullDependentValue;
 use Exterrestris\DtoFramework\Validator\Rules\EquivalentDtosInCollection;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 #[CoversClass(EquivalentDtosInCollection::class)]
+#[Group('validation')]
+#[Group('validator-rules')]
 class EquivalentDtosInCollectionTest extends DependentPropertyValidatorTestCase
 {
     public static function passValidationProvider(): array

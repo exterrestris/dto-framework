@@ -11,10 +11,14 @@ use Exterrestris\DtoFramework\Validator\PropertyValidator;
 use Exterrestris\DtoFramework\Validator\Rules\RequireOneOf;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
+use ReflectionObject;
 use Throwable;
 
 #[CoversClass(RequireOneOf::class)]
+#[Group('validation')]
+#[Group('validator-rules')]
 class RequireOneOfTest extends TestCase
 {
     /**
@@ -24,56 +28,48 @@ class RequireOneOfTest extends TestCase
     {
         return [
             [
-                static::getMockEntity()->setProperty1('test')->setAlternate1('value'),
+                static::getMockDto()->setProperty1('test')->setAlternate1('value'),
                 'property1',
-                null,
             ],
             [
-                static::getMockEntity()->setProperty2('test')->setAlternate3('value'),
+                static::getMockDto()->setProperty2('test')->setAlternate3('value'),
                 'property1',
-                null,
             ],
             [
-                static::getMockEntity()->setProperty1('test')->setAlternate1('value'),
+                static::getMockDto()->setProperty1('test')->setAlternate1('value'),
                 'property1',
-                'test',
             ],
             [
-                static::getMockEntity()->setProperty2('test')->setAlternate3('value'),
+                static::getMockDto()->setProperty2('test')->setAlternate3('value'),
                 'alternate1',
-                'test',
             ],
             [
-                static::getMockEntity()->setProperty1('test')->setAlternate1('value'),
+                static::getMockDto()->setProperty1('test')->setAlternate1('value'),
                 'alternate1',
-                null,
             ],
             [
-                static::getMockEntity()->setProperty2('test')->setAlternate3('value'),
+                static::getMockDto()->setProperty2('test')->setAlternate3('value'),
                 'property1',
-                null,
             ],
             [
-                static::getMockEntity()->setProperty1('test')->setAlternate1('value'),
+                static::getMockDto()->setProperty1('test')->setAlternate1('value'),
                 'alternate1',
-                'test',
             ],
             [
-                static::getMockEntity()->setProperty2('test')->setAlternate3('value'),
+                static::getMockDto()->setProperty2('test')->setAlternate3('value'),
                 'alternate1',
-                'test',
             ],
         ];
     }
 
     #[DataProvider('passValidationProvider')]
-    public function testValidatePasses(DtoInterface $entity, string $entityProperty, ?string $value ): void
+    public function testValidatePasses(DtoInterface $entity, string $entityProperty): void
     {
         $this->expectNotToPerformAssertions();
 
         $validator = $this->getValidator();
 
-        $validator->validateProperty($value, $entity, $entityProperty);
+        $validator->validateProperty((new ReflectionObject($entity))->getProperty($entityProperty), $entity);
     }
 
     /**
@@ -83,35 +79,31 @@ class RequireOneOfTest extends TestCase
     {
         return [
             [
-                static::getMockEntity(),
+                static::getMockDto(),
                 'property1',
-                null,
             ],
             [
-                static::getMockEntity()->setAlternate1('value'),
+                static::getMockDto()->setAlternate1('value'),
                 'property1',
-                null,
             ],
             [
-                static::getMockEntity(),
+                static::getMockDto(),
                 'alternate1',
-                null,
             ],
             [
-                static::getMockEntity()->setProperty1('test'),
+                static::getMockDto()->setProperty1('test'),
                 'alternate1',
-                null,
             ],
         ];
     }
 
     #[DataProvider('failValidationProvider')]
-    public function testValidateFails(DtoInterface $entity, string $entityProperty, ?string $value): void
+    public function testValidateFails(DtoInterface $entity, string $entityProperty): void
     {
         $validator = $this->getValidator();
 
         try {
-            $validator->validateProperty($value, $entity, $entityProperty);
+            $validator->validateProperty((new ReflectionObject($entity))->getProperty($entityProperty), $entity);
             $this->fail('Exception not thrown');
         } catch (Throwable $exception) {
             $this->assertInstanceOf(PropertyValidatorException::class, $exception);
@@ -122,7 +114,7 @@ class RequireOneOfTest extends TestCase
         }
     }
 
-    protected static function getMockEntity(): DtoInterface
+    protected static function getMockDto(): DtoInterface
     {
         return new class() implements DtoInterface {
             #[RequireOneOf]

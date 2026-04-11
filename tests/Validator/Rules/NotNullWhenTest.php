@@ -8,8 +8,11 @@ use Exterrestris\DtoFramework\Validator\PropertyValidator;
 use Exterrestris\DtoFramework\Validator\Rules\Configuration\NullDependentValueBehaviour as NullDependentValue;
 use Exterrestris\DtoFramework\Validator\Rules\NotNullWhen;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 #[CoversClass(NotNullWhen::class)]
+#[Group('validation')]
+#[Group('validator-rules')]
 class NotNullWhenTest extends DependentPropertyValidatorTestCase
 {
     public static function passValidationProvider(): array

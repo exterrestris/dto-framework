@@ -7,12 +7,12 @@ namespace Exterrestris\DtoFramework\Dto\Attributes;
 use Attribute;
 use Exterrestris\DtoFramework\Dto\Collection\CollectionInterface;
 use Exterrestris\DtoFramework\Dto\DtoInterface;
-use Exterrestris\DtoFramework\Validator\Exceptions\PropertyValidationException;
+use Exterrestris\DtoFramework\Validator\AbstractPropertyValueValidator;
 use Exterrestris\DtoFramework\Validator\Exceptions\ValueException;
-use Exterrestris\DtoFramework\Validator\PropertyValidator;
+use Exterrestris\DtoFramework\Validator\Exceptions\ValueValidationException;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-final readonly class CollectionType implements PropertyValidator
+final readonly class CollectionType extends AbstractPropertyValueValidator
 {
     /**
      * @param class-string<DtoInterface> $dtoType
@@ -30,7 +30,7 @@ final readonly class CollectionType implements PropertyValidator
     /**
      * @inheritDoc
      */
-    public function validateProperty(mixed $value, DtoInterface $dto, string $dtoProperty): void
+    public function validateValue(mixed $value): void
     {
         try {
             if ($value === null) {
@@ -45,7 +45,7 @@ final readonly class CollectionType implements PropertyValidator
                 throw new ValueException(sprintf('Collection must be of type %s', $this->getDtoType()));
             }
         } catch (ValueException $exception) {
-            throw PropertyValidationException::createFromValueException($exception, $this, $dtoProperty);
+            throw ValueValidationException::fromValueException($exception, $this);
         }
     }
 }

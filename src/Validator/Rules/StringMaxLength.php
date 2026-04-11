@@ -5,36 +5,33 @@ declare(strict_types=1);
 namespace Exterrestris\DtoFramework\Validator\Rules;
 
 use Attribute;
-use Exterrestris\DtoFramework\Dto\DtoInterface;
-use Exterrestris\DtoFramework\Validator\Exceptions\PropertyValidationException;
-use Exterrestris\DtoFramework\Validator\PropertyValidator;
+use Exterrestris\DtoFramework\Validator\AbstractPropertyValueValidator;
+use Exterrestris\DtoFramework\Validator\Exceptions\ValueValidationException;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-readonly class StringMaxLength implements PropertyValidator
+readonly class StringMaxLength extends AbstractPropertyValueValidator
 {
     public function __construct(
         private int $maxLength
     ) {
     }
 
-    public function validateProperty(mixed $value, DtoInterface $dto, string $dtoProperty): void
+    public function validateValue(mixed $value): void
     {
         if ($value === null) {
             return;
         }
 
         if (!is_string($value)) {
-            throw new PropertyValidationException(
+            throw new ValueValidationException(
                 $this,
-                $dtoProperty,
                 sprintf('Value must be a string of %s or fewer characters in length', $this->maxLength),
             );
         }
 
         if (strlen($value) > $this->maxLength) {
-            throw new PropertyValidationException(
+            throw new ValueValidationException(
                 $this,
-                $dtoProperty,
                 sprintf('Value must be %s or fewer characters in length', $this->maxLength),
             );
         }

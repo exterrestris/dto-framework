@@ -12,8 +12,8 @@ use Exterrestris\DtoFramework\Serializer\Rules\Map;
 use Exterrestris\DtoFramework\Serializer\Rules\MapFrom;
 use Exterrestris\DtoFramework\Serializer\Rules\NoSerialize;
 use Exterrestris\DtoFramework\Serializer\Rules\NoSerializeIfNull;
+use Exterrestris\DtoFramework\Tests\Mocks\Validator\Rules\Title;
 use Exterrestris\DtoFramework\Validator\Rules\MatchRegex;
-use Exterrestris\DtoFramework\Validator\Rules\StringMaxLength;
 use Exterrestris\DtoFramework\Validator\Rules\StringMaxLengthPreference;
 
 class TestEntity extends AbstractProcessableDto implements TestEntityInterface
@@ -23,7 +23,7 @@ class TestEntity extends AbstractProcessableDto implements TestEntityInterface
     #[Map('fullName')]
     protected string $name;
     #[NoSerializeIfNull]
-    #[StringMaxLength(5)]
+    #[Title]
     protected ?string $title = null;
     #[Internal]
     protected bool $internal;

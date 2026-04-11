@@ -2,19 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Exterrestris\DtoFramework\Validator;
+namespace Exterrestris\DtoFramework\Validator\Traits;
 
 use Exterrestris\DtoFramework\Dto\Attributes\Internal;
-use Exterrestris\DtoFramework\Dto\Collection\CollectionInterface;
 use Exterrestris\DtoFramework\Dto\DtoInterface;
 use Exterrestris\DtoFramework\Traits\GetAttributeTrait;
-use Exterrestris\DtoFramework\Validator\Exceptions\CollectionValidationException;
-use Exterrestris\DtoFramework\Validator\Exceptions\DtoValidationException;
-use Exterrestris\DtoFramework\Validator\Exceptions\InvalidCollectionDtoException;
-use Exterrestris\DtoFramework\Validator\Exceptions\InvalidCollectionException;
+use Exterrestris\DtoFramework\Validator\CompositePropertyValidator;
 use Exterrestris\DtoFramework\Validator\Exceptions\InvalidDtoException;
 use Exterrestris\DtoFramework\Validator\Exceptions\PropertyValidatorException;
 use Exterrestris\DtoFramework\Validator\Exceptions\RequiredPropertyException;
+use Exterrestris\DtoFramework\Validator\PropertyPreferenceValidator;
+use Exterrestris\DtoFramework\Validator\PropertyValidator;
 use Exterrestris\DtoFramework\Validator\Rules\NoValidate;
 use ReflectionAttribute;
 use ReflectionObject;
@@ -22,9 +20,8 @@ use ReflectionProperty;
 
 /**
  * @template Dto of DtoInterface
- * @template Collection of CollectionInterface<Dto>
  */
-abstract readonly class AbstractValidator
+trait ValidateDtoTrait
 {
     use GetAttributeTrait;
 
@@ -63,7 +60,7 @@ abstract readonly class AbstractValidator
             if ($validatorAttributes) {
                 foreach ($validatorAttributes as $validator) {
                     try {
-                        $validator->validateProperty($property->getValue($dto), $dto, $property->getName());
+                        $validator->validateProperty($property, $dto);
                     } catch (PropertyValidatorException $e) {
                         $invalidProperties[$property->getName()][] = $e;
                     }
@@ -78,32 +75,6 @@ abstract readonly class AbstractValidator
         return $dto;
     }
 
-    /**
-     * @param Collection $collection
-     * @param bool $enforcePreferences
-     * @return Collection
-     * @throws InvalidCollectionException
-     */
-    protected function validateCollection(
-        CollectionInterface $collection,
-        bool $enforcePreferences = false
-    ): CollectionInterface {
-        $failed = [];
-
-        foreach ($collection as $index => $dto) {
-            try {
-                $this->validateDto($dto, $enforcePreferences);
-            } catch (InvalidDtoException $e) {
-                $failed[] = new InvalidCollectionDtoException($collection, $index, $e);
-            }
-        }
-
-        if ($failed) {
-            throw new InvalidCollectionException($collection, $failed);
-        }
-
-        return $collection;
-    }
 
     /**
      * @param ReflectionProperty $property
@@ -114,7 +85,7 @@ abstract readonly class AbstractValidator
     {
         return array_map(
             static function (PropertyValidator $validator) use ($enforcePreferences) {
-                if ($validator instanceof PreferenceValidator) {
+                if ($validator instanceof PropertyPreferenceValidator) {
                     return $enforcePreferences ? $validator->getPreference() : $validator->getRequirement();
                 }
 

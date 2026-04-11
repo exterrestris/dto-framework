@@ -6,12 +6,16 @@ namespace Exterrestris\DtoFramework\Tests\Validator\Rules;
 
 use Exterrestris\DtoFramework\Validator\PropertyValidator;
 use Exterrestris\DtoFramework\Validator\Rules\StringLengthBetween;
+use Exterrestris\DtoFramework\Validator\ValueValidator;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 #[CoversClass(StringLengthBetween::class)]
-class StringLengthBetweenTest extends PropertyValidatorTestCase
+#[Group('validation')]
+#[Group('validator-rules')]
+class StringLengthBetweenTest extends PropertyValueValidatorTestCase
 {
-    public static function passValidationProvider(): array
+    public static function valuePassesValidationProvider(): array
     {
         return [
             [
@@ -41,7 +45,7 @@ class StringLengthBetweenTest extends PropertyValidatorTestCase
         ];
     }
 
-    public static function failValidationProvider(): array
+    public static function valueFailsValidationProvider(): array
     {
         return [
             [
@@ -67,7 +71,7 @@ class StringLengthBetweenTest extends PropertyValidatorTestCase
         ];
     }
 
-    protected function getValidator(array $params): PropertyValidator
+    protected function getValidator(array $params): ValueValidator&PropertyValidator
     {
         return new StringLengthBetween(...$params);
     }

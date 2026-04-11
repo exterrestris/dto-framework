@@ -4,14 +4,18 @@ declare(strict_types=1);
 
 namespace Exterrestris\DtoFramework\Tests\Validator\Rules;
 
-use Exterrestris\DtoFramework\Validator\PreferenceValidator;
+use Exterrestris\DtoFramework\Validator\PropertyPreferenceValidator;
+use Exterrestris\DtoFramework\Validator\ValuePreferenceValidator;
 use Exterrestris\DtoFramework\Validator\Rules\StringMaxLengthPreference;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 #[CoversClass(StringMaxLengthPreference::class)]
-class StringMaxLengthPreferenceTest extends PreferenceValidatorTestCase
+#[Group('validation')]
+#[Group('validator-rules')]
+class StringMaxLengthPreferenceTest extends PropertyPreferenceValidatorTestCase
 {
-    public static function passValidationProvider(): array
+    public static function valuePassesValidationProvider(): array
     {
         return [
             [
@@ -37,7 +41,7 @@ class StringMaxLengthPreferenceTest extends PreferenceValidatorTestCase
         ];
     }
 
-    public static function failValidationProvider(): array
+    public static function valueFailsValidationProvider(): array
     {
         return [
             [
@@ -55,7 +59,7 @@ class StringMaxLengthPreferenceTest extends PreferenceValidatorTestCase
         ];
     }
 
-    public static function passPreferenceValidationProvider(): array
+    public static function valuePassesPreferenceValidationProvider(): array
     {
         return [
             [
@@ -77,7 +81,7 @@ class StringMaxLengthPreferenceTest extends PreferenceValidatorTestCase
         ];
     }
 
-    public static function failPreferenceValidationProvider(): array
+    public static function valueFailsPreferenceValidationProvider(): array
     {
         return [
             [
@@ -90,12 +94,23 @@ class StringMaxLengthPreferenceTest extends PreferenceValidatorTestCase
             ],
             [
                 [5, 10],
-                'dsgsrxfhrt',
+                'dsgsrxfht',
             ],
         ];
     }
 
-    protected function getValidator(array $params): PreferenceValidator
+    public static function strictnessProvider(): array
+    {
+        return [
+            [
+                [5, 10],
+                'aaa',
+                'aaasss',
+            ]
+        ];
+    }
+
+    protected function getValidator(array $params): ValuePreferenceValidator&PropertyPreferenceValidator
     {
         return new StringMaxLengthPreference(...$params);
     }

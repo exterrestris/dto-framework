@@ -6,12 +6,16 @@ namespace Exterrestris\DtoFramework\Tests\Validator\Rules;
 
 use Exterrestris\DtoFramework\Validator\PropertyValidator;
 use Exterrestris\DtoFramework\Validator\Rules\StringMaxLength;
+use Exterrestris\DtoFramework\Validator\ValueValidator;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 #[CoversClass(StringMaxLength::class)]
-class StringMaxLengthTest extends PropertyValidatorTestCase
+#[Group('validation')]
+#[Group('validator-rules')]
+class StringMaxLengthTest extends PropertyValueValidatorTestCase
 {
-    public static function passValidationProvider(): array
+    public static function valuePassesValidationProvider(): array
     {
         return [
             [
@@ -33,7 +37,7 @@ class StringMaxLengthTest extends PropertyValidatorTestCase
         ];
     }
 
-    public static function failValidationProvider(): array
+    public static function valueFailsValidationProvider(): array
     {
         return [
             [
@@ -51,7 +55,7 @@ class StringMaxLengthTest extends PropertyValidatorTestCase
         ];
     }
 
-    protected function getValidator(array $params): PropertyValidator
+    protected function getValidator(array $params): ValueValidator&PropertyValidator
     {
         return new StringMaxLength(...$params);
     }

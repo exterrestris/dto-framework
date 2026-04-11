@@ -25,7 +25,7 @@ readonly class NotEmptyWhen extends AbstractDependentPropertyPropertyValidator
         parent::__construct($property, $nullDependentValueBehaviour);
     }
 
-    protected function validateValue(mixed $value, mixed $dependentValue): void
+    protected function validateValueAgainst(mixed $value, mixed $dependentValue): void
     {
         if (!$this->isEmpty($value)) {
             return;

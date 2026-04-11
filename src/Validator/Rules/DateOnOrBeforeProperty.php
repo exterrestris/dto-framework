@@ -12,7 +12,7 @@ use Exterrestris\DtoFramework\Validator\Exceptions\ValueException;
 #[Attribute(Attribute::TARGET_PROPERTY)]
 readonly class DateOnOrBeforeProperty extends AbstractDependentPropertyPropertyValidator
 {
-    protected function validateValue(mixed $value, mixed $dependentValue): void
+    protected function validateValueAgainst(mixed $value, mixed $dependentValue): void
     {
         if ($value === null || $dependentValue === null) {
             return;

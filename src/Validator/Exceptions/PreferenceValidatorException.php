@@ -4,6 +4,6 @@ declare(strict_types=1);
 
 namespace Exterrestris\DtoFramework\Validator\Exceptions;
 
-interface PreferenceValidatorException extends PropertyValidatorException
+interface PreferenceValidatorException extends ValueValidatorException
 {
 }

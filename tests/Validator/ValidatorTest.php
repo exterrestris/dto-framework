@@ -21,9 +21,11 @@ use Exterrestris\DtoFramework\Validator\Rules\StringMaxLength;
 use Exterrestris\DtoFramework\Validator\Validator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(Validator::class)]
+#[Group('validation')]
 class ValidatorTest extends TestCase
 {
     public static function validSerializableProvider(): array
@@ -95,12 +97,15 @@ class ValidatorTest extends TestCase
                 [],
             ],
             [
-                (new TestEntity())->setName('very very long name'),
+                (new TestEntity())->setName('very very long name')->setTitle('0'),
                 true,
                 [
                     'name' => [
                         StringMaxLength::class,
                     ],
+                    'title' => [
+                        MatchRegex::class,
+                    ]
                 ],
                 [
                     'uninitialized',

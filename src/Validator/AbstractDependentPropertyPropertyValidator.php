@@ -10,6 +10,7 @@ use Exterrestris\DtoFramework\Validator\Exceptions\ValueException;
 use Exterrestris\DtoFramework\Validator\Rules\Configuration\NullDependentValueBehaviour as NullDependentValue;
 use ReflectionClass;
 use ReflectionException;
+use ReflectionProperty;
 
 abstract readonly class AbstractDependentPropertyPropertyValidator implements PropertyValidator
 {
@@ -19,42 +20,43 @@ abstract readonly class AbstractDependentPropertyPropertyValidator implements Pr
     ) {
     }
 
-    public function validateProperty(mixed $value, DtoInterface $dto, string $dtoProperty): void
+    public function validateProperty(ReflectionProperty $dtoProperty, DtoInterface $forDto): void
     {
         try {
-            try {
-                $reflect = new ReflectionClass($dto);
-                $property = $reflect->getProperty($this->property);
-                $dependentValue = $property->isInitialized($dto) ? $property->getValue($dto) : null;
+            $dependentProperty = (new ReflectionClass($forDto))->getProperty($this->property);
+            $dependentValue = $dependentProperty->isInitialized($forDto) ? $dependentProperty->getValue($forDto) : null;
 
-                if ($dependentValue === null) {
-                    $passValidation = match ($this->nullDependentValueBehaviour) {
-                        NullDependentValue::PassIfNull => true,
-                        NullDependentValue::PassIfValueIsNull => $value === null,
-                        NullDependentValue::FailIfNull => false,
-                    };
+            if ($dependentValue === null) {
+                $passValidation = match ($this->nullDependentValueBehaviour) {
+                    NullDependentValue::PassIfNull => true,
+                    NullDependentValue::PassIfValueIsNull => $dtoProperty->getValue($forDto) === null,
+                    NullDependentValue::FailIfNull => false,
+                };
 
-                    if ($passValidation) {
-                        return;
-                    }
-
-                    throw new ValueException(
-                        sprintf('Validation of value depends on NULL property %s', $this->property),
-                    );
+                if ($passValidation) {
+                    return;
                 }
 
-                $this->validateValue($value, $dependentValue);
-            } catch (ReflectionException $reflectionException) {
-                throw new ValueException(
-                    sprintf('Validation of value depends on non-existent property %s', $this->property),
-                    $reflectionException,
+                throw new PropertyValidationException(
+                    $this,
+                    $dtoProperty->getName(),
+                    sprintf('Validation of value depends on NULL property %s', $this->property),
                 );
             }
-        } catch (ValueException $valueException) {
-            throw PropertyValidationException::createFromValueException(
-                $valueException,
+
+            $this->validateValueAgainst($dtoProperty->getValue($forDto), $dependentValue);
+        } catch (ReflectionException $exception) {
+            throw new PropertyValidationException(
                 $this,
-                $dtoProperty,
+                $dtoProperty->getName(),
+                sprintf('Validation of value depends on non-existent property %s', $this->property),
+                $exception
+            );
+        } catch (ValueException $exception) {
+            throw PropertyValidationException::fromValueException(
+                $exception,
+                $this,
+                $dtoProperty->getName(),
             );
         }
     }
@@ -65,5 +67,5 @@ abstract readonly class AbstractDependentPropertyPropertyValidator implements Pr
      * @return void
      * @throws ValueException
      */
-    abstract protected function validateValue(mixed $value, mixed $dependentValue): void;
+    abstract protected function validateValueAgainst(mixed $value, mixed $dependentValue): void;
 }

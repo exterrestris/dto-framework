@@ -5,12 +5,11 @@ declare(strict_types=1);
 namespace Exterrestris\DtoFramework\Validator\Rules;
 
 use Attribute;
-use Exterrestris\DtoFramework\Dto\DtoInterface;
-use Exterrestris\DtoFramework\Validator\Exceptions\PropertyValidationException;
-use Exterrestris\DtoFramework\Validator\PropertyValidator;
+use Exterrestris\DtoFramework\Validator\AbstractPropertyValueValidator;
+use Exterrestris\DtoFramework\Validator\Exceptions\ValueValidationException;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-readonly class StringLengthBetween implements PropertyValidator
+readonly class StringLengthBetween extends AbstractPropertyValueValidator
 {
     public function __construct(
         private int $minLength,
@@ -18,24 +17,22 @@ readonly class StringLengthBetween implements PropertyValidator
     ) {
     }
 
-    public function validateProperty(mixed $value, DtoInterface $dto, string $dtoProperty): void
+    public function validateValue(mixed $value): void
     {
         if ($value === null) {
             return;
         }
 
         if (!is_string($value)) {
-            throw new PropertyValidationException(
+            throw new ValueValidationException(
                 $this,
-                $dtoProperty,
                 sprintf('Value must be a string between %s and %s characters in length', $this->minLength, $this->maxLength),
             );
         }
 
         if (strlen($value) < $this->minLength || strlen($value) > $this->maxLength) {
-            throw new PropertyValidationException(
+            throw new ValueValidationException(
                 $this,
-                $dtoProperty,
                 sprintf('Value must be between %s and %s characters in length', $this->minLength, $this->maxLength),
             );
         }

@@ -6,12 +6,16 @@ namespace Exterrestris\DtoFramework\Tests\Validator\Rules;
 
 use Exterrestris\DtoFramework\Validator\PropertyValidator;
 use Exterrestris\DtoFramework\Validator\Rules\StringLength;
+use Exterrestris\DtoFramework\Validator\ValueValidator;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 #[CoversClass(StringLength::class)]
-class StringLengthTest extends PropertyValidatorTestCase
+#[Group('validation')]
+#[Group('validator-rules')]
+class StringLengthTest extends PropertyValueValidatorTestCase
 {
-    public static function passValidationProvider(): array
+    public static function valuePassesValidationProvider(): array
     {
         return [
             [
@@ -23,17 +27,13 @@ class StringLengthTest extends PropertyValidatorTestCase
                 '',
             ],
             [
-                [6],
-                'dsgsrg',
-            ],
-            [
                 [5],
                 'asdsd',
             ],
         ];
     }
 
-    public static function failValidationProvider(): array
+    public static function valueFailsValidationProvider(): array
     {
         return [
             [
@@ -45,13 +45,17 @@ class StringLengthTest extends PropertyValidatorTestCase
                 false,
             ],
             [
+                [4],
+                '',
+            ],
+            [
                 [5],
                 'asdsddfgsrg',
             ],
         ];
     }
 
-    protected function getValidator(array $params): PropertyValidator
+    protected function getValidator(array $params): ValueValidator&PropertyValidator
     {
         return new StringLength(...$params);
     }

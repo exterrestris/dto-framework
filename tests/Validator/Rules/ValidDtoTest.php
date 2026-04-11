@@ -4,31 +4,48 @@ declare(strict_types=1);
 
 namespace Exterrestris\DtoFramework\Tests\Validator\Rules;
 
-use Exterrestris\DtoFramework\Tests\Mocks\TestDto;
+use Exterrestris\DtoFramework\Dto\DtoInterface;
 use Exterrestris\DtoFramework\Tests\Mocks\TestHierarchicalDto;
-use Exterrestris\DtoFramework\Validator\Exceptions\PropertyValidatorException;
+use Exterrestris\DtoFramework\Validator\PropertyValidator;
 use Exterrestris\DtoFramework\Validator\Rules\ValidDto;
+use Exterrestris\DtoFramework\Validator\ValueValidator;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\TestCase;
-use Throwable;
+use PHPUnit\Framework\Attributes\Group;
 
 #[CoversClass(ValidDto::class)]
-class ValidDtoTest extends TestCase
+#[Group('validation')]
+#[Group('validator-rules')]
+class ValidDtoTest extends PropertyValueValidatorTestCase
 {
-    public static function passValidationProvider(): array
+    protected static function createDtoFromValue(mixed $value): DtoInterface
+    {
+        return new TestHierarchicalDto([
+            'name' => 'Jack Doe',
+            'parent' => $value,
+        ]);
+    }
+
+    protected static function getDtoPropertyToValidate(): string
+    {
+        return 'parent';
+    }
+
+    public static function valuePassesValidationProvider(): array
     {
         return [
             [
+                [],
                 null,
             ],
             [
+                [],
                 new TestHierarchicalDto([
                     'name' => 'John Doe',
                     'parent' => null,
                 ]),
             ],
             [
+                [],
                 new TestHierarchicalDto([
                     'name' => 'John Doe',
                     'parent' => new TestHierarchicalDto([
@@ -39,22 +56,26 @@ class ValidDtoTest extends TestCase
         ];
     }
 
-    public static function failValidationProvider(): array
+    public static function valueFailsValidationProvider(): array
     {
         return [
             [
+                [],
                 0,
                 'Value must be an instance of Exterrestris\DtoFramework\Dto\DtoInterface',
             ],
             [
+                [],
                 '',
                 'Value must be an instance of Exterrestris\DtoFramework\Dto\DtoInterface',
             ],
             [
                 [],
+                [],
                 'Value must be an instance of Exterrestris\DtoFramework\Dto\DtoInterface',
             ],
             [
+                [],
                 new TestHierarchicalDto([
                     'name' => 'John Doe',
                     'parent' => new TestHierarchicalDto([
@@ -70,34 +91,8 @@ class ValidDtoTest extends TestCase
         ];
     }
 
-    #[DataProvider('passValidationProvider')]
-    public function testValidatePasses(mixed $value): void
+    protected function getValidator(array $params): PropertyValidator&ValueValidator
     {
-        $this->expectNotToPerformAssertions();
-
-        $validator = new ValidDto();
-
-        $validator->validateProperty($value, new TestDto(), 'parent');
-    }
-
-    #[DataProvider('failValidationProvider')]
-    public function testValidateFails(mixed $value, ?string $exceptionMessage = null): void
-    {
-        $entity = new TestHierarchicalDto();
-        $validator = new ValidDto();
-
-        try {
-            $validator->validateProperty($value, $entity, 'parent');
-            $this->fail('Exception not thrown');
-        } catch (Throwable $exception) {
-            $this->assertInstanceOf(PropertyValidatorException::class, $exception);
-
-            $this->assertSame($validator, $exception->getValidator());
-            $this->assertEquals('parent', $exception->getProperty());
-
-            if ($exceptionMessage !== null) {
-                $this->assertEquals($exceptionMessage, $exception->getMessage());
-            }
-        }
+        return new ValidDto();
     }
 }

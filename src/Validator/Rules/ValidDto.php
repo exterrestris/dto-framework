@@ -6,35 +6,30 @@ namespace Exterrestris\DtoFramework\Validator\Rules;
 
 use Attribute;
 use Exterrestris\DtoFramework\Dto\DtoInterface;
-use Exterrestris\DtoFramework\Validator\AbstractValidator;
+use Exterrestris\DtoFramework\Validator\AbstractPropertyValueValidator;
 use Exterrestris\DtoFramework\Validator\Exceptions\DtoValidationException;
-use Exterrestris\DtoFramework\Validator\Exceptions\PropertyValidationException;
-use Exterrestris\DtoFramework\Validator\PropertyValidator;
+use Exterrestris\DtoFramework\Validator\Exceptions\ValueValidationException;
+use Exterrestris\DtoFramework\Validator\Traits\ValidateDtoTrait;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-readonly class ValidDto extends AbstractValidator implements PropertyValidator
+readonly class ValidDto extends AbstractPropertyValueValidator
 {
+    use ValidateDtoTrait;
+
     public function __construct(
         private bool $enforcePreferences = false,
     ) {
     }
 
-    /**
-     * @param mixed $value
-     * @param DtoInterface $dto
-     * @param string $dtoProperty
-     * @inheritDoc
-     */
-    public function validateProperty(mixed $value, DtoInterface $dto, string $dtoProperty): void
+    public function validateValue(mixed $value): void
     {
         if ($value === null) {
             return;
         }
 
         if (!$value instanceof DtoInterface) {
-            throw new PropertyValidationException(
+            throw new ValueValidationException(
                 $this,
-                $dtoProperty,
                 sprintf('Value must be an instance of %s', DtoInterface::class),
             );
         }
@@ -42,7 +37,7 @@ readonly class ValidDto extends AbstractValidator implements PropertyValidator
         try {
             $this->validateDto($value, $this->enforcePreferences);
         } catch (DtoValidationException $e) {
-            throw new PropertyValidationException($this, $dtoProperty, $e->getMessage(), $e);
+            throw new ValueValidationException($this, $e->getMessage(), $e);
         }
     }
 }

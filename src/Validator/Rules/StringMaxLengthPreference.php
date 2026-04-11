@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Exterrestris\DtoFramework\Validator\Rules;
 
 use Attribute;
-use Exterrestris\DtoFramework\Validator\AbstractPreferenceValidator;
+use Exterrestris\DtoFramework\Validator\AbstractPropertyPreferenceValidator;
 use Exterrestris\DtoFramework\Validator\PropertyValidator;
+use Exterrestris\DtoFramework\Validator\ValueValidator;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-readonly class StringMaxLengthPreference extends AbstractPreferenceValidator
+readonly class StringMaxLengthPreference extends AbstractPropertyPreferenceValidator
 {
     public function __construct(
         private int $preferredMaxLength,
@@ -17,12 +18,12 @@ readonly class StringMaxLengthPreference extends AbstractPreferenceValidator
     ) {
     }
 
-    public function getPreference(): PropertyValidator
+    public function getPreference(): ValueValidator&PropertyValidator
     {
         return new StringMaxLength($this->preferredMaxLength);
     }
 
-    public function getRequirement(): PropertyValidator
+    public function getRequirement(): ValueValidator&PropertyValidator
     {
         return new StringMaxLength($this->maxLength);
     }

@@ -5,24 +5,19 @@ declare(strict_types=1);
 namespace Exterrestris\DtoFramework\Validator\Rules;
 
 use Attribute;
-use Exterrestris\DtoFramework\Dto\DtoInterface;
-use Exterrestris\DtoFramework\Validator\Exceptions\PropertyValidationException;
-use Exterrestris\DtoFramework\Validator\PropertyValidator;
+use Exterrestris\DtoFramework\Validator\AbstractPropertyValueValidator;
+use Exterrestris\DtoFramework\Validator\Exceptions\ValueValidationException;
 use Exterrestris\DtoFramework\Validator\Rules\Traits\EmptyValueTrait;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-readonly class NotEmpty implements PropertyValidator
+readonly class NotEmpty extends AbstractPropertyValueValidator
 {
     use EmptyValueTrait;
 
-    public function __construct()
-    {
-    }
-
-    public function validateProperty(mixed $value, DtoInterface $dto, string $dtoProperty): void
+    public function validateValue(mixed $value): void
     {
         if ($this->isEmpty($value)) {
-            throw new PropertyValidationException($this, $dtoProperty, 'Value must not be empty');
+            throw new ValueValidationException($this, 'Value must not be empty');
         }
     }
 }

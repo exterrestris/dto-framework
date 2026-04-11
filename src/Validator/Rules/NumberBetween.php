@@ -5,12 +5,11 @@ declare(strict_types=1);
 namespace Exterrestris\DtoFramework\Validator\Rules;
 
 use Attribute;
-use Exterrestris\DtoFramework\Dto\DtoInterface;
-use Exterrestris\DtoFramework\Validator\Exceptions\PropertyValidationException;
-use Exterrestris\DtoFramework\Validator\PropertyValidator;
+use Exterrestris\DtoFramework\Validator\AbstractPropertyValueValidator;
+use Exterrestris\DtoFramework\Validator\Exceptions\ValueValidationException;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
-readonly class NumberBetween implements PropertyValidator
+readonly class NumberBetween extends AbstractPropertyValueValidator
 {
     public function __construct(
         private int|float $minValue,
@@ -18,24 +17,22 @@ readonly class NumberBetween implements PropertyValidator
     ) {
     }
 
-    public function validateProperty(mixed $value, DtoInterface $dto, string $dtoProperty): void
+    public function validateValue(mixed $value): void
     {
         if ($value === null) {
             return;
         }
 
         if (!is_numeric($value)) {
-            throw new PropertyValidationException(
+            throw new ValueValidationException(
                 $this,
-                $dtoProperty,
                 sprintf('Value must be a number between %s and %s', $this->minValue, $this->maxValue),
             );
         }
 
         if ($value < $this->minValue || $value > $this->maxValue) {
-            throw new PropertyValidationException(
+            throw new ValueValidationException(
                 $this,
-                $dtoProperty,
                 sprintf('Value must be between %s and %s', $this->minValue, $this->maxValue),
             );
         }

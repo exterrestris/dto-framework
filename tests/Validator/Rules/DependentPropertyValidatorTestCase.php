@@ -9,6 +9,7 @@ use Exterrestris\DtoFramework\Validator\Exceptions\PropertyValidatorException;
 use Exterrestris\DtoFramework\Validator\PropertyValidator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use ReflectionObject;
 use Throwable;
 
 abstract class DependentPropertyValidatorTestCase extends TestCase
@@ -23,9 +24,10 @@ abstract class DependentPropertyValidatorTestCase extends TestCase
     {
         $this->expectNotToPerformAssertions();
 
+        $dto = $this->getMockEntity($value, $dependsOnValue);
         $validator = $this->getValidator($validatorParams);
 
-        $validator->validateProperty($value, $this->getMockEntity()->setDependsOn($dependsOnValue), 'test');
+        $validator->validateProperty(((new ReflectionObject($dto))->getProperty('property')), $dto);
     }
 
     /**
@@ -40,17 +42,17 @@ abstract class DependentPropertyValidatorTestCase extends TestCase
         mixed $value,
         ?string $exceptionMessage = null
     ): void {
-        $entity = $this->getMockEntity()->setDependsOn($dependsOnValue);
+        $dto = $this->getMockEntity($value, $dependsOnValue);
         $validator = $this->getValidator($validatorParams);
 
         try {
-            $validator->validateProperty($value, $entity, 'test');
+            $validator->validateProperty(((new ReflectionObject($dto))->getProperty('property')), $dto);
             $this->fail('Exception not thrown');
         } catch (Throwable $exception) {
             $this->assertInstanceOf(PropertyValidatorException::class, $exception);
 
             $this->assertSame($validator, $exception->getValidator());
-            $this->assertEquals('test', $exception->getProperty());
+            $this->assertEquals('property', $exception->getProperty());
 
             if ($exceptionMessage !== null) {
                 $this->assertEquals($exceptionMessage, $exception->getMessage());
@@ -58,15 +60,14 @@ abstract class DependentPropertyValidatorTestCase extends TestCase
         }
     }
 
-    protected function getMockEntity(): DtoInterface
+    protected function getMockEntity(mixed $propertyValue, mixed $dependsOnValue): DtoInterface
     {
-        return new class() implements DtoInterface {
-            protected mixed $dependsOn;
+        return new class($propertyValue, $dependsOnValue) implements DtoInterface {
 
-            public function setDependsOn(mixed $dependsOn): static
-            {
-                $this->dependsOn = $dependsOn;
-                return $this;
+            public function __construct(
+                protected mixed $property,
+                protected mixed $dependsOn
+            ) {
             }
         };
     }
