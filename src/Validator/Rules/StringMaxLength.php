@@ -36,9 +36,4 @@ readonly class StringMaxLength extends AbstractPropertyValueValidator
             );
         }
     }
-
-    public function getMaxLength(): int
-    {
-        return $this->maxLength;
-    }
 }

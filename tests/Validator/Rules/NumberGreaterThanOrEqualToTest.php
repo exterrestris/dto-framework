@@ -4,15 +4,20 @@ declare(strict_types=1);
 
 namespace Exterrestris\DtoFramework\Tests\Validator\Rules;
 
+use Exterrestris\DtoFramework\Validator\Exceptions\PropertyValidationException;
+use Exterrestris\DtoFramework\Validator\Exceptions\ValueValidationException;
 use Exterrestris\DtoFramework\Validator\PropertyValidator;
 use Exterrestris\DtoFramework\Validator\Rules\NumberGreaterThanOrEqualTo;
 use Exterrestris\DtoFramework\Validator\ValueValidator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\UsesClass;
 
-#[CoversClass(NumberGreaterThanOrEqualTo::class)]
 #[Group('validation')]
 #[Group('validator-rules')]
+#[CoversClass(NumberGreaterThanOrEqualTo::class)]
+#[UsesClass(ValueValidationException::class)]
+#[UsesClass(PropertyValidationException::class)]
 class NumberGreaterThanOrEqualToTest extends PropertyValueValidatorTestCase
 {
     public static function valuePassesValidationProvider(): array

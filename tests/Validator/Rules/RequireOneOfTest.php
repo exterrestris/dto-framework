@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Exterrestris\DtoFramework\Tests\Validator\Rules;
 
 use Exterrestris\DtoFramework\Dto\DtoInterface;
+use Exterrestris\DtoFramework\Validator\Exceptions\PropertyValidationException;
 use Exterrestris\DtoFramework\Validator\Exceptions\PropertyValidatorException;
 use Exterrestris\DtoFramework\Validator\Exceptions\RequireOneOfValidationException;
 use Exterrestris\DtoFramework\Validator\PropertyValidator;
@@ -12,13 +13,16 @@ use Exterrestris\DtoFramework\Validator\Rules\RequireOneOf;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use ReflectionObject;
 use Throwable;
 
-#[CoversClass(RequireOneOf::class)]
 #[Group('validation')]
 #[Group('validator-rules')]
+#[CoversClass(RequireOneOf::class)]
+#[UsesClass(PropertyValidationException::class)]
+#[UsesClass(RequireOneOfValidationException::class)]
 class RequireOneOfTest extends TestCase
 {
     /**

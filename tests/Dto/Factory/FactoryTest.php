@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Exterrestris\DtoFramework\Tests\Dto\Factory;
 
 use Closure;
+use Exception;
 use Exterrestris\DtoFramework\Dto\AbstractDto;
 use Exterrestris\DtoFramework\Dto\Collection\Collection;
 use Exterrestris\DtoFramework\Dto\Collection\CollectionInterface;
@@ -24,6 +25,8 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(Factory::class)]
 #[UsesClass(AbstractDto::class)]
 #[UsesClass(Collection::class)]
+#[UsesClass(LazyCollection::class)]
+#[UsesClass(InvalidTypeException::class)]
 class FactoryTest extends TestCase
 {
     public static function createProvider(): array
@@ -87,7 +90,7 @@ class FactoryTest extends TestCase
 
         try {
             $factory->create($dtoType);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $this->assertInstanceOf(FactoryException::class, $exception);
             $this->assertInstanceOf($expectedException, $exception);
             return;

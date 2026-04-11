@@ -4,18 +4,37 @@ declare(strict_types=1);
 
 namespace Exterrestris\DtoFramework\Tests\Serializer;
 
+use Exterrestris\DtoFramework\Dto\AbstractDto;
+use Exterrestris\DtoFramework\Dto\Attributes\CollectionType;
+use Exterrestris\DtoFramework\Dto\Collection\AbstractCollection;
 use Exterrestris\DtoFramework\Dto\Collection\Collection;
+use Exterrestris\DtoFramework\Dto\Factory\AbstractFactory;
 use Exterrestris\DtoFramework\Dto\Factory\Factory;
+use Exterrestris\DtoFramework\Serializer\Config\UseDataParserPreprocessor;
 use Exterrestris\DtoFramework\Serializer\DataParser;
+use Exterrestris\DtoFramework\Serializer\Exceptions\AbstractDataParserException;
 use Exterrestris\DtoFramework\Serializer\Exceptions\DataParserException;
+use Exterrestris\DtoFramework\Serializer\Rules\Map;
+use Exterrestris\DtoFramework\Serializer\Rules\MapFrom;
 use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockCustomSerializationDto;
 use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockDto;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
 #[CoversClass(DataParser::class)]
+#[UsesClass(AbstractDto::class)]
+#[UsesClass(CollectionType::class)]
+#[UsesClass(AbstractCollection::class)]
+#[UsesClass(Collection::class)]
+#[UsesClass(AbstractFactory::class)]
+#[UsesClass(Factory::class)]
+#[UsesClass(Map::class)]
+#[UsesClass(MapFrom::class)]
+#[UsesClass(AbstractDataParserException::class)]
+#[UsesClass(UseDataParserPreprocessor::class)]
 class DataParserTest extends TestCase
 {
     public static function dtoDataProvider(): array

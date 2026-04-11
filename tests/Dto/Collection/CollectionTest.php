@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace Exterrestris\DtoFramework\Tests\Dto\Collection;
 
+use Exterrestris\DtoFramework\Comparators\AbstractComparator;
 use Exterrestris\DtoFramework\Comparators\EquivalentComparator;
+use Exterrestris\DtoFramework\Dto\AbstractDto;
 use Exterrestris\DtoFramework\Dto\Collection\Collection;
 use Exterrestris\DtoFramework\Dto\Collection\CollectionInterface;
+use Exterrestris\DtoFramework\Dto\Collection\Exceptions\IncompatibleTypeException;
 use Exterrestris\DtoFramework\Dto\DtoInterface;
 use Exterrestris\DtoFramework\Dto\Collection\Exceptions\AlreadyInCollectionException;
 use Exterrestris\DtoFramework\Dto\Collection\Exceptions\NotInCollectionException;
@@ -17,15 +20,31 @@ use Exterrestris\DtoFramework\Dto\Collection\Exceptions\IncompatibleDtoException
 use Exterrestris\DtoFramework\Dto\AbstractProcessableDto;
 use Exterrestris\DtoFramework\Dto\ProcessableDtoInterface;
 use Exterrestris\DtoFramework\Serializer\DataExtractor;
+use Exterrestris\DtoFramework\Serializer\Rules\Map;
+use Exterrestris\DtoFramework\Serializer\Traits\GetPropertyMappingTrait;
 use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockBasicDto;
 use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockDto;
 use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockDtoInterface;
 use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockCustomSerializationDto;
+use Exterrestris\DtoFramework\Traits\GetShortDtoTypeTrait;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(Collection::class)]
+#[UsesClass(AbstractDto::class)]
+#[UsesClass(IncompatibleCollectionException::class)]
+#[UsesClass(IncompatibleTypeException::class)]
+#[UsesClass(GetShortDtoTypeTrait::class)]
+#[UsesClass(AbstractComparator::class)]
+#[UsesClass(EquivalentComparator::class)]
+#[UsesClass(DataExtractor::class)]
+#[UsesClass(Map::class)]
+#[UsesClass(GetPropertyMappingTrait::class)]
+#[UsesClass(IncompatibleDtoException::class)]
+#[UsesClass(AlreadyInCollectionException::class)]
+#[UsesClass(NotInCollectionException::class)]
 class CollectionTest extends TestCase
 {
     public static function constructWithInvalidTypeProvider(): array

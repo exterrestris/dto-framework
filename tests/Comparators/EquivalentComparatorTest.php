@@ -11,8 +11,10 @@ use Exterrestris\DtoFramework\Dto\DtoInterface;
 use Exterrestris\DtoFramework\Serializer\DataExtractor;
 use Exterrestris\DtoFramework\Serializer\Rules\NoSerialize;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 
 #[CoversClass(EquivalentComparator::class)]
+#[UsesClass(DataExtractor::class)]
 class EquivalentComparatorTest extends ComparatorTestCase
 {
     public static function compareProvider(): array

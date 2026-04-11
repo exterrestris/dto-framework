@@ -4,15 +4,22 @@ declare(strict_types=1);
 
 namespace Exterrestris\DtoFramework\Tests\Validator\Rules;
 
+use Exterrestris\DtoFramework\Validator\Exceptions\PropertyValidationException;
+use Exterrestris\DtoFramework\Validator\Exceptions\ValueValidationException;
 use Exterrestris\DtoFramework\Validator\PropertyPreferenceValidator;
+use Exterrestris\DtoFramework\Validator\Rules\StringMaxLength;
 use Exterrestris\DtoFramework\Validator\ValuePreferenceValidator;
 use Exterrestris\DtoFramework\Validator\Rules\StringMaxLengthPreference;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\UsesClass;
 
-#[CoversClass(StringMaxLengthPreference::class)]
 #[Group('validation')]
 #[Group('validator-rules')]
+#[CoversClass(StringMaxLengthPreference::class)]
+#[UsesClass(StringMaxLength::class)]
+#[UsesClass(ValueValidationException::class)]
+#[UsesClass(PropertyValidationException::class)]
 class StringMaxLengthPreferenceTest extends PropertyPreferenceValidatorTestCase
 {
     public static function valuePassesValidationProvider(): array

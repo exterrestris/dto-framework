@@ -12,14 +12,22 @@ use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockDto;
 use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockDtoInterface;
 use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockCustomSerializationDto;
 use Exterrestris\DtoFramework\Tests\Validator\Rules\PropertyValueValidatorTestCase;
+use Exterrestris\DtoFramework\Validator\Exceptions\PropertyValidationException;
+use Exterrestris\DtoFramework\Validator\Exceptions\ValueException;
+use Exterrestris\DtoFramework\Validator\Exceptions\ValueValidationException;
 use Exterrestris\DtoFramework\Validator\PropertyValidator;
 use Exterrestris\DtoFramework\Validator\ValueValidator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\UsesClass;
 
-#[CoversClass(CollectionType::class)]
 #[Group('validation')]
 #[Group('validator-rules')]
+#[CoversClass(CollectionType::class)]
+#[UsesClass(Collection::class)]
+#[UsesClass(PropertyValidationException::class)]
+#[UsesClass(ValueException::class)]
+#[UsesClass(ValueValidationException::class)]
 class CollectionTypeTest extends PropertyValueValidatorTestCase
 {
 

@@ -4,17 +4,27 @@ declare(strict_types=1);
 
 namespace Exterrestris\DtoFramework\Tests\Serializer;
 
+use Exterrestris\DtoFramework\Dto\AbstractDto;
+use Exterrestris\DtoFramework\Dto\Collection\AbstractCollection;
 use Exterrestris\DtoFramework\Dto\Collection\Collection;
 use Exterrestris\DtoFramework\Dto\DtoInterface;
 use Exterrestris\DtoFramework\Dto\ProcessableDtoInterface;
+use Exterrestris\DtoFramework\Serializer\Config\OverrideDataExtractor;
 use Exterrestris\DtoFramework\Serializer\DataExtractor;
+use Exterrestris\DtoFramework\Serializer\Rules\Map;
 use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockDto;
 use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockCustomSerializationDto;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(DataExtractor::class)]
+#[UsesClass(AbstractDto::class)]
+#[UsesClass(AbstractCollection::class)]
+#[UsesClass(Collection::class)]
+#[UsesClass(Map::class)]
+#[UsesClass(OverrideDataExtractor::class)]
 class DataExtractorTest extends TestCase
 {
 

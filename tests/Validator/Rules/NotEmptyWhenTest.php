@@ -4,15 +4,20 @@ declare(strict_types=1);
 
 namespace Exterrestris\DtoFramework\Tests\Validator\Rules;
 
+use Exterrestris\DtoFramework\Validator\Exceptions\PropertyValidationException;
+use Exterrestris\DtoFramework\Validator\Exceptions\ValueException;
 use Exterrestris\DtoFramework\Validator\PropertyValidator;
 use Exterrestris\DtoFramework\Validator\Rules\Configuration\NullDependentValueBehaviour as NullDependentValue;
 use Exterrestris\DtoFramework\Validator\Rules\NotEmptyWhen;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\UsesClass;
 
-#[CoversClass(NotEmptyWhen::class)]
 #[Group('validation')]
 #[Group('validator-rules')]
+#[CoversClass(NotEmptyWhen::class)]
+#[UsesClass(PropertyValidationException::class)]
+#[UsesClass(ValueException::class)]
 class NotEmptyWhenTest extends DependentPropertyValidatorTestCase
 {
     public static function passValidationProvider(): array

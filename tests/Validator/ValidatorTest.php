@@ -10,22 +10,41 @@ use Exterrestris\DtoFramework\Dto\Collection\CollectionInterface;
 use Exterrestris\DtoFramework\Dto\DtoInterface;
 use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockDto;
 use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockDtoInterface;
+use Exterrestris\DtoFramework\Validator\AbstractPropertyValueValidator;
 use Exterrestris\DtoFramework\Validator\Exceptions\InvalidCollectionDtoException;
 use Exterrestris\DtoFramework\Validator\Exceptions\InvalidCollectionException;
 use Exterrestris\DtoFramework\Validator\Exceptions\InvalidDtoException;
 use Exterrestris\DtoFramework\Validator\Exceptions\PropertyValidationException;
 use Exterrestris\DtoFramework\Validator\Exceptions\RequiredPropertyException;
+use Exterrestris\DtoFramework\Validator\Exceptions\ValueException;
+use Exterrestris\DtoFramework\Validator\Exceptions\ValueValidationException;
 use Exterrestris\DtoFramework\Validator\PropertyValidator;
 use Exterrestris\DtoFramework\Validator\Rules\MatchRegex;
 use Exterrestris\DtoFramework\Validator\Rules\StringMaxLength;
+use Exterrestris\DtoFramework\Validator\Rules\StringMaxLengthPreference;
+use Exterrestris\DtoFramework\Validator\Rules\StringMinLength;
 use Exterrestris\DtoFramework\Validator\Validator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(Validator::class)]
 #[Group('validation')]
+#[CoversClass(Validator::class)]
+#[UsesClass(Collection::class)]
+#[UsesClass(CollectionType::class)]
+#[UsesClass(AbstractPropertyValueValidator::class)]
+#[UsesClass(MatchRegex::class)]
+#[UsesClass(StringMaxLength::class)]
+#[UsesClass(StringMaxLengthPreference::class)]
+#[UsesClass(InvalidCollectionDtoException::class)]
+#[UsesClass(InvalidCollectionException::class)]
+#[UsesClass(InvalidDtoException::class)]
+#[UsesClass(PropertyValidationException::class)]
+#[UsesClass(RequiredPropertyException::class)]
+#[UsesClass(ValueValidationException::class)]
+#[UsesClass(ValueException::class)]
 class ValidatorTest extends TestCase
 {
     public static function validSerializableProvider(): array

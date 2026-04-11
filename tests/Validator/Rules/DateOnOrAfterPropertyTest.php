@@ -5,15 +5,20 @@ declare(strict_types=1);
 namespace Exterrestris\DtoFramework\Tests\Validator\Rules;
 
 use DateTimeImmutable;
+use Exterrestris\DtoFramework\Validator\Exceptions\PropertyValidationException;
+use Exterrestris\DtoFramework\Validator\Exceptions\ValueException;
 use Exterrestris\DtoFramework\Validator\PropertyValidator;
 use Exterrestris\DtoFramework\Validator\Rules\Configuration\NullDependentValueBehaviour as NullDependentValue;
 use Exterrestris\DtoFramework\Validator\Rules\DateOnOrAfterProperty;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\Attributes\UsesClass;
 
-#[CoversClass(DateOnOrAfterProperty::class)]
 #[Group('validation')]
 #[Group('validator-rules')]
+#[CoversClass(DateOnOrAfterProperty::class)]
+#[UsesClass(PropertyValidationException::class)]
+#[UsesClass(ValueException::class)]
 class DateOnOrAfterPropertyTest extends DependentPropertyValidatorTestCase
 {
     public static function passValidationProvider(): array
