@@ -13,6 +13,7 @@ use Exterrestris\DtoFramework\Dto\Collection\Exceptions\InvalidTypeException;
 use Exterrestris\DtoFramework\Dto\Collection\Exceptions\NotInCollectionException;
 use Exterrestris\DtoFramework\Dto\DtoInterface;
 use Exterrestris\DtoFramework\Traits\IdenticalComparisonTrait;
+use Exterrestris\DtoFramework\Traits\CheckAcceptableTypeTrait;
 use IteratorAggregate;
 use Traversable;
 
@@ -23,6 +24,7 @@ use Traversable;
  */
 abstract class AbstractCollection implements CollectionInterface, IteratorAggregate {
     use IdenticalComparisonTrait;
+    use CheckAcceptableTypeTrait;
 
     /**
      * @param class-string<Dto> $dtoType
@@ -31,12 +33,10 @@ abstract class AbstractCollection implements CollectionInterface, IteratorAggreg
     public function __construct(
         protected readonly string $dtoType
     ) {
-        if ($dtoType === DtoInterface::class) {
-            throw new InvalidTypeException('Type must be specific');
-        }
-
-        if (!is_a($dtoType, DtoInterface::class, true)) {
-            throw new InvalidTypeException('Type must implement DtoInterface');
+        try {
+            $this->verifyIsAcceptableType($this->dtoType);
+        } catch (\Exterrestris\DtoFramework\Exceptions\Internal\TypeException $e) {
+            throw InvalidTypeException::from($e);
         }
     }
 

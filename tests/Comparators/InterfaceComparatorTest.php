@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Exterrestris\DtoFramework\Tests\Comparators;
 
+use Exterrestris\DtoFramework\Dto\AbstractDto;
 use Exterrestris\DtoFramework\Dto\Attributes\Internal;
 use Exterrestris\DtoFramework\Comparators\ComparatorInterface;
 use Exterrestris\DtoFramework\Comparators\InterfaceComparator;
@@ -11,6 +12,8 @@ use Exterrestris\DtoFramework\Dto\DtoInterface;
 use Exterrestris\DtoFramework\Dto\ProcessableDtoInterface;
 use Exterrestris\DtoFramework\Serializer\DataExtractor;
 use Exterrestris\DtoFramework\Serializer\Rules\NoSerialize;
+use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockDtoInterface;
+use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockNamedDtoInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(InterfaceComparator::class)]
@@ -44,7 +47,7 @@ class InterfaceComparatorTest extends ComparatorTestCase
             [
                 $mockDto3,
                 $mockDto2,
-                -1,
+                1,
             ],
             [
                 $mockDto2,
@@ -64,12 +67,12 @@ class InterfaceComparatorTest extends ComparatorTestCase
             [
                 $mockDto5,
                 $mockDto2,
-                0,
+                -1,
             ],
             [
                 $mockDto2,
                 $mockDto5,
-                0,
+                1,
             ],
             [
                 $mockDto1,
@@ -86,9 +89,6 @@ class InterfaceComparatorTest extends ComparatorTestCase
 
     public static function areEqualProvider(): array
     {
-        $mockDto1 = static::createMockDto('name', 'title')->setIsProcessed(true);
-        $mockDto2 = static::createMockDto('name', 'title')->setIsProcessed(false);
-
         return [
             [
                 static::createMockDto('name', 'title'),
@@ -96,14 +96,14 @@ class InterfaceComparatorTest extends ComparatorTestCase
             ],
             [
                 static::createMockDto('name', 'title')->setIsProcessed(true),
-                static::createMockDto('name2', 'title')->setIsProcessed(true),
+                static::createMockDto('name', 'title')->setIsProcessed(false),
             ],
             [
-                $mockDto1,
-                $mockDto1,
+                static::createMockDto('name', 'title')->setIsProcessed(true),
+                static::createMockDto('name', 'title')->setIsProcessed(true),
             ],
             [
-                $mockDto2,
+                static::createMockDto('name', 'title')->setIsProcessed(false),
                 static::createMockDto('name', 'title', true)->setIsProcessed(false),
             ],
         ];
@@ -114,11 +114,11 @@ class InterfaceComparatorTest extends ComparatorTestCase
         return [
             [
                 static::createMockDto('name', 'title')->setIsProcessed(true),
-                static::createMockDto('name', 'title')->setIsProcessed(false),
+                static::createMockDto('name2', 'title')->setIsProcessed(true),
             ],
             [
                 static::createMockDto('name', 'title')->setIsProcessed(true),
-                static::createMockDto('name', 'title'),
+                static::createMockDto('name', null),
             ],
         ];
     }
@@ -128,8 +128,13 @@ class InterfaceComparatorTest extends ComparatorTestCase
         return [
             [
                 static::createMockDto('name', 'title')->setIsProcessed(false),
+                static::createMockDto('name', 'title')->setIsProcessed(false),
                 static::createMockDto('name', 'title2')->setIsProcessed(false),
-                static::createMockDto('name2', 'title2')->setIsProcessed(true),
+            ],
+            [
+                static::createMockDto('name', 'title')->setIsProcessed(false),
+                static::createMockDto('name', 'title')->setIsProcessed(true),
+                static::createMockDto('name', 'title2')->setIsProcessed(false),
             ],
         ];
     }
@@ -138,7 +143,11 @@ class InterfaceComparatorTest extends ComparatorTestCase
     {
         return [
             [
-                ProcessableDtoInterface::class,
+                MockNamedDtoInterface::class,
+                true,
+            ],
+            [
+                MockDtoInterface::class,
                 true,
             ],
             [
@@ -152,12 +161,12 @@ class InterfaceComparatorTest extends ComparatorTestCase
     {
         $dataExtractor = new DataExtractor();
 
-        return new InterfaceComparator(ProcessableDtoInterface::class, $dataExtractor);
+        return new InterfaceComparator(MockNamedDtoInterface::class, $dataExtractor);
     }
 
-    private static function createMockDto(?string $name, ?string $title, bool $internal = false): ProcessableDtoInterface
+    private static function createMockDto(?string $name, ?string $title, bool $internal = false): MockNamedDtoInterface
     {
-        return new class($name, $title, $internal) implements ProcessableDtoInterface {
+        return new class($name, $title, $internal) extends AbstractDto implements MockNamedDtoInterface, ProcessableDtoInterface {
             protected ?string $name;
             #[NoSerialize]
             protected ?string $title = null;
@@ -172,6 +181,26 @@ class InterfaceComparatorTest extends ComparatorTestCase
                 $this->name = $name;
                 $this->title = $title;
                 $this->internal = $internal;
+            }
+
+            public function getName(): string
+            {
+                return $this->name;
+            }
+
+            public function setName(string $name): static
+            {
+                return $this->with('name', $name);
+            }
+
+            public function getTitle(): ?string
+            {
+                return $this->title;
+            }
+
+            public function setTitle(?string $title): static
+            {
+                return $this->with('title', $title);
             }
 
             public function isProcessed(): ?bool

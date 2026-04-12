@@ -54,20 +54,29 @@ class CollectionTest extends TestCase
                 DtoInterface::class,
             ],
             [
+                ProcessableDtoInterface::class,
+            ],
+            [
                 CollectionInterface::class,
+            ],
+            [
+                AbstractDto::class,
+            ],
+            [
+                AbstractProcessableDto::class,
             ],
         ];
     }
 
     #[DataProvider('constructWithInvalidTypeProvider')]
-    public function testConstructWithInvalidType(string $dtoType)
+    public function testConstructWithInvalidType(string $dtoType): void
     {
         $this->expectException(InvalidTypeException::class);
 
         new Collection($dtoType);
     }
 
-    public function testConstructWithValidItems()
+    public function testConstructWithValidItems(): void
     {
         $collection = new Collection(MockDto::class, [new MockDto()]);
 
@@ -85,7 +94,6 @@ class CollectionTest extends TestCase
     {
         $specificCollection = new Collection(MockDto::class);
         $typeCollection = new Collection(MockDtoInterface::class);
-        $genericCollection = new Collection(ProcessableDtoInterface::class);
 
         $this->assertTrue($specificCollection->isOfType(MockDto::class));
         $this->assertTrue($specificCollection->isOfType(MockDtoInterface::class));
@@ -96,11 +104,6 @@ class CollectionTest extends TestCase
         $this->assertTrue($typeCollection->isOfType(MockDtoInterface::class));
         $this->assertFalse($typeCollection->isOfType(AbstractProcessableDto::class));
         $this->assertTrue($typeCollection->isOfType(ProcessableDtoInterface::class));
-
-        $this->assertFalse($genericCollection->isOfType(MockDto::class));
-        $this->assertFalse($genericCollection->isOfType(MockDtoInterface::class));
-        $this->assertFalse($genericCollection->isOfType(AbstractProcessableDto::class));
-        $this->assertTrue($genericCollection->isOfType(ProcessableDtoInterface::class));
     }
 
     public function testGetEntityType()

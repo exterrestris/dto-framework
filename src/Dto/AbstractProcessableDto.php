@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Exterrestris\DtoFramework\Dto;
 
+use Exterrestris\DtoFramework\Dto\Attributes\BaseDto;
 use Exterrestris\DtoFramework\Serializer\Rules\NoSerialize;
 
+#[BaseDto]
 abstract class AbstractProcessableDto extends AbstractDto implements ProcessableDtoInterface
 {
     #[NoSerialize]

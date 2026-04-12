@@ -2,15 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Exterrestris\DtoFramework\Comparators\Exceptions;
+namespace Exterrestris\DtoFramework\Dto\Factory\Exceptions;
 
 use Exterrestris\DtoFramework\Exceptions\Internal\TypeException as InternalTypeException;
-use Exterrestris\DtoFramework\Exceptions\InvalidTypeException as FrameworkInvalidTypeException;
+use Exterrestris\DtoFramework\Exceptions\TypeException as FrameworkTypeException;
 use InvalidArgumentException;
 
-class InvalidTypeException extends InvalidArgumentException implements
-    ComparatorException,
-    FrameworkInvalidTypeException
+/**
+ * @internal Must be caught and rethrown
+ */
+abstract class TypeException extends InvalidArgumentException implements FrameworkTypeException, FactoryException
 {
     public static function from(InternalTypeException $exception): static
     {

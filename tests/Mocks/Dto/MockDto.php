@@ -43,7 +43,7 @@ class MockDto extends AbstractProcessableDto implements MockDtoInterface
         return $this->name;
     }
 
-    public function setName(string $name): MockDto
+    public function setName(string $name): static
     {
         $new = clone $this;
         $new->name = $name;
@@ -55,7 +55,7 @@ class MockDto extends AbstractProcessableDto implements MockDtoInterface
         return $this->title;
     }
 
-    public function setTitle(?string $title): MockDto
+    public function setTitle(?string $title): static
     {
         $new = clone $this;
         $new->title = $title;
@@ -78,7 +78,7 @@ class MockDto extends AbstractProcessableDto implements MockDtoInterface
         return $this->uninitialized;
     }
 
-    public function setUninitialized(string $uninitialized): MockDto
+    public function setUninitialized(string $uninitialized): static
     {
         $new = clone $this;
         $new->uninitialized = $uninitialized;

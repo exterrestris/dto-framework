@@ -6,6 +6,7 @@ namespace Exterrestris\DtoFramework\Dto;
 
 use BackedEnum;
 use DateTimeInterface;
+use Exterrestris\DtoFramework\Dto\Attributes\BaseDto;
 use Exterrestris\DtoFramework\Dto\Attributes\Internal;
 use Exterrestris\DtoFramework\Dto\Collection\CollectionInterface;
 use Exterrestris\DtoFramework\Dto\Exceptions\InternalPropertyException;
@@ -16,6 +17,7 @@ use ReflectionClass;
 use ReflectionException;
 use ReflectionProperty;
 
+#[BaseDto]
 abstract class AbstractDto implements DtoInterface
 {
     use GetAttributeTrait;

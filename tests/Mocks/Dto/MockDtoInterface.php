@@ -8,23 +8,15 @@ use Exterrestris\DtoFramework\Dto\Collection\CollectionInterface;
 use Exterrestris\DtoFramework\Dto\ProcessableDtoInterface;
 use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockDto;
 
-interface MockDtoInterface extends ProcessableDtoInterface
+interface MockDtoInterface extends MockNamedDtoInterface, ProcessableDtoInterface
 {
-    public function getName(): string;
-
-    public function setName(string $name): MockDto;
-
-    public function getTitle(): ?string;
-
-    public function setTitle(?string $title): MockDto;
-
     public function isInternal(): bool;
 
-    public function setInternal(bool $internal): MockDto;
+    public function setInternal(bool $internal): static;
 
     public function getUninitialized(): string;
 
-    public function setUninitialized(string $uninitialized): MockDto;
+    public function setUninitialized(string $uninitialized): static;
 
     public function getChildren(): ?CollectionInterface;
 
