@@ -67,11 +67,10 @@ class MockDto extends AbstractProcessableDto implements MockDtoInterface
         return $this->internal;
     }
 
-    public function setInternal(bool $internal): MockDto
+    public function setInternal(bool $internal): static
     {
-        $new = clone $this;
-        $new->internal = $internal;
-        return $new;
+        $this->internal = $internal;
+        return $this;
     }
 
     public function getUninitialized(): string

@@ -5,13 +5,16 @@ declare(strict_types=1);
 namespace Exterrestris\DtoFramework\Dto\Factory;
 
 use Exterrestris\DtoFramework\Dto\Attributes\BaseDto;
+use Exterrestris\DtoFramework\Dto\Attributes\Internal;
 use Exterrestris\DtoFramework\Dto\DtoInterface;
+use Exterrestris\DtoFramework\Dto\Exceptions\InternalPropertyException;
 use Exterrestris\DtoFramework\Dto\Factory\Exceptions\FactoryException;
 use Exterrestris\DtoFramework\Dto\Factory\Exceptions\InvalidTypeException;
 use Exterrestris\DtoFramework\Dto\Factory\Exceptions\UnknownTypeException;
 use Exterrestris\DtoFramework\Traits\GetAttributeTrait;
 use ReflectionClass;
 use ReflectionException;
+use ReflectionObject;
 
 abstract class AbstractFactory implements FactoryInterface
 {
@@ -54,11 +57,15 @@ abstract class AbstractFactory implements FactoryInterface
             return $dto;
         }
 
-        foreach ($data as $property => $value) {
-            $setter = 'set' . ucfirst($property);
+        $reflection = new ReflectionObject($dto);
 
-            if (method_exists($dto, $setter)) {
-                $dto = $dto->$setter($value);
+        foreach ($reflection->getProperties() as $property) {
+            if (isset($data[$property->getName()])) {
+                if ($this->getAttribute($property, Internal::class)) {
+                    throw new InternalPropertyException();
+                }
+
+                $property->setValue($dto, $data[$property->getName()]);
             }
         }
 

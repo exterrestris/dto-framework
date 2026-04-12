@@ -11,6 +11,7 @@ use Exterrestris\DtoFramework\Dto\Collection\Collection;
 use Exterrestris\DtoFramework\Dto\Collection\CollectionInterface;
 use Exterrestris\DtoFramework\Dto\Collection\LazyCollection;
 use Exterrestris\DtoFramework\Dto\DtoInterface;
+use Exterrestris\DtoFramework\Dto\Exceptions\InternalPropertyException;
 use Exterrestris\DtoFramework\Dto\Factory\Exceptions\FactoryException;
 use Exterrestris\DtoFramework\Dto\Factory\Exceptions\InvalidTypeException;
 use Exterrestris\DtoFramework\Dto\Factory\Exceptions\UnknownTypeException;
@@ -61,35 +62,47 @@ class FactoryTest extends TestCase
         return [
             [
                 DtoInterface::class,
+                [],
                 InvalidTypeException::class,
             ],
             [
                 Collection::class,
+                [],
                 InvalidTypeException::class,
             ],
             [
                 CollectionInterface::class,
+                [],
                 InvalidTypeException::class,
             ],
             [
                 'NonExistentClass',
+                [],
                 UnknownTypeException::class,
+            ],
+            [
+                MockDto::class,
+                [
+                    'internal' => 'test',
+                ],
+                InternalPropertyException::class,
             ],
         ];
     }
 
     /**
      * @param class-string $dtoType
+     * @param array<string, mixed> $dtoData
      * @param class-string<FactoryException> $expectedException
      * @return void
      */
     #[DataProvider('createThrowProvider')]
-    public function testCreateDtoThrows(string $dtoType, string $expectedException): void
+    public function testCreateDtoThrows(string $dtoType, array $dtoData, string $expectedException): void
     {
         $factory = new Factory();
 
         try {
-            $factory->create($dtoType);
+            $factory->create($dtoType, $dtoData);
         } catch (Exception $exception) {
             $this->assertInstanceOf(FactoryException::class, $exception);
             $this->assertInstanceOf($expectedException, $exception);
