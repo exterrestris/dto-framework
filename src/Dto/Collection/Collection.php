@@ -49,7 +49,7 @@ class Collection extends AbstractCollection implements CollectionInterface
             return $this->items[$index];
         }
 
-        throw new InvalidIndexException();
+        throw new InvalidIndexException($this, $index);
     }
 
     public function count(): int

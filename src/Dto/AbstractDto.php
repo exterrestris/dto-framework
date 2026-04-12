@@ -74,11 +74,11 @@ abstract class AbstractDto implements DtoInterface
             try {
                 $reflectionProperty = $reflection->getProperty($property);
             } catch (ReflectionException $e) {
-                throw new NoSuchPropertyException(previous: $e);
+                throw new NoSuchPropertyException($this, $property, previous: $e);
             }
 
             if ($this->getAttribute($reflectionProperty, Internal::class)) {
-                throw new InternalPropertyException();
+                throw new InternalPropertyException($this, $property);
             }
 
             $reflectionProperty->setValue($this, $value);

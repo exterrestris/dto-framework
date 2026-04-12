@@ -6,5 +6,8 @@ namespace Exterrestris\DtoFramework\Dto\Exceptions;
 
 class InvalidDataException extends \InvalidArgumentException implements DtoException
 {
-
+    public function getDto(): null
+    {
+        return null;
+    }
 }

@@ -4,13 +4,21 @@ declare(strict_types=1);
 
 namespace Exterrestris\DtoFramework\Dto\Exceptions;
 
-use DomainException;
-use Exterrestris\DtoFramework\Dto\Factory\Exceptions\FactoryException;
+use Exterrestris\DtoFramework\Dto\DtoInterface;
 use Throwable;
 
-class InternalPropertyException extends DomainException implements DtoException, FactoryException
+class InternalPropertyException extends AbstractDtoPropertyException
 {
-    public function __construct(?Throwable $previous = null) {
-        parent::__construct('Cannot set internal property', previous: $previous);
+    public function __construct(
+        DtoInterface $dto,
+        string $property,
+        ?Throwable $previous = null
+    ) {
+        parent::__construct(
+            $dto,
+            $property,
+            sprintf('Cannot set internal property "%s"', $property),
+            $previous
+        );
     }
 }

@@ -8,4 +8,8 @@ use InvalidArgumentException;
 
 class InvalidTypeException extends InvalidArgumentException implements CollectionException
 {
+    public function getCollection(): null
+    {
+        return null;
+    }
 }

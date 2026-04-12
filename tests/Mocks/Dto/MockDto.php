@@ -14,8 +14,8 @@ use Exterrestris\DtoFramework\Serializer\Rules\NoSerialize;
 use Exterrestris\DtoFramework\Serializer\Rules\NoSerializeIfNull;
 use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockDtoInterface;
 use Exterrestris\DtoFramework\Tests\Mocks\Validator\Rules\Title;
-use Exterrestris\DtoFramework\Validator\Rules\MatchRegex;
-use Exterrestris\DtoFramework\Validator\Rules\StringMaxLengthPreference;
+use Exterrestris\DtoFramework\Validation\Rules\MatchRegex;
+use Exterrestris\DtoFramework\Validation\Rules\StringMaxLengthPreference;
 
 class MockDto extends AbstractProcessableDto implements MockDtoInterface
 {

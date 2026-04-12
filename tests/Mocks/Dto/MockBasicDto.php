@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Exterrestris\DtoFramework\Tests\Mocks\Dto;
 
 use Exterrestris\DtoFramework\Dto\AbstractDto;
-use Exterrestris\DtoFramework\Validator\Rules\NotEmpty;
+use Exterrestris\DtoFramework\Validation\Rules\NotEmpty;
 
 class MockBasicDto extends AbstractDto
 {

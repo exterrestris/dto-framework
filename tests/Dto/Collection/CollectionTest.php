@@ -9,7 +9,7 @@ use Exterrestris\DtoFramework\Comparators\EquivalentComparator;
 use Exterrestris\DtoFramework\Dto\AbstractDto;
 use Exterrestris\DtoFramework\Dto\Collection\Collection;
 use Exterrestris\DtoFramework\Dto\Collection\CollectionInterface;
-use Exterrestris\DtoFramework\Dto\Collection\Exceptions\IncompatibleTypeException;
+use Exterrestris\DtoFramework\Dto\Collection\Exceptions\IncompatibleItemException;
 use Exterrestris\DtoFramework\Dto\DtoInterface;
 use Exterrestris\DtoFramework\Dto\Collection\Exceptions\AlreadyInCollectionException;
 use Exterrestris\DtoFramework\Dto\Collection\Exceptions\NotInCollectionException;
@@ -35,7 +35,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(Collection::class)]
 #[UsesClass(AbstractDto::class)]
 #[UsesClass(IncompatibleCollectionException::class)]
-#[UsesClass(IncompatibleTypeException::class)]
+#[UsesClass(IncompatibleItemException::class)]
 #[UsesClass(GetShortDtoTypeTrait::class)]
 #[UsesClass(AbstractComparator::class)]
 #[UsesClass(EquivalentComparator::class)]
