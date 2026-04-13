@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Exterrestris\DtoFramework\Tests\Mocks\Dto;
 
 use Exterrestris\DtoFramework\Dto\AbstractProcessableDto;
-use Exterrestris\DtoFramework\Dto\Attributes\CollectionType;
-use Exterrestris\DtoFramework\Dto\Attributes\Internal;
 use Exterrestris\DtoFramework\Dto\Collection\CollectionInterface;
+use Exterrestris\DtoFramework\Dto\Metadata\CollectionType;
+use Exterrestris\DtoFramework\Dto\Metadata\Internal;
 use Exterrestris\DtoFramework\Serializer\Rules\Map;
 use Exterrestris\DtoFramework\Serializer\Rules\MapFrom;
 use Exterrestris\DtoFramework\Serializer\Rules\NoSerialize;

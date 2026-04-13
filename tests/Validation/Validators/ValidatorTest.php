@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Exterrestris\DtoFramework\Tests\Validation\Validators;
 
-use Exterrestris\DtoFramework\Dto\Attributes\CollectionType;
 use Exterrestris\DtoFramework\Dto\Collection\Collection;
 use Exterrestris\DtoFramework\Dto\Collection\CollectionInterface;
 use Exterrestris\DtoFramework\Dto\DtoInterface;
+use Exterrestris\DtoFramework\Dto\Metadata\CollectionType;
 use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockDto;
 use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockDtoInterface;
 use Exterrestris\DtoFramework\Validation\Exceptions\InvalidDtoPropertyException;

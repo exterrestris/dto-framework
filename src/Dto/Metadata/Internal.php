@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Exterrestris\DtoFramework\Dto\Attributes;
+namespace Exterrestris\DtoFramework\Dto\Metadata;
 
 use Attribute;
 use Exterrestris\DtoFramework\Comparators\IdenticalComparator;

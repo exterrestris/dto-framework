@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Exterrestris\DtoFramework\Dto\Factory;
 
-use Exterrestris\DtoFramework\Dto\Attributes\Internal;
 use Exterrestris\DtoFramework\Dto\DtoInterface;
 use Exterrestris\DtoFramework\Dto\Exceptions\InternalPropertyException;
 use Exterrestris\DtoFramework\Dto\Exceptions\NoSuchPropertyException;
 use Exterrestris\DtoFramework\Dto\Factory\Exceptions\InvalidTypeException as InvalidTypeFactoryException;
 use Exterrestris\DtoFramework\Dto\Factory\Exceptions\UnknownTypeException as UnknownTypeFactoryException;
+use Exterrestris\DtoFramework\Dto\Metadata\Internal;
 use Exterrestris\DtoFramework\Exceptions\Internal\InvalidTypeException as InvalidTypeInternalException;
 use Exterrestris\DtoFramework\Exceptions\Internal\UnknownTypeException as UnknownTypeInternalException;
 use Exterrestris\DtoFramework\Traits\CheckAcceptableTypeTrait;

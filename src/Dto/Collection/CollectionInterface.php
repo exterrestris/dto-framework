@@ -6,13 +6,13 @@ namespace Exterrestris\DtoFramework\Dto\Collection;
 
 use Countable;
 use Exterrestris\DtoFramework\Comparators\ComparatorInterface;
-use Exterrestris\DtoFramework\Dto\Attributes\BaseDto;
 use Exterrestris\DtoFramework\Dto\Collection\Exceptions\AlreadyInCollectionException;
 use Exterrestris\DtoFramework\Dto\Collection\Exceptions\IncompatibleCollectionException;
 use Exterrestris\DtoFramework\Dto\Collection\Exceptions\IncompatibleDtoException;
 use Exterrestris\DtoFramework\Dto\Collection\Exceptions\InvalidIndexException;
 use Exterrestris\DtoFramework\Dto\Collection\Exceptions\NotInCollectionException;
 use Exterrestris\DtoFramework\Dto\DtoInterface;
+use Exterrestris\DtoFramework\Dto\Metadata\BaseDto;
 use Traversable;
 
 /**

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Exterrestris\DtoFramework\Tests\Dto\Attributes;
+namespace Exterrestris\DtoFramework\Tests\Dto\Metadata;
 
-use Exterrestris\DtoFramework\Dto\Attributes\CollectionType;
 use Exterrestris\DtoFramework\Dto\Collection\Collection;
+use Exterrestris\DtoFramework\Dto\Metadata\CollectionType;
 use Exterrestris\DtoFramework\Dto\ProcessableDtoInterface;
 use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockBasicDto;
 use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockDto;

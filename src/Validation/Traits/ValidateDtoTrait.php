@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Exterrestris\DtoFramework\Validation\Traits;
 
-use Exterrestris\DtoFramework\Dto\Attributes\Internal;
 use Exterrestris\DtoFramework\Dto\DtoInterface;
+use Exterrestris\DtoFramework\Dto\Metadata\Internal;
 use Exterrestris\DtoFramework\Traits\GetAttributeTrait;
 use Exterrestris\DtoFramework\Validation\CompositeValueValidator;
 use Exterrestris\DtoFramework\Validation\Exceptions\InvalidDtoException;

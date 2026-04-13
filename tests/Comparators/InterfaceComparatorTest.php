@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Exterrestris\DtoFramework\Tests\Comparators;
 
 use Exterrestris\DtoFramework\Dto\AbstractDto;
-use Exterrestris\DtoFramework\Dto\Attributes\Internal;
 use Exterrestris\DtoFramework\Comparators\ComparatorInterface;
 use Exterrestris\DtoFramework\Comparators\InterfaceComparator;
 use Exterrestris\DtoFramework\Dto\DtoInterface;
+use Exterrestris\DtoFramework\Dto\Metadata\Internal;
 use Exterrestris\DtoFramework\Dto\ProcessableDtoInterface;
 use Exterrestris\DtoFramework\Serializer\DataExtractor;
 use Exterrestris\DtoFramework\Serializer\Rules\NoSerialize;

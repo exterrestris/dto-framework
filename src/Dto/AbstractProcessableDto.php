@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Exterrestris\DtoFramework\Dto;
 
-use Exterrestris\DtoFramework\Dto\Attributes\BaseDto;
+use Exterrestris\DtoFramework\Dto\Metadata\BaseDto;
 use Exterrestris\DtoFramework\Serializer\Rules\NoSerialize;
 
 #[BaseDto]

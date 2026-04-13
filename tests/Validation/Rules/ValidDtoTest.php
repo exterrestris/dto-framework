@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Exterrestris\DtoFramework\Tests\Validation\Rules;
 
-use Exterrestris\DtoFramework\Dto\Attributes\CollectionType;
 use Exterrestris\DtoFramework\Dto\DtoInterface;
+use Exterrestris\DtoFramework\Dto\Metadata\CollectionType;
 use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockHierarchicalDto;
 use Exterrestris\DtoFramework\Validation\Exceptions\InvalidCollectionException;
 use Exterrestris\DtoFramework\Validation\Exceptions\InvalidDtoException;
