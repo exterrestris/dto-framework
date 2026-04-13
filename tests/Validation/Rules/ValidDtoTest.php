@@ -11,13 +11,11 @@ use Exterrestris\DtoFramework\Validation\Exceptions\InvalidCollectionException;
 use Exterrestris\DtoFramework\Validation\Exceptions\InvalidDtoException;
 use Exterrestris\DtoFramework\Validation\Exceptions\PropertyValidationException;
 use Exterrestris\DtoFramework\Validation\Exceptions\ValueValidationException;
-use Exterrestris\DtoFramework\Validation\PropertyValidator;
 use Exterrestris\DtoFramework\Validation\Rules\NotEmpty;
 use Exterrestris\DtoFramework\Validation\Rules\NoValidate;
 use Exterrestris\DtoFramework\Validation\Rules\Traits\EmptyValueTrait;
 use Exterrestris\DtoFramework\Validation\Rules\ValidCollection;
 use Exterrestris\DtoFramework\Validation\Rules\ValidDto;
-use Exterrestris\DtoFramework\Validation\ValueValidator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\UsesClass;
@@ -115,19 +113,18 @@ class ValidDtoTest extends PropertyValueValidatorTestCase
 
     public static function propertyFailsValidationProvider(): array
     {
-        $value = new MockHierarchicalDto([
-            'name' => 'John Doe',
-            'parent' => new MockHierarchicalDto([
-                'name' => '',
-            ]),
-        ]);
-        $dto = static::createDtoFromValue($value);
-
         return [
             [
                 [],
-                (new \ReflectionObject($dto))->getProperty(static::getDtoPropertyToValidate()),
-                $dto,
+                static::createDtoFromValue(
+                    new MockHierarchicalDto([
+                        'name' => 'John Doe',
+                        'parent' => new MockHierarchicalDto([
+                            'name' => '',
+                        ]),
+                    ])
+                ),
+                static::getDtoPropertyToValidate(),
                 <<<'MESSAGE'
                 1 MockHierarchicalDto property is invalid
                 - parent: 1 MockHierarchicalDto property is invalid
@@ -135,10 +132,5 @@ class ValidDtoTest extends PropertyValueValidatorTestCase
                 MESSAGE,
             ]
         ];
-    }
-
-    protected function getValidator(array $params): PropertyValidator&ValueValidator
-    {
-        return new ValidDto();
     }
 }

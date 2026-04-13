@@ -5,62 +5,44 @@ declare(strict_types=1);
 namespace Exterrestris\DtoFramework\Tests\Validation\Rules;
 
 use Exterrestris\DtoFramework\Dto\DtoInterface;
-use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockDto;
+use Exterrestris\DtoFramework\Validation\Exceptions\ConfigurationException;
+use Exterrestris\DtoFramework\Validation\Exceptions\PreferenceValidatorException;
 use Exterrestris\DtoFramework\Validation\Exceptions\PropertyValidatorException;
 use Exterrestris\DtoFramework\Validation\PropertyPreferenceValidator;
-use Exterrestris\DtoFramework\Validation\PropertyValidator;
 use Exterrestris\DtoFramework\Validation\ValuePreferenceValidator;
-use Exterrestris\DtoFramework\Validation\ValueValidator;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\TestCase;
 use ReflectionObject;
-use ReflectionProperty;
 use Throwable;
 
 /**
- * @phpstan-import-type valuePassesTestCase from ValueValidatorTestCase
- * @phpstan-import-type valueFailsTestCase from ValueValidatorTestCase
- * @phpstan-type propertyPassesTestCase array{array, ReflectionProperty, DtoInterface}
- * @phpstan-type propertyFailsTestCase array{array, ReflectionProperty, DtoInterface, ?string}
+ * @extends ValueValidatorTestCase<ValuePreferenceValidator&PropertyPreferenceValidator>
+ * @phpstan-import-type propertyPassesTestCase from PropertyValueValidatorTestCaseTrait
+ * @phpstan-import-type propertyFailsTestCase from PropertyValueValidatorTestCaseTrait
+ * @phpstan-import-type propertyInvalidRuntimeConfigTestCase from PropertyValueValidatorTestCaseTrait
  */
 abstract class PropertyPreferenceValidatorTestCase extends ValuePreferenceValidatorTestCase
 {
+    use PropertyValueValidatorTestCaseTrait;
+
     /**
      * @return propertyPassesTestCase[]
      */
     public static function propertyPassesValidationProvider(): array
     {
-        return array_map(
-        /**
-         * @param valuePassesTestCase $testCaseParams
-         * @return propertyPassesTestCase
-         */
-            static function (array $testCaseParams): array {
-                $dto = new class($testCaseParams[1]) implements DtoInterface {
-                    public function __construct(
-                        protected readonly mixed $testProperty
-                    ) {
-                    }
-                };
-
-                return array(
-                    $testCaseParams[0],
-                    (new ReflectionObject($dto))->getProperty('testProperty'),
-                    $dto,
-                );
-            },
-            static::valuePassesValidationProvider()
-        );
+        return static::createPropertyPassesFromValuePasses(static::valuePassesValidationProvider());
     }
 
     #[DataProvider('propertyPassesValidationProvider')]
-    public function testValidatePropertyPasses(array $validatorParams, ReflectionProperty $property, DtoInterface $dto): void
-    {
+    public function testValidatePropertyPasses(
+        array $validatorParams,
+        DtoInterface $dto,
+        string $property,
+    ): void {
         $this->expectNotToPerformAssertions();
 
         $validator = $this->getValidator($validatorParams);
 
-        $validator->validateProperty($property, $dto);
+        $validator->validateProperty((new ReflectionObject($dto))->getProperty($property), $dto);
     }
 
     /**
@@ -68,90 +50,58 @@ abstract class PropertyPreferenceValidatorTestCase extends ValuePreferenceValida
      */
     public static function propertyFailsValidationProvider(): array
     {
-        return array_map(
-        /**
-         * @param valueFailsTestCase $testCaseParams
-         * @return propertyFailsTestCase
-         */
-            static function (array $testCaseParams): array {
-                $dto = new class($testCaseParams[1]) implements DtoInterface {
-                    public function __construct(
-                        protected readonly mixed $testProperty
-                    ) {
-                    }
-                };
-
-                return array(
-                    $testCaseParams[0],
-                    (new ReflectionObject($dto))->getProperty('testProperty'),
-                    $dto,
-                    $testCaseParams[2] ?? null,
-                );
-            },
-            static::valueFailsValidationProvider()
-        );
+        return static::createPropertyFailsFromValueFails(static::valueFailsValidationProvider());
     }
 
     #[DataProvider('propertyFailsValidationProvider')]
     public function testValidatePropertyFails(
         array $validatorParams,
-        ReflectionProperty $property,
         DtoInterface $dto,
-        ?string $exceptionMessage = null
+        string $property,
+        ?string $exceptionMessage = null,
+        ?string $exceptionType = null,
     ): void {
         $validator = $this->getValidator($validatorParams);
 
         try {
-            $validator->validateProperty($property, $dto);
+            $validator->validateProperty((new ReflectionObject($dto))->getProperty($property), $dto);
 
             $this->fail('PropertyValidatorException not thrown');
         } catch (Throwable $exception) {
             $this->assertInstanceOf(PropertyValidatorException::class, $exception);
 
             $this->assertSame($validator, $exception->getValidator());
-            $this->assertEquals($property->getName(), $exception->getProperty());
+            $this->assertEquals($property, $exception->getProperty());
 
             if ($exceptionMessage !== null) {
                 $this->assertEquals($exceptionMessage, $exception->getMessage());
             }
+
+            if ($exceptionType !== null) {
+                $this->assertInstanceOf($exceptionType, $exception);
+            }
         }
     }
+
     /**
      * @return propertyPassesTestCase[]
      */
     public static function propertyPassesPreferenceValidationProvider(): array
     {
-        return array_map(
-        /**
-         * @param valuePassesTestCase $testCaseParams
-         * @return propertyPassesTestCase
-         */
-            static function (array $testCaseParams): array {
-                $dto = new class($testCaseParams[1]) implements DtoInterface {
-                    public function __construct(
-                        protected readonly mixed $testProperty
-                    ) {
-                    }
-                };
-
-                return array(
-                    $testCaseParams[0],
-                    (new ReflectionObject($dto))->getProperty('testProperty'),
-                    $dto,
-                );
-            },
-            static::valuePassesPreferenceValidationProvider()
-        );
+        return static::createPropertyPassesFromValuePasses(static::valuePassesPreferenceValidationProvider());
     }
 
     #[DataProvider('propertyPassesPreferenceValidationProvider')]
-    public function testValidatePropertyPreferencePasses(array $validatorParams, ReflectionProperty $property, DtoInterface $dto): void
-    {
+    public function testValidatePropertyPreferencePasses(
+        array $validatorParams,
+        DtoInterface $dto,
+        string $property,
+    ): void {
         $this->expectNotToPerformAssertions();
 
         $validator = $this->getValidator($validatorParams);
 
-        $validator->validatePropertyPreference($property, $dto);
+        $validator->validateProperty((new ReflectionObject($dto))->getProperty($property), $dto);
     }
 
     /**
@@ -159,48 +109,70 @@ abstract class PropertyPreferenceValidatorTestCase extends ValuePreferenceValida
      */
     public static function propertyFailsPreferenceValidationProvider(): array
     {
-        return array_map(
-        /**
-         * @param valueFailsTestCase $testCaseParams
-         * @return propertyFailsTestCase
-         */
-            static function (array $testCaseParams): array {
-                $dto = new class($testCaseParams[1]) implements DtoInterface {
-                    public function __construct(
-                        protected readonly mixed $testProperty
-                    ) {
-                    }
-                };
-
-                return array(
-                    $testCaseParams[0],
-                    (new ReflectionObject($dto))->getProperty('testProperty'),
-                    $dto,
-                    $testCaseParams[2] ?? null,
-                );
-            },
-            static::valueFailsPreferenceValidationProvider()
-        );
+        return static::createPropertyFailsFromValueFails(static::valueFailsPreferenceValidationProvider());
     }
 
     #[DataProvider('propertyFailsPreferenceValidationProvider')]
     public function testValidatePropertyPreferenceFails(
         array $validatorParams,
-        ReflectionProperty $property,
         DtoInterface $dto,
-        ?string $exceptionMessage = null
+        string $property,
+        ?string $exceptionMessage = null,
+        ?string $exceptionType = null,
     ): void {
         $validator = $this->getValidator($validatorParams);
 
         try {
-            $validator->validatePropertyPreference($property, $dto);
+            $validator->validatePropertyPreference((new ReflectionObject($dto))->getProperty($property), $dto);
 
             $this->fail('PropertyValidatorException not thrown');
         } catch (Throwable $exception) {
             $this->assertInstanceOf(PropertyValidatorException::class, $exception);
+            $this->assertInstanceOf(PreferenceValidatorException::class, $exception);
 
             $this->assertSame($validator, $exception->getValidator());
-            $this->assertEquals($property->getName(), $exception->getProperty());
+            $this->assertEquals($property, $exception->getProperty());
+
+            if ($exceptionMessage !== null) {
+                $this->assertEquals($exceptionMessage, $exception->getMessage());
+            }
+
+            if ($exceptionType !== null) {
+                $this->assertInstanceOf($exceptionType, $exception);
+            }
+        }
+    }
+
+    /**
+     * @return propertyInvalidRuntimeConfigTestCase[]
+     */
+    public static function propertyWithInvalidConfigProvider(): array
+    {
+        return static::createPropertyInvalidConfigFromValueInvalidConfig(static::valueWithInvalidConfigProvider());
+    }
+
+    #[DataProvider('propertyWithInvalidConfigProvider')]
+    public function testValidatePropertyWithInvalidConfig(
+        array $validatorParams,
+        DtoInterface $dto,
+        string $property,
+        ?string $exceptionMessage = null
+    ): void {
+        if (!static::$canHaveInvalidConfig) {
+            $this->expectNotToPerformAssertions();
+            return;
+        }
+
+        $validator = $this->getValidator($validatorParams);
+
+        try {
+            $validator->validateProperty((new ReflectionObject($dto))->getProperty($property), $dto);
+
+            $this->fail('PropertyValidatorConfigException not thrown');
+        } catch (Throwable $exception) {
+            $this->assertInstanceOf(PropertyValidatorException::class, $exception);
+            $this->assertInstanceOf(ConfigurationException::class, $exception);
+            $this->assertSame($validator, $exception->getValidator());
 
             if ($exceptionMessage !== null) {
                 $this->assertEquals($exceptionMessage, $exception->getMessage());
@@ -208,5 +180,41 @@ abstract class PropertyPreferenceValidatorTestCase extends ValuePreferenceValida
         }
     }
 
-    abstract protected function getValidator(array $params): ValuePreferenceValidator&PropertyPreferenceValidator;
+    /**
+     * @return propertyInvalidRuntimeConfigTestCase[]
+     */
+    public static function propertyWithInvalidPreferenceConfigProvider(): array
+    {
+        return static::createPropertyInvalidConfigFromValueInvalidConfig(static::valueWithInvalidPreferenceConfigProvider());
+    }
+
+    #[DataProvider('propertyWithInvalidPreferenceConfigProvider')]
+    public function testValidatePropertyPreferenceWithInvalidConfig(
+        array $validatorParams,
+        DtoInterface $dto,
+        string $property,
+        ?string $exceptionMessage = null
+    ): void {
+        if (!static::$canHaveInvalidConfig) {
+            $this->expectNotToPerformAssertions();
+            return;
+        }
+
+        $validator = $this->getValidator($validatorParams);
+
+        try {
+            $validator->validatePropertyPreference((new ReflectionObject($dto))->getProperty($property), $dto);
+
+            $this->fail('PropertyValidatorConfigException not thrown');
+        } catch (Throwable $exception) {
+            $this->assertInstanceOf(PropertyValidatorException::class, $exception);
+            $this->assertInstanceOf(PreferenceValidatorException::class, $exception);
+            $this->assertInstanceOf(ConfigurationException::class, $exception);
+            $this->assertSame($validator, $exception->getValidator());
+
+            if ($exceptionMessage !== null) {
+                $this->assertEquals($exceptionMessage, $exception->getMessage());
+            }
+        }
+    }
 }

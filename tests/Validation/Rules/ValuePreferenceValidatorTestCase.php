@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Exterrestris\DtoFramework\Tests\Validation\Rules;
 
+use Exterrestris\DtoFramework\Validation\Exceptions\ConfigurationException;
 use Exterrestris\DtoFramework\Validation\Exceptions\PreferenceValidatorException;
 use Exterrestris\DtoFramework\Validation\Exceptions\ValueValidatorException;
 use Exterrestris\DtoFramework\Validation\ValuePreferenceValidator;
@@ -11,9 +12,11 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use Throwable;
 
 /**
- * @phpstan-type valuePassesTestCase array{array, mixed}
- * @phpstan-type valueFailsTestCase array{array, mixed, ?string}
- * @phpstan-type strictnessTestCase array{array, mixed, mixed}
+ * @extends ValueValidatorTestCase<ValuePreferenceValidator>
+ * @phpstan-import-type valuePassesTestCase from ValueValidatorTestCase
+ * @phpstan-import-type valueFailsTestCase from ValueValidatorTestCase
+ * @phpstan-import-type strictnessTestCase from ValueValidatorTestCase
+ * @phpstan-import-type valueInvalidRuntimeConfigTestCase from ValueValidatorException
  */
 abstract class ValuePreferenceValidatorTestCase extends ValueValidatorTestCase
 {
@@ -51,6 +54,41 @@ abstract class ValuePreferenceValidatorTestCase extends ValueValidatorTestCase
             $this->fail('ValueValidatorException not thrown');
         } catch (Throwable $exception) {
             $this->assertInstanceOf(ValueValidatorException::class, $exception);
+            $this->assertInstanceOf(PreferenceValidatorException::class, $exception);
+            $this->assertSame($validator, $exception->getValidator());
+
+            if ($exceptionMessage !== null) {
+                $this->assertEquals($exceptionMessage, $exception->getMessage());
+            }
+        }
+    }
+
+    /**
+     * @return valueInvalidRuntimeConfigTestCase[]
+     */
+    public static function valueWithInvalidPreferenceConfigProvider(): array
+    {
+        return static::valueWithInvalidConfigProvider();
+    }
+
+    #[DataProvider('valueWithInvalidPreferenceConfigProvider')]
+    public function testValidateValuePreferenceWithInvalidConfig(array $validatorParams, mixed $value, ?string $exceptionMessage = null): void
+    {
+        if (!static::$canHaveInvalidConfig) {
+            $this->expectNotToPerformAssertions();
+            return;
+        }
+
+        $validator = $this->getValidator($validatorParams);
+
+        try {
+            $validator->validateValuePreference($value);
+
+            $this->fail('ValueValidatorConfigException not thrown');
+        } catch (Throwable $exception) {
+            $this->assertInstanceOf(ValueValidatorException::class, $exception);
+            $this->assertInstanceOf(PreferenceValidatorException::class, $exception);
+            $this->assertInstanceOf(ConfigurationException::class, $exception);
             $this->assertSame($validator, $exception->getValidator());
 
             if ($exceptionMessage !== null) {
@@ -76,9 +114,7 @@ abstract class ValuePreferenceValidatorTestCase extends ValueValidatorTestCase
         $validator->validateValue($valueMeetingPreference);
         $validator->validateValue($valueMeetingRequirement);
 
-        $this->expectException(PreferenceValidatorException::class);
+        $this->expectException(ValueValidatorException::class);
         $validator->validateValuePreference($valueMeetingRequirement);
     }
-
-    abstract protected function getValidator(array $params): ValuePreferenceValidator;
 }

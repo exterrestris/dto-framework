@@ -6,6 +6,7 @@ namespace Exterrestris\DtoFramework\Validation\Rules;
 
 use Attribute;
 use Exterrestris\DtoFramework\Validation\Exceptions\ValueValidationException;
+use Exterrestris\DtoFramework\Validation\Exceptions\ValueValidatorConfigException;
 use Exterrestris\DtoFramework\Validation\Validators\AbstractPropertyValueValidator;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
@@ -20,6 +21,10 @@ readonly class StringLength extends AbstractPropertyValueValidator
     {
         if ($value === null) {
             return;
+        }
+
+        if ($this->length < 0) {
+            throw new ValueValidatorConfigException($this, 'Minimum length must be greater than zero');
         }
 
         if (!is_string($value)) {

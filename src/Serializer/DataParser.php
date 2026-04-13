@@ -13,6 +13,7 @@ use Exterrestris\DtoFramework\Dto\Collection\CollectionInterface;
 use Exterrestris\DtoFramework\Dto\DtoInterface;
 use Exterrestris\DtoFramework\Dto\Factory\FactoryInterface;
 use Exterrestris\DtoFramework\Dto\Metadata\CollectionType;
+use Exterrestris\DtoFramework\Dto\Metadata\Exceptions\InvalidTypeException;
 use Exterrestris\DtoFramework\Dto\Metadata\Internal;
 use Exterrestris\DtoFramework\Serializer\Config\UseDataParserPreprocessor;
 use Exterrestris\DtoFramework\Serializer\Exceptions\DataParserException;
@@ -146,7 +147,11 @@ class DataParser implements DataParserInterface
         }
 
         if (is_a($propertyType->getName(), CollectionInterface::class, true)) {
-            $collectionType = $this->getAttribute($property, CollectionType::class)?->getDtoType();
+            try {
+                $collectionType = $this->getAttribute($property, CollectionType::class)?->getDtoType();
+            } catch (InvalidTypeException $e) {
+                throw new ValueParserException($e->getMessage(), previous: $e);
+            }
 
             if ($collectionType) {
                 return function (array|object|null $data) use ($collectionType): CollectionInterface {
