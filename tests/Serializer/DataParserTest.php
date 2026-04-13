@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Exterrestris\DtoFramework\Tests\Serializer;
 
+use DateTimeImmutable;
 use Exterrestris\DtoFramework\Dto\AbstractDto;
 use Exterrestris\DtoFramework\Dto\Collection\AbstractCollection;
 use Exterrestris\DtoFramework\Dto\Collection\Collection;
@@ -46,6 +47,7 @@ class DataParserTest extends TestCase
                     'title' => null,
                     'processed' => false,
                     'processingErrors' => null,
+                    'date' => '01/01/2026',
                     'children' => [
                         [
                             'fullName' => 'test',
@@ -70,6 +72,7 @@ class DataParserTest extends TestCase
                     'title' => null,
                     'processed' => false,
                     'processingErrors' => null,
+                    'date' => '01/01/2026',
                     'children' => [
                         (object) [
                             'fullName' => 'test',
@@ -95,6 +98,7 @@ class DataParserTest extends TestCase
                     'title' => null,
                     'processed' => false,
                     'processingErrors' => null,
+                    'date' => '01/01/2026',
                     'children' => [
                         [
                             'name' => 'skip',
@@ -128,6 +132,7 @@ class DataParserTest extends TestCase
         $this->assertInstanceOf(MockDto::class, $dto);
         $this->assertEquals('test', $dto->getName());
         $this->assertNull($dto->getTitle());
+        $this->assertEquals(new DateTimeImmutable('2026-01-01'), $dto->getDate());
         $this->assertFalse($dto->isProcessed());
         $this->assertNull($dto->getProcessingErrors());
         $this->assertInstanceOf(Collection::class, $dto->getChildren());

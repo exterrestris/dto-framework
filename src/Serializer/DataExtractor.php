@@ -15,7 +15,7 @@ use Exterrestris\DtoFramework\Serializer\Exceptions\DataExtractorException;
 use Exterrestris\DtoFramework\Serializer\Exceptions\ValueSerializationException;
 use Exterrestris\DtoFramework\Serializer\Rules\NoSerialize;
 use Exterrestris\DtoFramework\Serializer\Rules\NoSerializeIfNull;
-use Exterrestris\DtoFramework\Serializer\Traits\GetPropertyDateFormatTrait;
+use Exterrestris\DtoFramework\Utilities\GetPropertyDateFormatTrait;
 use Exterrestris\DtoFramework\Serializer\Traits\GetPropertyMappingTrait;
 use Exterrestris\DtoFramework\Utilities\GetAttributeTrait;
 use ReflectionObject;
@@ -60,7 +60,7 @@ class DataExtractor implements DataExtractorInterface
         $data = [];
 
         foreach ($reflect->getProperties() as $property) {
-            if ($this->isInternal($property) || $this->noSerialise($property, $dto) && $excludeNoSerialize) {
+            if ($this->isInternal($property) || ($this->noSerialise($property, $dto) && $excludeNoSerialize)) {
                 continue;
             }
 
@@ -92,10 +92,10 @@ class DataExtractor implements DataExtractorInterface
 
     protected function noSerialise(ReflectionProperty $property, DtoInterface $dto): bool
     {
-        return $this->getAttribute($property, NoSerialize::class) ||
+        return $this->getAttribute($property, NoSerialize::class) || (
             $this->getAttribute($property, NoSerializeIfNull::class) && (
                 !$property->isInitialized($dto) || $property->getValue($dto) === null
-            );
+            ));
     }
 
     /**
@@ -125,7 +125,7 @@ class DataExtractor implements DataExtractorInterface
         }
 
         if ($propertyValue instanceof DateTimeInterface) {
-            return $propertyValue->format($this->getDateFormat($property));
+            return $propertyValue->format($this->getDateFormatString($property));
         }
 
         if ($propertyValue instanceof BackedEnum) {

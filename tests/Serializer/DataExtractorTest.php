@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Exterrestris\DtoFramework\Tests\Serializer;
 
+use DateTimeImmutable;
 use Exterrestris\DtoFramework\Dto\AbstractDto;
 use Exterrestris\DtoFramework\Dto\Collection\AbstractCollection;
 use Exterrestris\DtoFramework\Dto\Collection\Collection;
@@ -28,53 +29,82 @@ use PHPUnit\Framework\TestCase;
 class DataExtractorTest extends TestCase
 {
 
-    public static function getDataFromEntityProvider(): array
+    public static function getDataFromDtoProvider(): array
     {
         return [
             [
-                static::createMockEntity('test', 'test', true)->setIsProcessed(true),
+                (new MockDto())
+                    ->setName('test')
+                    ->setTitle('test')
+                    ->setInternal(true)
+                    ->setIsProcessed(true)
+                    ->setDate(new DateTimeImmutable('2026-01-01')),
                 [
                     'fullName' => 'test',
                     'title' => 'test',
                     'uninitialized' => '',
+                    'date' => '01/01/2026',
                 ],
             ],
             [
-                static::createMockEntity('test', null, true)->setIsProcessed(false),
+                (new MockDto())
+                    ->setName('test')
+                    ->setTitle(null)
+                    ->setInternal(true)
+                    ->setIsProcessed(false),
                 [
                     'fullName' => 'test',
                     'uninitialized' => '',
+                    'date' => null,
                 ],
             ],
             [
-                static::createMockEntity('test', null)
+                (new MockDto())
+                    ->setName('test')
+                    ->setTitle(null)
+                    ->setInternal(false)
                     ->setIsProcessed(false)
                     ->setChildren(new Collection(MockNamedDtoInterface::class)),
                 [
                     'fullName' => 'test',
                     'uninitialized' => '',
+                    'date' => null,
                     'children' => [],
                 ],
             ],
             [
-                static::createMockEntity('test', null)
+                (new MockDto())
+                    ->setName('test')
+                    ->setTitle(null)
+                    ->setInternal(false)
                     ->setIsProcessed(false)
                     ->setChildren(new Collection(MockNamedDtoInterface::class, [
-                        static::createMockEntity('test', 'test', true)->setIsProcessed(true),
-                        static::createMockEntity('test', null)->setIsProcessed(false),
+                        (new MockDto())
+                            ->setName('test')
+                            ->setTitle('test')
+                            ->setInternal(true)
+                            ->setIsProcessed(true),
+                        (new MockDto())
+                            ->setName('test')
+                            ->setTitle(null)
+                            ->setInternal(false)
+                            ->setIsProcessed(false),
                     ])),
                 [
                     'fullName' => 'test',
                     'uninitialized' => '',
+                    'date' => null,
                     'children' => [
                         [
                             'fullName' => 'test',
                             'title' => 'test',
                             'uninitialized' => '',
+                            'date' => null,
                         ],
                         [
                             'fullName' => 'test',
                             'uninitialized' => '',
+                            'date' => null,
                         ],
                     ],
                 ],
@@ -82,8 +112,8 @@ class DataExtractorTest extends TestCase
         ];
     }
 
-    #[DataProvider('getDataFromEntityProvider')]
-    public function testGetDataFromEntity(DtoInterface $dto, array $expected)
+    #[DataProvider('getDataFromDtoProvider')]
+    public function testGetDataFromDto(DtoInterface $dto, array $expected): void
     {
         $dataExtractor = new DataExtractor();
 
@@ -93,11 +123,19 @@ class DataExtractorTest extends TestCase
         $this->assertSame($expected, $data);
     }
 
-    public function testGetDataFromCollection()
+    public function testGetDataFromCollection(): void
     {
         $collection = (new Collection(MockNamedDtoInterface::class))->add(
-            static::createMockEntity('test', 'test', true)->setIsProcessed(true),
-            static::createMockEntity('test-2', null, true)->setIsProcessed(false),
+            (new MockDto())
+                ->setName('test')
+                ->setTitle('test')
+                ->setInternal(true)
+                ->setIsProcessed(true),
+            (new MockDto())
+                ->setName('test-2')
+                ->setTitle(null)
+                ->setInternal(true)
+                ->setIsProcessed(false),
         );
 
         $dataExtractor = new DataExtractor();
@@ -110,17 +148,19 @@ class DataExtractorTest extends TestCase
                 'fullName' => 'test',
                 'title' => 'test',
                 'uninitialized' => '',
+                'date' => null,
             ],
             [
                 'fullName' => 'test-2',
                 'uninitialized' => '',
+                'date' => null,
             ],
         ], $data);
     }
 
-    public function testGetDataWithCustomExtractor()
+    public function testGetDataWithCustomExtractor(): void
     {
-        $dto = $this->createMockEntityWithDataExtractor('test', 'Test Entity');
+        $dto = (new MockCustomSerializationDto())->setName('test')->setTitle('Test Entity');
 
         $dataExtractor = new DataExtractor();
 
@@ -132,11 +172,11 @@ class DataExtractorTest extends TestCase
         ], $data);
     }
 
-    public function testGetDataFromCollectionWithCustomExtractor()
+    public function testGetDataFromCollectionWithCustomExtractor(): void
     {
         $collection = (new Collection(MockCustomSerializationDto::class))->add(
-            $this->createMockEntityWithDataExtractor('test-1', 'Test Entity 1'),
-            $this->createMockEntityWithDataExtractor('test-2', 'Test Entity 2'),
+            (new MockCustomSerializationDto())->setName('test-1')->setTitle('Test Entity 1'),
+            (new MockCustomSerializationDto())->setName('test-2')->setTitle('Test Entity 2'),
         );
 
         $dataExtractor = new DataExtractor();
@@ -148,15 +188,5 @@ class DataExtractorTest extends TestCase
             ['test-1' => 'Test Entity 1'],
             ['test-2' => 'Test Entity 2'],
         ], $data);
-    }
-
-    private static function createMockEntity(?string $name, ?string $title, bool $internal = false): MockDto
-    {
-        return (new MockDto())->setName($name)->setTitle($title)->setInternal($internal);
-    }
-
-    private function createMockEntityWithDataExtractor(?string $name, ?string $title): MockCustomSerializationDto
-    {
-        return (new MockCustomSerializationDto())->setName($name)->setTitle($title);
     }
 }

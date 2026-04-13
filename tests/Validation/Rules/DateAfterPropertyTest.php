@@ -31,13 +31,13 @@ class DateAfterPropertyTest extends DependentPropertyValidatorTestCase
             ],
             [
                 [NullDependentValue::PassIfNull],
-                new DateTimeImmutable('2024-10-10'),
+                new DateTimeImmutable('2024-10-10 00:00:00'),
                 null,
             ],
             [
                 [NullDependentValue::PassIfNull],
-                new DateTimeImmutable('2024-10-10'),
-                new DateTimeImmutable('2024-10-11'),
+                new DateTimeImmutable('2024-10-10 00:00:00'),
+                new DateTimeImmutable('2024-10-11 00:00:00'),
             ],
             [
                 [NullDependentValue::PassIfValueIsNull],
@@ -46,23 +46,23 @@ class DateAfterPropertyTest extends DependentPropertyValidatorTestCase
             ],
             [
                 [NullDependentValue::PassIfValueIsNull],
-                new DateTimeImmutable('2024-10-10'),
+                new DateTimeImmutable('2024-10-10 00:00:00'),
                 null,
             ],
             [
                 [NullDependentValue::PassIfValueIsNull],
-                new DateTimeImmutable('2024-10-10'),
-                new DateTimeImmutable('2024-10-11'),
+                new DateTimeImmutable('2024-10-10 00:00:00'),
+                new DateTimeImmutable('2024-10-11 00:00:00'),
             ],
             [
                 [NullDependentValue::FailIfNull],
-                new DateTimeImmutable('2024-10-10'),
+                new DateTimeImmutable('2024-10-10 00:00:00'),
                 null,
             ],
             [
                 [NullDependentValue::FailIfNull],
-                new DateTimeImmutable('2024-10-10'),
-                new DateTimeImmutable('2024-10-11'),
+                new DateTimeImmutable('2024-10-10 00:00:00'),
+                new DateTimeImmutable('2024-10-11 00:00:00'),
             ],
         ];
     }
@@ -73,37 +73,37 @@ class DateAfterPropertyTest extends DependentPropertyValidatorTestCase
             [
                 [NullDependentValue::PassIfNull],
                 '2024-10-10',
-                new DateTimeImmutable('2024-10-11'),
+                new DateTimeImmutable('2024-10-11 00:00:00'),
             ],
             [
                 [NullDependentValue::PassIfNull],
-                new DateTimeImmutable('2024-10-10'),
-                new DateTimeImmutable('2024-10-10'),
+                new DateTimeImmutable('2024-10-10 00:00:00'),
+                new DateTimeImmutable('2024-10-10 00:00:00'),
             ],
             [
                 [NullDependentValue::PassIfNull],
-                new DateTimeImmutable('2024-10-10'),
-                new DateTimeImmutable('2024-10-09'),
+                new DateTimeImmutable('2024-10-10 00:00:00'),
+                new DateTimeImmutable('2024-10-09 00:00:00'),
             ],
             [
                 [NullDependentValue::PassIfValueIsNull],
                 null,
-                new DateTimeImmutable('2024-10-11'),
+                new DateTimeImmutable('2024-10-11 00:00:00'),
             ],
             [
                 [NullDependentValue::PassIfValueIsNull],
                 '2024-10-10',
-                new DateTimeImmutable('2024-10-11'),
+                new DateTimeImmutable('2024-10-11 00:00:00'),
             ],
             [
                 [NullDependentValue::PassIfValueIsNull],
-                new DateTimeImmutable('2024-10-10'),
-                new DateTimeImmutable('2024-10-10'),
+                new DateTimeImmutable('2024-10-10 00:00:00'),
+                new DateTimeImmutable('2024-10-10 00:00:00'),
             ],
             [
                 [NullDependentValue::PassIfValueIsNull],
-                new DateTimeImmutable('2024-10-10'),
-                new DateTimeImmutable('2024-10-09'),
+                new DateTimeImmutable('2024-10-10 00:00:00'),
+                new DateTimeImmutable('2024-10-09 00:00:00'),
             ],
             [
                 [NullDependentValue::FailIfNull],
@@ -113,22 +113,22 @@ class DateAfterPropertyTest extends DependentPropertyValidatorTestCase
             [
                 [NullDependentValue::FailIfNull],
                 null,
-                new DateTimeImmutable('2024-10-11'),
+                new DateTimeImmutable('2024-10-11 00:00:00'),
             ],
             [
                 [NullDependentValue::FailIfNull],
                 '2024-10-10',
-                new DateTimeImmutable('2024-10-11'),
+                new DateTimeImmutable('2024-10-11 00:00:00'),
             ],
             [
                 [NullDependentValue::FailIfNull],
-                new DateTimeImmutable('2024-10-10'),
-                new DateTimeImmutable('2024-10-10'),
+                new DateTimeImmutable('2024-10-10 00:00:00'),
+                new DateTimeImmutable('2024-10-10 00:00:00'),
             ],
             [
                 [NullDependentValue::FailIfNull],
-                new DateTimeImmutable('2024-10-10'),
-                new DateTimeImmutable('2024-10-09'),
+                new DateTimeImmutable('2024-10-10 00:00:00'),
+                new DateTimeImmutable('2024-10-09 00:00:00'),
             ],
         ];
     }
