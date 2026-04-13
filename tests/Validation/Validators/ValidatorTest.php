@@ -10,20 +10,19 @@ use Exterrestris\DtoFramework\Dto\DtoInterface;
 use Exterrestris\DtoFramework\Dto\Metadata\CollectionType;
 use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockDto;
 use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockDtoInterface;
-use Exterrestris\DtoFramework\Validation\Exceptions\InvalidDtoPropertyException;
-use Exterrestris\DtoFramework\Validation\Validators\AbstractPropertyValueValidator;
+use Exterrestris\DtoFramework\Validation\Exceptions\Internal\ValueException;
 use Exterrestris\DtoFramework\Validation\Exceptions\InvalidCollectionDtoException;
 use Exterrestris\DtoFramework\Validation\Exceptions\InvalidCollectionException;
 use Exterrestris\DtoFramework\Validation\Exceptions\InvalidDtoException;
-use Exterrestris\DtoFramework\Validation\Exceptions\PropertyValidationException;
+use Exterrestris\DtoFramework\Validation\Exceptions\InvalidDtoPropertyException;
 use Exterrestris\DtoFramework\Validation\Exceptions\MissingRequiredDtoPropertyException;
-use Exterrestris\DtoFramework\Validation\Exceptions\Internal\ValueException;
+use Exterrestris\DtoFramework\Validation\Exceptions\PropertyValidationException;
 use Exterrestris\DtoFramework\Validation\Exceptions\ValueValidationException;
 use Exterrestris\DtoFramework\Validation\PropertyValidator;
 use Exterrestris\DtoFramework\Validation\Rules\MatchRegex;
 use Exterrestris\DtoFramework\Validation\Rules\StringMaxLength;
 use Exterrestris\DtoFramework\Validation\Rules\StringMaxLengthPreference;
-use Exterrestris\DtoFramework\Validation\Rules\StringMinLength;
+use Exterrestris\DtoFramework\Validation\Validators\AbstractPropertyValueValidator;
 use Exterrestris\DtoFramework\Validation\Validators\Validator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -52,33 +51,62 @@ class ValidatorTest extends TestCase
     {
         return [
             [
-                (new MockDto())->setName('very very long name')->setUninitialized('init'),
+                (new MockDto())
+                    ->setName('very very long name')
+                    ->setUninitialized('init')
+                    ->setDate(new \DateTimeImmutable('2026-01-01')),
                 false,
             ],
             [
-                (new MockDto())->setName('long name')->setUninitialized('init'),
+                (new MockDto())
+                    ->setName('long name')
+                    ->setUninitialized('init'),
                 true,
             ],
             [
                 (new Collection(MockDto::class))
-                    ->add((new MockDto())->setName('very very long name')->setUninitialized('init')),
+                    ->add(
+                        (new MockDto())
+                            ->setName('very very long name')
+                            ->setUninitialized('init')
+                    ),
                 false,
             ],
             [
                 (new Collection(MockDto::class))
-                    ->add((new MockDto())->setName('long name')->setUninitialized('init')),
+                    ->add(
+                        (new MockDto())
+                            ->setName('long name')
+                            ->setUninitialized('init')
+                    ),
                 true,
             ],
             [
                 (new Collection(MockDto::class))
-                    ->add((new MockDto())->setName('very very long name')->setUninitialized('init'))
-                    ->add((new MockDto())->setName('another very long name')->setUninitialized('init')),
+                    ->add(
+                        (new MockDto())
+                            ->setName('very very long name')
+                            ->setUninitialized('init')
+                    )
+                    ->add(
+                        (new MockDto())
+                            ->setName('another very long name')
+                            ->setUninitialized('init')
+                    ),
                 false,
             ],
             [
                 (new Collection(MockDto::class))
-                    ->add((new MockDto())->setName('long name')->setUninitialized('init'))
-                    ->add((new MockDto())->setName('another name')->setUninitialized('init')),
+                    ->add(
+                        (new MockDto())
+                            ->setName('long name')
+                            ->setUninitialized('init')
+                    )
+                    ->add(
+                        (new MockDto())
+                            ->setName('another name')
+                            ->setUninitialized('init')
+                    ),
                 true,
             ],
         ];
@@ -96,7 +124,9 @@ class ValidatorTest extends TestCase
     {
         return [
             [
-                (new MockDto())->setName('very very very very long name')->setUninitialized('init'),
+                (new MockDto())
+                    ->setName('very very very very long name')
+                    ->setUninitialized('init'),
                 false,
                 [
                     'name' => [
@@ -106,7 +136,9 @@ class ValidatorTest extends TestCase
                 [],
             ],
             [
-                (new MockDto())->setName('very + very long name')->setUninitialized('init'),
+                (new MockDto())
+                    ->setName('very + very long name')
+                    ->setUninitialized('init'),
                 true,
                 [
                     'name' => [
@@ -117,7 +149,9 @@ class ValidatorTest extends TestCase
                 [],
             ],
             [
-                (new MockDto())->setName('very very long name')->setTitle('0'),
+                (new MockDto())
+                    ->setName('very very long name')
+                    ->setTitle('0'),
                 true,
                 [
                     'name' => [

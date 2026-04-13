@@ -6,7 +6,6 @@ namespace Exterrestris\DtoFramework\Tests\Mocks\Dto;
 
 use Exterrestris\DtoFramework\Dto\Collection\CollectionInterface;
 use Exterrestris\DtoFramework\Dto\ProcessableDtoInterface;
-use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockDto;
 
 interface MockDtoInterface extends MockNamedDtoInterface, ProcessableDtoInterface
 {
