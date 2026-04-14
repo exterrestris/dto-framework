@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Exterrestris\DtoFramework\Comparators;
 
 use Exterrestris\DtoFramework\Dto\DtoInterface;
-use Exterrestris\DtoFramework\Traits\IdenticalComparisonTrait;
+use Exterrestris\DtoFramework\Utilities\IdenticalComparisonTrait;
 
 /**
  * Compare DTOs using their instances (i.e. match if (object) === (object))

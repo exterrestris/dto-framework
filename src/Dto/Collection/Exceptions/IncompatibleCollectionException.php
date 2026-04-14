@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Exterrestris\DtoFramework\Dto\Collection\Exceptions;
 
 use Exterrestris\DtoFramework\Dto\Collection\CollectionInterface;
-use Exterrestris\DtoFramework\Traits\GetShortDtoTypeTrait;
+use Exterrestris\DtoFramework\Utilities\GetShortDtoTypeTrait;
 use Throwable;
 
 /**

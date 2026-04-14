@@ -7,7 +7,7 @@ namespace Exterrestris\DtoFramework\Validation\Exceptions;
 use DomainException;
 use Exterrestris\DtoFramework\Dto\DtoInterface;
 use Exterrestris\DtoFramework\Dto\Exceptions\DtoException;
-use Exterrestris\DtoFramework\Traits\GetShortDtoTypeTrait;
+use Exterrestris\DtoFramework\Utilities\GetShortDtoTypeTrait;
 use Throwable;
 
 class InvalidDtoException extends DomainException implements ItemValidatorException, DtoException

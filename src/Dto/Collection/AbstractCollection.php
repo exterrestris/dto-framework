@@ -12,8 +12,8 @@ use Exterrestris\DtoFramework\Dto\Collection\Exceptions\InvalidIndexException;
 use Exterrestris\DtoFramework\Dto\Collection\Exceptions\InvalidTypeException;
 use Exterrestris\DtoFramework\Dto\Collection\Exceptions\NotInCollectionException;
 use Exterrestris\DtoFramework\Dto\DtoInterface;
-use Exterrestris\DtoFramework\Traits\IdenticalComparisonTrait;
-use Exterrestris\DtoFramework\Traits\CheckAcceptableTypeTrait;
+use Exterrestris\DtoFramework\Utilities\IdenticalComparisonTrait;
+use Exterrestris\DtoFramework\Utilities\CheckAcceptableTypeTrait;
 use IteratorAggregate;
 use Traversable;
 

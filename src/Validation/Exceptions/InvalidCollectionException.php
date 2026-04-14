@@ -7,7 +7,7 @@ namespace Exterrestris\DtoFramework\Validation\Exceptions;
 use DomainException;
 use Exterrestris\DtoFramework\Dto\Collection\CollectionInterface;
 use Exterrestris\DtoFramework\Dto\Collection\Exceptions\CollectionException;
-use Exterrestris\DtoFramework\Traits\GetShortDtoTypeTrait;
+use Exterrestris\DtoFramework\Utilities\GetShortDtoTypeTrait;
 use Throwable;
 
 class InvalidCollectionException extends DomainException implements ItemValidatorException, CollectionException

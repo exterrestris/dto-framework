@@ -12,7 +12,7 @@ use Exterrestris\DtoFramework\Dto\Exceptions\InvalidDataException;
 use Exterrestris\DtoFramework\Dto\Exceptions\NoSuchPropertyException;
 use Exterrestris\DtoFramework\Dto\Metadata\BaseDto;
 use Exterrestris\DtoFramework\Dto\Metadata\Internal;
-use Exterrestris\DtoFramework\Traits\GetAttributeTrait;
+use Exterrestris\DtoFramework\Utilities\GetAttributeTrait;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionProperty;

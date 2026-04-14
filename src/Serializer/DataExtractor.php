@@ -17,7 +17,7 @@ use Exterrestris\DtoFramework\Serializer\Rules\NoSerialize;
 use Exterrestris\DtoFramework\Serializer\Rules\NoSerializeIfNull;
 use Exterrestris\DtoFramework\Serializer\Traits\GetPropertyDateFormatTrait;
 use Exterrestris\DtoFramework\Serializer\Traits\GetPropertyMappingTrait;
-use Exterrestris\DtoFramework\Traits\GetAttributeTrait;
+use Exterrestris\DtoFramework\Utilities\GetAttributeTrait;
 use ReflectionObject;
 use ReflectionProperty;
 use stdClass;

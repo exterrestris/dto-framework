@@ -10,7 +10,7 @@ use Exterrestris\DtoFramework\Dto\DtoInterface;
 use Exterrestris\DtoFramework\Exceptions\Internal\TypeException as InternalTypeException;
 use Exterrestris\DtoFramework\Serializer\DataExtractorInterface;
 use Exterrestris\DtoFramework\Serializer\Exceptions\DataExtractorException;
-use Exterrestris\DtoFramework\Traits\CheckAcceptableTypeTrait;
+use Exterrestris\DtoFramework\Utilities\CheckAcceptableTypeTrait;
 use ReflectionClass;
 use ReflectionException;
 

@@ -28,7 +28,7 @@ use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockBasicDto;
 use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockDto;
 use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockDtoInterface;
 use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockCustomSerializationDto;
-use Exterrestris\DtoFramework\Traits\GetShortDtoTypeTrait;
+use Exterrestris\DtoFramework\Utilities\GetShortDtoTypeTrait;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\UsesClass;

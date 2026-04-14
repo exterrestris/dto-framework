@@ -6,7 +6,7 @@ namespace Exterrestris\DtoFramework\Serializer\Traits;
 
 use Exterrestris\DtoFramework\Dto\DtoInterface as Serializable;
 use Exterrestris\DtoFramework\Serializer\Rules\DateFormat;
-use Exterrestris\DtoFramework\Traits\GetAttributeTrait;
+use Exterrestris\DtoFramework\Utilities\GetAttributeTrait;
 use ReflectionProperty;
 
 trait GetPropertyDateFormatTrait

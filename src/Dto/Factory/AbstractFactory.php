@@ -12,7 +12,7 @@ use Exterrestris\DtoFramework\Dto\Factory\Exceptions\UnknownTypeException as Unk
 use Exterrestris\DtoFramework\Dto\Metadata\Internal;
 use Exterrestris\DtoFramework\Exceptions\Internal\InvalidTypeException as InvalidTypeInternalException;
 use Exterrestris\DtoFramework\Exceptions\Internal\UnknownTypeException as UnknownTypeInternalException;
-use Exterrestris\DtoFramework\Traits\CheckAcceptableTypeTrait;
+use Exterrestris\DtoFramework\Utilities\CheckAcceptableTypeTrait;
 use ReflectionClass;
 use ReflectionObject;
 use ReflectionProperty;

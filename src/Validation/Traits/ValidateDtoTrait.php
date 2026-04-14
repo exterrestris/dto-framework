@@ -6,7 +6,7 @@ namespace Exterrestris\DtoFramework\Validation\Traits;
 
 use Exterrestris\DtoFramework\Dto\DtoInterface;
 use Exterrestris\DtoFramework\Dto\Metadata\Internal;
-use Exterrestris\DtoFramework\Traits\GetAttributeTrait;
+use Exterrestris\DtoFramework\Utilities\GetAttributeTrait;
 use Exterrestris\DtoFramework\Validation\CompositeValueValidator;
 use Exterrestris\DtoFramework\Validation\Exceptions\InvalidDtoException;
 use Exterrestris\DtoFramework\Validation\Exceptions\InvalidDtoPropertyException;

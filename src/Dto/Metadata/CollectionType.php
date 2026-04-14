@@ -9,7 +9,7 @@ use Exterrestris\DtoFramework\Dto\Collection\CollectionInterface;
 use Exterrestris\DtoFramework\Dto\DtoInterface;
 use Exterrestris\DtoFramework\Dto\Metadata\Exceptions\InvalidTypeException;
 use Exterrestris\DtoFramework\Exceptions\Internal\TypeException;
-use Exterrestris\DtoFramework\Traits\CheckAcceptableTypeTrait;
+use Exterrestris\DtoFramework\Utilities\CheckAcceptableTypeTrait;
 use Exterrestris\DtoFramework\Validation\Exceptions\Internal\ValueException;
 use Exterrestris\DtoFramework\Validation\Exceptions\ValueValidationException;
 use Exterrestris\DtoFramework\Validation\Exceptions\ValueValidatorConfigException;

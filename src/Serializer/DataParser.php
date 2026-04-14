@@ -27,7 +27,7 @@ use Exterrestris\DtoFramework\Serializer\Exceptions\ValueParserException;
 use Exterrestris\DtoFramework\Serializer\Rules\NullIfEmpty;
 use Exterrestris\DtoFramework\Serializer\Traits\GetPropertyDateFormatTrait;
 use Exterrestris\DtoFramework\Serializer\Traits\GetPropertyMappingTrait;
-use Exterrestris\DtoFramework\Traits\GetAttributeTrait;
+use Exterrestris\DtoFramework\Utilities\GetAttributeTrait;
 use Psr\Log\LoggerInterface;
 use ReflectionObject;
 use ReflectionProperty;
