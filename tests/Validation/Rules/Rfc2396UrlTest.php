@@ -6,9 +6,7 @@ namespace Exterrestris\DtoFramework\Tests\Validation\Rules;
 
 use Exterrestris\DtoFramework\Validation\Exceptions\PropertyValidationException;
 use Exterrestris\DtoFramework\Validation\Exceptions\ValueValidationException;
-use Exterrestris\DtoFramework\Validation\PropertyValidator;
 use Exterrestris\DtoFramework\Validation\Rules\Rfc2396Url;
-use Exterrestris\DtoFramework\Validation\ValueValidator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\UsesClass;
@@ -58,10 +56,5 @@ class Rfc2396UrlTest extends PropertyValueValidatorTestCase
                 'https://www.brandalley.co.uk',
             ],
         ];
-    }
-
-    protected function getValidator(array $params): ValueValidator&PropertyValidator
-    {
-        return new Rfc2396Url();
     }
 }

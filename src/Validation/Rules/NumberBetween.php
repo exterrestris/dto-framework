@@ -7,14 +7,21 @@ namespace Exterrestris\DtoFramework\Validation\Rules;
 use Attribute;
 use Exterrestris\DtoFramework\Validation\Exceptions\ValueValidationException;
 use Exterrestris\DtoFramework\Validation\Validators\AbstractPropertyValueValidator;
+use Exterrestris\DtoFramework\Validation\Validators\Metadata\ConfigCannotBeInvalid;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
+#[ConfigCannotBeInvalid]
 readonly class NumberBetween extends AbstractPropertyValueValidator
 {
+    private int|float $minValue;
+    private int|float $maxValue;
+
     public function __construct(
-        private int|float $minValue,
-        private int|float $maxValue,
+        int|float $minValue,
+        int|float $maxValue,
     ) {
+        $this->minValue = min($minValue, $maxValue);
+        $this->maxValue = max($minValue, $maxValue);
     }
 
     public function validateValue(mixed $value): void

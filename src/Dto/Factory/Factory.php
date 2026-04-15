@@ -16,7 +16,6 @@ use ReflectionObject;
 
 class Factory extends AbstractFactory
 {
-
     /**
      * @param class-string<DtoInterface> $interface
      * @return class-string<DtoInterface>[]

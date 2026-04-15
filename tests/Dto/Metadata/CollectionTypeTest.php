@@ -2,21 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Exterrestris\DtoFramework\Tests\Dto\Attributes;
+namespace Exterrestris\DtoFramework\Tests\Dto\Metadata;
 
-use Exterrestris\DtoFramework\Dto\Attributes\CollectionType;
 use Exterrestris\DtoFramework\Dto\Collection\Collection;
+use Exterrestris\DtoFramework\Dto\Metadata\CollectionType;
 use Exterrestris\DtoFramework\Dto\ProcessableDtoInterface;
 use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockBasicDto;
+use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockCustomSerializationDto;
 use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockDto;
 use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockDtoInterface;
-use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockCustomSerializationDto;
 use Exterrestris\DtoFramework\Tests\Validation\Rules\PropertyValueValidatorTestCase;
 use Exterrestris\DtoFramework\Validation\Exceptions\Internal\ValueException;
 use Exterrestris\DtoFramework\Validation\Exceptions\PropertyValidationException;
 use Exterrestris\DtoFramework\Validation\Exceptions\ValueValidationException;
-use Exterrestris\DtoFramework\Validation\PropertyValidator;
-use Exterrestris\DtoFramework\Validation\ValueValidator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\UsesClass;
@@ -61,22 +59,6 @@ class CollectionTypeTest extends PropertyValueValidatorTestCase
                 [MockDtoInterface::class],
                 new Collection(MockDto::class, [new MockDto()]),
             ],
-            [
-                [ProcessableDtoInterface::class],
-                new Collection(MockDto::class),
-            ],
-            [
-                [ProcessableDtoInterface::class],
-                new Collection(MockDto::class, [new MockDto()]),
-            ],
-            [
-                [ProcessableDtoInterface::class],
-                new Collection(MockDtoInterface::class),
-            ],
-            [
-                [ProcessableDtoInterface::class],
-                new Collection(MockDtoInterface::class, [new MockDto()]),
-            ],
         ];
     }
 
@@ -102,8 +84,13 @@ class CollectionTypeTest extends PropertyValueValidatorTestCase
         ];
     }
 
-    protected function getValidator(array $params): ValueValidator&PropertyValidator
+    public static function valueWithInvalidConfigProvider(): array
     {
-        return new CollectionType(...$params);
+        return [
+            [
+                [ProcessableDtoInterface::class],
+                new Collection(MockDto::class),
+            ]
+        ];
     }
 }

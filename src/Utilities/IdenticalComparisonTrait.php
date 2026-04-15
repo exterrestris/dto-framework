@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Exterrestris\DtoFramework\Traits;
+namespace Exterrestris\DtoFramework\Utilities;
 
 use Exterrestris\DtoFramework\Dto\DtoInterface;
 

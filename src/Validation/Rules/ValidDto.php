@@ -8,10 +8,12 @@ use Attribute;
 use Exterrestris\DtoFramework\Dto\DtoInterface;
 use Exterrestris\DtoFramework\Validation\Exceptions\InvalidDtoException;
 use Exterrestris\DtoFramework\Validation\Exceptions\ValueValidationException;
+use Exterrestris\DtoFramework\Validation\Validators\Metadata\ConfigCannotBeInvalid;
 use Exterrestris\DtoFramework\Validation\Traits\ValidateDtoTrait;
 use Exterrestris\DtoFramework\Validation\Validators\AbstractPropertyValueValidator;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
+#[ConfigCannotBeInvalid]
 readonly class ValidDto extends AbstractPropertyValueValidator
 {
     use ValidateDtoTrait;

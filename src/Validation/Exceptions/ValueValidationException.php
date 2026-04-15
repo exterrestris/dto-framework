@@ -44,4 +44,17 @@ class ValueValidationException extends DomainException implements ValueValidator
     {
         return new static($validator, $exception->getMessage(), $exception->getPrevious());
     }
+
+    /**
+     * @param ValueValidatorException $exception
+     * @param ValueValidator $validator
+     * @return static
+     * @see ValuePreferenceValidator
+     */
+    public static function fromValueValidationException(
+        ValueValidatorException $exception,
+        ValueValidator $validator
+    ): self {
+        return new static($validator, $exception->getMessage(), $exception->getPrevious());
+    }
 }

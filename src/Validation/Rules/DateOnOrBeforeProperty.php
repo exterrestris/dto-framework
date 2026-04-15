@@ -27,7 +27,7 @@ readonly class DateOnOrBeforeProperty extends AbstractDependentPropertyPropertyV
         }
 
         if ($value > $dependentValue) {
-            throw new ValueException(sprintf('Value must be before %s', $this->property));
+            throw new ValueException(sprintf('Value must be before or equal to %s', $this->property));
         }
     }
 }

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Exterrestris\DtoFramework\Tests\Mocks\Validator\Rules;
 
 use Attribute;
-use Exterrestris\DtoFramework\Validation\Validators\AbstractCompositePropertyValueValidator;
 use Exterrestris\DtoFramework\Validation\Rules\MatchRegex;
 use Exterrestris\DtoFramework\Validation\Rules\StringMaxLength;
+use Exterrestris\DtoFramework\Validation\Validators\AbstractCompositePropertyValueValidator;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
 readonly class Title extends AbstractCompositePropertyValueValidator

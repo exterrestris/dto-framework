@@ -6,6 +6,7 @@ namespace Exterrestris\DtoFramework\Validation\Rules;
 
 use Attribute;
 use Exterrestris\DtoFramework\Validation\Exceptions\ValueValidationException;
+use Exterrestris\DtoFramework\Validation\Exceptions\ValueValidatorConfigException;
 use Exterrestris\DtoFramework\Validation\Rules\Traits\CompileArrayValuesTrait;
 use Exterrestris\DtoFramework\Validation\Validators\AbstractPropertyValueValidator;
 
@@ -15,7 +16,7 @@ readonly class IsNotInList extends AbstractPropertyValueValidator
     use CompileArrayValuesTrait;
 
     public function __construct(
-        private array $allowedValues,
+        private array $disallowedValues,
     ) {
     }
 
@@ -25,10 +26,14 @@ readonly class IsNotInList extends AbstractPropertyValueValidator
             return;
         }
 
-        if (in_array($value, $this->allowedValues)) {
+        if (!$this->disallowedValues) {
+            throw new ValueValidatorConfigException($this, 'No disallowed values provided');
+        }
+
+        if (in_array($value, $this->disallowedValues)) {
             throw new ValueValidationException(
                 $this,
-                sprintf('Value must not be %s', $this->compileValues($this->allowedValues)),
+                sprintf('Value must not be %s', $this->compileValues($this->disallowedValues)),
             );
         }
     }

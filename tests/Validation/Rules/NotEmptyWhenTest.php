@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Exterrestris\DtoFramework\Tests\Validation\Rules;
 
+use Exterrestris\DtoFramework\Validation\Exceptions\Internal\ValueException;
 use Exterrestris\DtoFramework\Validation\Exceptions\PropertyValidationException;
-use Exterrestris\DtoFramework\Validation\Exceptions\ValueException;
 use Exterrestris\DtoFramework\Validation\PropertyValidator;
 use Exterrestris\DtoFramework\Validation\Rules\Configuration\NullDependentValueBehaviour as NullDependentValue;
 use Exterrestris\DtoFramework\Validation\Rules\NotEmptyWhen;

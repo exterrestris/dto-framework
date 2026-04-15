@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Exterrestris\DtoFramework\Tests\Serializer;
 
 use Exterrestris\DtoFramework\Dto\AbstractDto;
-use Exterrestris\DtoFramework\Dto\Attributes\CollectionType;
 use Exterrestris\DtoFramework\Dto\Collection\AbstractCollection;
 use Exterrestris\DtoFramework\Dto\Collection\Collection;
 use Exterrestris\DtoFramework\Dto\Factory\AbstractFactory;
 use Exterrestris\DtoFramework\Dto\Factory\Factory;
+use Exterrestris\DtoFramework\Dto\Metadata\CollectionType;
 use Exterrestris\DtoFramework\Serializer\Config\UseDataParserPreprocessor;
 use Exterrestris\DtoFramework\Serializer\DataParser;
 use Exterrestris\DtoFramework\Serializer\Exceptions\AbstractDataParserException;

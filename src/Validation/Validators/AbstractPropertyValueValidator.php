@@ -6,6 +6,8 @@ namespace Exterrestris\DtoFramework\Validation\Validators;
 
 use Exterrestris\DtoFramework\Dto\DtoInterface;
 use Exterrestris\DtoFramework\Validation\Exceptions\PropertyValidationException;
+use Exterrestris\DtoFramework\Validation\Exceptions\PropertyValidatorConfigException;
+use Exterrestris\DtoFramework\Validation\Exceptions\ValueValidatorConfigException;
 use Exterrestris\DtoFramework\Validation\Exceptions\ValueValidatorException;
 use Exterrestris\DtoFramework\Validation\PropertyValidator;
 use Exterrestris\DtoFramework\Validation\ValueValidator;
@@ -17,6 +19,8 @@ abstract readonly class AbstractPropertyValueValidator implements PropertyValida
     {
         try {
             $this->validateValue($dtoProperty->getValue($forDto));
+        } catch (ValueValidatorConfigException $e) {
+            throw PropertyValidatorConfigException::fromValueValidatorException($e, $this, $dtoProperty->getName());
         } catch (ValueValidatorException $e) {
             throw PropertyValidationException::fromValueValidatorException($e, $this, $dtoProperty->getName());
         }

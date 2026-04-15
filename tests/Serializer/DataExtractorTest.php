@@ -8,12 +8,12 @@ use Exterrestris\DtoFramework\Dto\AbstractDto;
 use Exterrestris\DtoFramework\Dto\Collection\AbstractCollection;
 use Exterrestris\DtoFramework\Dto\Collection\Collection;
 use Exterrestris\DtoFramework\Dto\DtoInterface;
-use Exterrestris\DtoFramework\Dto\ProcessableDtoInterface;
 use Exterrestris\DtoFramework\Serializer\Config\OverrideDataExtractor;
 use Exterrestris\DtoFramework\Serializer\DataExtractor;
 use Exterrestris\DtoFramework\Serializer\Rules\Map;
-use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockDto;
 use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockCustomSerializationDto;
+use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockDto;
+use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockNamedDtoInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\UsesClass;
@@ -49,7 +49,7 @@ class DataExtractorTest extends TestCase
             [
                 static::createMockEntity('test', null)
                     ->setIsProcessed(false)
-                    ->setChildren(new Collection(ProcessableDtoInterface::class)),
+                    ->setChildren(new Collection(MockNamedDtoInterface::class)),
                 [
                     'fullName' => 'test',
                     'uninitialized' => '',
@@ -59,7 +59,7 @@ class DataExtractorTest extends TestCase
             [
                 static::createMockEntity('test', null)
                     ->setIsProcessed(false)
-                    ->setChildren(new Collection(ProcessableDtoInterface::class, [
+                    ->setChildren(new Collection(MockNamedDtoInterface::class, [
                         static::createMockEntity('test', 'test', true)->setIsProcessed(true),
                         static::createMockEntity('test', null)->setIsProcessed(false),
                     ])),
@@ -95,7 +95,7 @@ class DataExtractorTest extends TestCase
 
     public function testGetDataFromCollection()
     {
-        $collection = (new Collection(ProcessableDtoInterface::class))->add(
+        $collection = (new Collection(MockNamedDtoInterface::class))->add(
             static::createMockEntity('test', 'test', true)->setIsProcessed(true),
             static::createMockEntity('test-2', null, true)->setIsProcessed(false),
         );

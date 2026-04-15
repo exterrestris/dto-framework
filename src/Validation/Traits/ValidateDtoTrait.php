@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Exterrestris\DtoFramework\Validation\Traits;
 
-use Exterrestris\DtoFramework\Dto\Attributes\Internal;
 use Exterrestris\DtoFramework\Dto\DtoInterface;
-use Exterrestris\DtoFramework\Traits\GetAttributeTrait;
+use Exterrestris\DtoFramework\Dto\Metadata\Internal;
+use Exterrestris\DtoFramework\Utilities\GetAttributeTrait;
 use Exterrestris\DtoFramework\Validation\CompositeValueValidator;
 use Exterrestris\DtoFramework\Validation\Exceptions\InvalidDtoException;
 use Exterrestris\DtoFramework\Validation\Exceptions\InvalidDtoPropertyException;
-use Exterrestris\DtoFramework\Validation\Exceptions\PropertyValidatorException;
 use Exterrestris\DtoFramework\Validation\Exceptions\MissingRequiredDtoPropertyException;
+use Exterrestris\DtoFramework\Validation\Exceptions\PropertyValidatorException;
 use Exterrestris\DtoFramework\Validation\PropertyPreferenceValidator;
 use Exterrestris\DtoFramework\Validation\PropertyValidator;
 use Exterrestris\DtoFramework\Validation\Rules\NoValidate;

@@ -7,8 +7,10 @@ namespace Exterrestris\DtoFramework\Comparators;
 use Exterrestris\DtoFramework\Comparators\Exceptions\InvalidTypeException;
 use Exterrestris\DtoFramework\Dto\Collection\CollectionInterface;
 use Exterrestris\DtoFramework\Dto\DtoInterface;
+use Exterrestris\DtoFramework\Exceptions\Internal\TypeException as InternalTypeException;
 use Exterrestris\DtoFramework\Serializer\DataExtractorInterface;
 use Exterrestris\DtoFramework\Serializer\Exceptions\DataExtractorException;
+use Exterrestris\DtoFramework\Utilities\CheckAcceptableTypeTrait;
 use ReflectionClass;
 use ReflectionException;
 
@@ -21,6 +23,8 @@ use ReflectionException;
  */
 final class InterfaceComparator extends AbstractComparator
 {
+    use CheckAcceptableTypeTrait;
+
     private ReflectionClass $reflect;
 
     /**
@@ -33,17 +37,9 @@ final class InterfaceComparator extends AbstractComparator
     )
     {
         try {
-            $this->reflect = new ReflectionClass($this->dtoType);
-        } catch (ReflectionException $e) {
-            throw new InvalidTypeException('Cannot reflect supplied type', previous: $e);
-        }
-
-        if (!$this->reflect->isInterface()) {
-            throw new InvalidTypeException(sprintf('"%s" must be an interface', $this->reflect->getName()));
-        }
-
-        if (!$this->reflect->implementsInterface(DtoInterface::class)) {
-            throw new InvalidTypeException(sprintf('"%s" must extend "%s"', $this->reflect->getName(), DtoInterface::class));
+            $this->reflect = $this->verifyIsAcceptableType($this->dtoType);
+        } catch (InternalTypeException $e) {
+            throw InvalidTypeException::from($e);
         }
     }
 

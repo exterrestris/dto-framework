@@ -4,48 +4,32 @@ declare(strict_types=1);
 
 namespace Exterrestris\DtoFramework\Dto\Factory;
 
-use Exterrestris\DtoFramework\Dto\Attributes\BaseDto;
-use Exterrestris\DtoFramework\Dto\Attributes\Internal;
 use Exterrestris\DtoFramework\Dto\DtoInterface;
 use Exterrestris\DtoFramework\Dto\Exceptions\InternalPropertyException;
 use Exterrestris\DtoFramework\Dto\Exceptions\NoSuchPropertyException;
-use Exterrestris\DtoFramework\Dto\Factory\Exceptions\FactoryException;
-use Exterrestris\DtoFramework\Dto\Factory\Exceptions\InvalidTypeException;
-use Exterrestris\DtoFramework\Dto\Factory\Exceptions\UnknownTypeException;
-use Exterrestris\DtoFramework\Traits\GetAttributeTrait;
+use Exterrestris\DtoFramework\Dto\Factory\Exceptions\InvalidTypeException as InvalidTypeFactoryException;
+use Exterrestris\DtoFramework\Dto\Factory\Exceptions\UnknownTypeException as UnknownTypeFactoryException;
+use Exterrestris\DtoFramework\Dto\Metadata\Internal;
+use Exterrestris\DtoFramework\Exceptions\Internal\InvalidTypeException as InvalidTypeInternalException;
+use Exterrestris\DtoFramework\Exceptions\Internal\UnknownTypeException as UnknownTypeInternalException;
+use Exterrestris\DtoFramework\Utilities\CheckAcceptableTypeTrait;
 use ReflectionClass;
-use ReflectionException;
 use ReflectionObject;
 use ReflectionProperty;
 
 abstract class AbstractFactory implements FactoryInterface
 {
-    use GetAttributeTrait;
+    use CheckAcceptableTypeTrait;
 
-    /**
-     * @param class-string<DtoInterface> $dtoType
-     * @return ReflectionClass
-     * @throws FactoryException
-     */
     protected function validateType(string $dtoType): ReflectionClass
     {
         try {
-            $reflection = new ReflectionClass($dtoType);
-        } catch (ReflectionException $e) {
-            throw new UnknownTypeException($e->getMessage(), previous: $e);
+            return $this->verifyIsAcceptableType($dtoType);
+        } catch (UnknownTypeInternalException $e) {
+            throw UnknownTypeFactoryException::from($e);
+        } catch (InvalidTypeInternalException $e) {
+            throw InvalidTypeFactoryException::from($e);
         }
-
-        if (!$this->isAcceptableType($reflection)) {
-            throw new InvalidTypeException();
-        }
-
-        return $reflection;
-    }
-
-    protected function isAcceptableType(ReflectionClass $reflection): bool
-    {
-        return $reflection->implementsInterface(DtoInterface::class)
-            && !$this->getAttribute($reflection, BaseDto::class);
     }
 
     /**

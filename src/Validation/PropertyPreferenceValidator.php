@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Exterrestris\DtoFramework\Validation;
 
 use Exterrestris\DtoFramework\Dto\DtoInterface;
-use Exterrestris\DtoFramework\Validation\Exceptions\PropertyValidatorException;
+use Exterrestris\DtoFramework\Validation\Exceptions\ConfigurationException;
+use Exterrestris\DtoFramework\Validation\Exceptions\PreferenceValidatorException;
 use ReflectionProperty;
 
 interface PropertyPreferenceValidator extends PropertyValidator
@@ -17,7 +18,8 @@ interface PropertyPreferenceValidator extends PropertyValidator
      * @param ReflectionProperty $dtoProperty
      * @param DtoInterface $forDto
      * @return void
-     * @throws PropertyValidatorException
+     * @throws PreferenceValidatorException
+     * @throws ConfigurationException
      */
     public function validatePropertyPreference(ReflectionProperty $dtoProperty, DtoInterface $forDto): void;
 }

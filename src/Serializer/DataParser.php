@@ -9,11 +9,12 @@ use Closure;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Error;
-use Exterrestris\DtoFramework\Dto\Attributes\CollectionType;
-use Exterrestris\DtoFramework\Dto\Attributes\Internal;
 use Exterrestris\DtoFramework\Dto\Collection\CollectionInterface;
 use Exterrestris\DtoFramework\Dto\DtoInterface;
 use Exterrestris\DtoFramework\Dto\Factory\FactoryInterface;
+use Exterrestris\DtoFramework\Dto\Metadata\CollectionType;
+use Exterrestris\DtoFramework\Dto\Metadata\Exceptions\InvalidTypeException;
+use Exterrestris\DtoFramework\Dto\Metadata\Internal;
 use Exterrestris\DtoFramework\Serializer\Config\UseDataParserPreprocessor;
 use Exterrestris\DtoFramework\Serializer\Exceptions\DataParserException;
 use Exterrestris\DtoFramework\Serializer\Exceptions\DataParserPreprocessorException;
@@ -26,7 +27,7 @@ use Exterrestris\DtoFramework\Serializer\Exceptions\ValueParserException;
 use Exterrestris\DtoFramework\Serializer\Rules\NullIfEmpty;
 use Exterrestris\DtoFramework\Serializer\Traits\GetPropertyDateFormatTrait;
 use Exterrestris\DtoFramework\Serializer\Traits\GetPropertyMappingTrait;
-use Exterrestris\DtoFramework\Traits\GetAttributeTrait;
+use Exterrestris\DtoFramework\Utilities\GetAttributeTrait;
 use Psr\Log\LoggerInterface;
 use ReflectionObject;
 use ReflectionProperty;
@@ -146,7 +147,11 @@ class DataParser implements DataParserInterface
         }
 
         if (is_a($propertyType->getName(), CollectionInterface::class, true)) {
-            $collectionType = $this->getAttribute($property, CollectionType::class)?->getDtoType();
+            try {
+                $collectionType = $this->getAttribute($property, CollectionType::class)?->getDtoType();
+            } catch (InvalidTypeException $e) {
+                throw new ValueParserException($e->getMessage(), previous: $e);
+            }
 
             if ($collectionType) {
                 return function (array|object|null $data) use ($collectionType): CollectionInterface {

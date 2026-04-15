@@ -6,9 +6,7 @@ namespace Exterrestris\DtoFramework\Tests\Validation\Rules;
 
 use Exterrestris\DtoFramework\Validation\Exceptions\PropertyValidationException;
 use Exterrestris\DtoFramework\Validation\Exceptions\ValueValidationException;
-use Exterrestris\DtoFramework\Validation\PropertyPreferenceValidator;
 use Exterrestris\DtoFramework\Validation\Rules\StringMaxLength;
-use Exterrestris\DtoFramework\Validation\ValuePreferenceValidator;
 use Exterrestris\DtoFramework\Validation\Rules\StringMaxLengthPreference;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
@@ -106,6 +104,16 @@ class StringMaxLengthPreferenceTest extends PropertyPreferenceValidatorTestCase
         ];
     }
 
+    public static function valueWithInvalidConfigProvider(): array
+    {
+        return [
+            [
+                [-1, -1],
+                '',
+            ],
+        ];
+    }
+
     public static function strictnessProvider(): array
     {
         return [
@@ -115,10 +123,5 @@ class StringMaxLengthPreferenceTest extends PropertyPreferenceValidatorTestCase
                 'aaasss',
             ]
         ];
-    }
-
-    protected function getValidator(array $params): ValuePreferenceValidator&PropertyPreferenceValidator
-    {
-        return new StringMaxLengthPreference(...$params);
     }
 }

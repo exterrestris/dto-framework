@@ -6,6 +6,7 @@ namespace Exterrestris\DtoFramework\Validation\Rules;
 
 use Attribute;
 use Exterrestris\DtoFramework\Validation\Exceptions\ValueValidationException;
+use Exterrestris\DtoFramework\Validation\Exceptions\ValueValidatorConfigException;
 use Exterrestris\DtoFramework\Validation\Rules\Traits\CompileArrayValuesTrait;
 use Exterrestris\DtoFramework\Validation\Validators\AbstractPropertyValueValidator;
 
@@ -23,6 +24,10 @@ readonly class IsInList extends AbstractPropertyValueValidator
     {
         if ($value === null) {
             return;
+        }
+
+        if (!$this->allowedValues) {
+            throw new ValueValidatorConfigException($this, 'No allowed values provided');
         }
 
         if (!in_array($value, $this->allowedValues)) {

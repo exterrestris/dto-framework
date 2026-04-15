@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Exterrestris\DtoFramework\Dto;
 
 use DateTimeInterface;
-use Exterrestris\DtoFramework\Dto\Attributes\BaseDto;
 use Exterrestris\DtoFramework\Dto\Factory\AbstractFactory;
 use Exterrestris\DtoFramework\Dto\Factory\Factory;
+use Exterrestris\DtoFramework\Dto\Metadata\BaseDto;
 
 /**
  * Base DTO interface

@@ -6,7 +6,7 @@ namespace Exterrestris\DtoFramework\Validation\Rules;
 
 use Attribute;
 use Exterrestris\DtoFramework\Dto\DtoInterface;
-use Exterrestris\DtoFramework\Traits\GetAttributeTrait;
+use Exterrestris\DtoFramework\Utilities\GetAttributeTrait;
 use Exterrestris\DtoFramework\Validation\Exceptions\PropertyValidationException;
 use Exterrestris\DtoFramework\Validation\PropertyValidator;
 use Exterrestris\DtoFramework\Validation\Rules\Exceptions\RequireOneOfValidationException;

@@ -7,10 +7,11 @@ namespace Exterrestris\DtoFramework\Tests\Mocks\Dto;
 use Exterrestris\DtoFramework\Dto\AbstractDto;
 use Exterrestris\DtoFramework\Validation\Rules\NotEmpty;
 
-class MockBasicDto extends AbstractDto
+class MockBasicDto extends AbstractDto implements MockNamedDtoInterface
 {
     #[NotEmpty]
     protected string $name;
+    protected ?string $title = null;
 
     public function getName(): string
     {
@@ -20,5 +21,15 @@ class MockBasicDto extends AbstractDto
     public function setName(string $name): static
     {
         return $this->with('name', $name);
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(?string $title): static
+    {
+        return $this->with('title', $title);
     }
 }

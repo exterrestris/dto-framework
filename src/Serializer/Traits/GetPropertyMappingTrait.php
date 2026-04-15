@@ -7,7 +7,7 @@ namespace Exterrestris\DtoFramework\Serializer\Traits;
 use Exterrestris\DtoFramework\Serializer\Rules\Map;
 use Exterrestris\DtoFramework\Serializer\Rules\MapFrom;
 use Exterrestris\DtoFramework\Serializer\Rules\MapTo;
-use Exterrestris\DtoFramework\Traits\GetAttributeTrait;
+use Exterrestris\DtoFramework\Utilities\GetAttributeTrait;
 use ReflectionProperty;
 
 trait GetPropertyMappingTrait

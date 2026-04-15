@@ -8,10 +8,12 @@ use Attribute;
 use Exterrestris\DtoFramework\Dto\Collection\CollectionInterface;
 use Exterrestris\DtoFramework\Validation\Exceptions\InvalidCollectionException;
 use Exterrestris\DtoFramework\Validation\Exceptions\ValueValidationException;
+use Exterrestris\DtoFramework\Validation\Validators\Metadata\ConfigCannotBeInvalid;
 use Exterrestris\DtoFramework\Validation\Traits\ValidateCollectionTrait;
 use Exterrestris\DtoFramework\Validation\Validators\AbstractPropertyValueValidator;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
+#[ConfigCannotBeInvalid]
 readonly class ValidCollection extends AbstractPropertyValueValidator
 {
     use ValidateCollectionTrait;

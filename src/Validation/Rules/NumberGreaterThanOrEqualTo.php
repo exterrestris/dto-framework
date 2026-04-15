@@ -7,8 +7,10 @@ namespace Exterrestris\DtoFramework\Validation\Rules;
 use Attribute;
 use Exterrestris\DtoFramework\Validation\Exceptions\ValueValidationException;
 use Exterrestris\DtoFramework\Validation\Validators\AbstractPropertyValueValidator;
+use Exterrestris\DtoFramework\Validation\Validators\Metadata\ConfigCannotBeInvalid;
 
 #[Attribute(Attribute::TARGET_PROPERTY)]
+#[ConfigCannotBeInvalid]
 readonly class NumberGreaterThanOrEqualTo extends AbstractPropertyValueValidator
 {
     public function __construct(

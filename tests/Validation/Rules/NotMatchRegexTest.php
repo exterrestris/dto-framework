@@ -6,9 +6,7 @@ namespace Exterrestris\DtoFramework\Tests\Validation\Rules;
 
 use Exterrestris\DtoFramework\Validation\Exceptions\PropertyValidationException;
 use Exterrestris\DtoFramework\Validation\Exceptions\ValueValidationException;
-use Exterrestris\DtoFramework\Validation\PropertyValidator;
 use Exterrestris\DtoFramework\Validation\Rules\NotMatchRegex;
-use Exterrestris\DtoFramework\Validation\ValueValidator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\UsesClass;
@@ -25,15 +23,15 @@ class NotMatchRegexTest extends PropertyValueValidatorTestCase
         return [
             [
                 [
-                    '/^[^<>]*$/',
+                    '/^<[a-z]*>$/',
                 ],
                 null,
             ],
             [
                 [
-                    '/^[^<>]*$/',
+                    '/^<[a-z]*>$/',
                 ],
-                '<string>',
+                'string',
             ],
         ];
     }
@@ -58,8 +56,27 @@ class NotMatchRegexTest extends PropertyValueValidatorTestCase
         ];
     }
 
-    protected function getValidator(array $params): ValueValidator&PropertyValidator
+    public static function valueWithInvalidConfigProvider(): array
     {
-        return new NotMatchRegex(...$params);
+        return [
+            [
+                [
+                    ''
+                ],
+                '',
+            ],
+            [
+                [
+                    '/^[^<>]*$'
+                ],
+                '',
+            ],
+            [
+                [
+                    '/^[^<>*$/'
+                ],
+                '',
+            ],
+        ];
     }
 }

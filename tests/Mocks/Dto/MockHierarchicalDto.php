@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Exterrestris\DtoFramework\Tests\Mocks\Dto;
 
 use Exterrestris\DtoFramework\Dto\AbstractDto;
-use Exterrestris\DtoFramework\Dto\Attributes\CollectionType;
 use Exterrestris\DtoFramework\Dto\Collection\Collection;
+use Exterrestris\DtoFramework\Dto\Metadata\CollectionType;
 use Exterrestris\DtoFramework\Validation\Rules\NotEmpty;
 use Exterrestris\DtoFramework\Validation\Rules\ValidCollection;
 use Exterrestris\DtoFramework\Validation\Rules\ValidDto;

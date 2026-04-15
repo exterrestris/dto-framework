@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace Exterrestris\DtoFramework\Tests\Mocks\Dto;
 
 use Exterrestris\DtoFramework\Dto\AbstractProcessableDto;
-use Exterrestris\DtoFramework\Dto\Attributes\CollectionType;
-use Exterrestris\DtoFramework\Dto\Attributes\Internal;
 use Exterrestris\DtoFramework\Dto\Collection\CollectionInterface;
+use Exterrestris\DtoFramework\Dto\Metadata\CollectionType;
+use Exterrestris\DtoFramework\Dto\Metadata\Internal;
 use Exterrestris\DtoFramework\Serializer\Rules\Map;
 use Exterrestris\DtoFramework\Serializer\Rules\MapFrom;
 use Exterrestris\DtoFramework\Serializer\Rules\NoSerialize;
 use Exterrestris\DtoFramework\Serializer\Rules\NoSerializeIfNull;
-use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockDtoInterface;
 use Exterrestris\DtoFramework\Tests\Mocks\Validator\Rules\Title;
 use Exterrestris\DtoFramework\Validation\Rules\MatchRegex;
 use Exterrestris\DtoFramework\Validation\Rules\StringMaxLengthPreference;
@@ -43,11 +42,9 @@ class MockDto extends AbstractProcessableDto implements MockDtoInterface
         return $this->name;
     }
 
-    public function setName(string $name): MockDto
+    public function setName(string $name): static
     {
-        $new = clone $this;
-        $new->name = $name;
-        return $new;
+        return $this->with('name', $name);
     }
 
     public function getTitle(): ?string
@@ -55,11 +52,9 @@ class MockDto extends AbstractProcessableDto implements MockDtoInterface
         return $this->title;
     }
 
-    public function setTitle(?string $title): MockDto
+    public function setTitle(?string $title): static
     {
-        $new = clone $this;
-        $new->title = $title;
-        return $new;
+        return $this->with('title', $title);
     }
 
     public function isInternal(): bool
@@ -78,11 +73,9 @@ class MockDto extends AbstractProcessableDto implements MockDtoInterface
         return $this->uninitialized;
     }
 
-    public function setUninitialized(string $uninitialized): MockDto
+    public function setUninitialized(string $uninitialized): static
     {
-        $new = clone $this;
-        $new->uninitialized = $uninitialized;
-        return $new;
+        return $this->with('uninitialized', $uninitialized);
     }
 
     public function isProcessed(): ?bool
@@ -92,9 +85,7 @@ class MockDto extends AbstractProcessableDto implements MockDtoInterface
 
     public function setIsProcessed(?bool $isProcessed): static
     {
-        $new = clone $this;
-        $new->isProcessed = $isProcessed;
-        return $new;
+        return $this->with('isProcessed', $isProcessed);
     }
 
     public function getProcessingErrors(): ?array
@@ -104,9 +95,7 @@ class MockDto extends AbstractProcessableDto implements MockDtoInterface
 
     public function setProcessingErrors(?array $processingErrors): static
     {
-        $new = clone $this;
-        $new->processingErrors = $processingErrors;
-        return $new;
+        return $this->with('processingErrors', $processingErrors);
     }
 
     public function getChildren(): ?CollectionInterface
@@ -116,8 +105,6 @@ class MockDto extends AbstractProcessableDto implements MockDtoInterface
 
     public function setChildren(?CollectionInterface $children): static
     {
-        $new = clone $this;
-        $new->children = $children;
-        return $new;
+        return $this->with('children', $children);
     }
 }

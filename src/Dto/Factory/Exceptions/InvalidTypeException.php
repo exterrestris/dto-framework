@@ -4,17 +4,8 @@ declare(strict_types=1);
 
 namespace Exterrestris\DtoFramework\Dto\Factory\Exceptions;
 
-use InvalidArgumentException;
-use Throwable;
+use Exterrestris\DtoFramework\Exceptions\InvalidTypeException as FrameworkInvalidTypeException;
 
-class InvalidTypeException extends InvalidArgumentException implements FactoryException
+class InvalidTypeException extends TypeException implements FrameworkInvalidTypeException
 {
-    public function __construct(
-        string $message = 'Type must be a instantiable object implementing DtoInterface',
-        int $code = 0,
-        ?Throwable $previous = null
-    ) {
-        parent::__construct($message, $code, $previous);
-    }
-
 }
