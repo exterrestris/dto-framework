@@ -7,6 +7,7 @@ namespace Exterrestris\DtoFramework\Tests\Dto;
 use DateTime;
 use DateTimeInterface;
 use Exterrestris\DtoFramework\Dto\AbstractDto;
+use Exterrestris\DtoFramework\Dto\DtoInterface;
 use Exterrestris\DtoFramework\Dto\Exceptions\DtoException;
 use Exterrestris\DtoFramework\Dto\Exceptions\InternalPropertyException;
 use Exterrestris\DtoFramework\Dto\Exceptions\InvalidDataException;
@@ -72,14 +73,21 @@ class AbstractDtoTest extends TestCase
         $dto = $this->getDto([
             'name' => 'John Doe',
             'date' => new DateTime('2026-04-08'),
+            'child' => $this->getDto([
+                'name' => 'Jane Doe',
+                'date' => new DateTime('2026-04-09'),
+            ])
         ]);
 
         $clone = clone $dto;
 
         $this->assertNotSame($dto, $clone);
         $this->assertNotSame($dto->getDate(), $clone->getDate());
+        $this->assertNotSame($dto->getChild(), $clone->getChild());
         $this->assertEquals($dto->getName(), $clone->getName());
         $this->assertEquals($dto->getDate(), $clone->getDate());
+        $this->assertEquals($dto->getChild()->getName(), $clone->getChild()->getName());
+        $this->assertEquals($dto->getChild()->getDate(), $clone->getChild()->getDate());
     }
 
     public function testWith(): void
@@ -125,6 +133,8 @@ class AbstractDtoTest extends TestCase
             protected ?DateTimeInterface $date = null;
             #[Internal]
             protected ?string $internal = null;
+            protected ?DtoInterface $child = null;
+            protected ?DtoInterface $unintialized;
 
             public function getName(): string
             {
@@ -136,10 +146,20 @@ class AbstractDtoTest extends TestCase
                 return $this->date;
             }
 
+            public function getChild(): ?DtoInterface
+            {
+                return $this->child;
+            }
+
             /** @noinspection PhpHierarchyChecksInspection */
             public function with(array|string $newData, mixed $newValue = null): static
             {
                 return parent::with($newData, $newValue);
+            }
+
+            public function getUnintialized(): ?DtoInterface
+            {
+                return $this->unintialized;
             }
         };
     }

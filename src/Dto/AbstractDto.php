@@ -23,7 +23,7 @@ abstract class AbstractDto implements DtoInterface
     use GetAttributeTrait;
 
     /**
-     * Cache for {@see self::getPropertiesToClone()}
+     * Cache for {@see self::_getPropertiesToClone()}
      *
      * @var array<class-string<DtoInterface>, array<string, ReflectionProperty>>
      */
@@ -38,7 +38,7 @@ abstract class AbstractDto implements DtoInterface
                 throw new InvalidDataException();
             }
 
-            $this->setData($dtoData);
+            $this->_populateWithData($dtoData);
         }
     }
 
@@ -61,18 +61,18 @@ abstract class AbstractDto implements DtoInterface
             throw new InvalidDataException();
         }
 
-        return (clone $this)->setData($newData);
+        return (clone $this)->_populateWithData($newData);
     }
 
     /**
-     * @param array<string, mixed> $newData
+     * @param array<string, mixed> $data
      * @return static
      */
-    private function setData(array $newData): static
+    private function _populateWithData(array $data): static
     {
         $reflection = new ReflectionClass($this);
 
-        foreach ($newData as $property => $value) {
+        foreach ($data as $property => $value) {
             try {
                 $reflectionProperty = $reflection->getProperty($property);
             } catch (ReflectionException $e) {
@@ -94,8 +94,8 @@ abstract class AbstractDto implements DtoInterface
      */
     public function __clone(): void
     {
-        foreach ($this->getPropertiesToClone() as $reflectionProperty) {
-            if (!$reflectionProperty->isInitialized($this) || $this->getAttribute($reflectionProperty, Internal::class)) {
+        foreach ($this->_getPropertiesToClone() as $reflectionProperty) {
+            if (!$reflectionProperty->isInitialized($this)) {
                 continue;
             }
 
@@ -118,7 +118,7 @@ abstract class AbstractDto implements DtoInterface
      * @return array<string, ReflectionProperty>
      * @see self::$cloneCache
      */
-    private function getPropertiesToClone(): array
+    private function _getPropertiesToClone(): array
     {
         if (!isset(self::$cloneCache[static::class])) {
             self::$cloneCache[static::class] = [];
@@ -128,7 +128,11 @@ abstract class AbstractDto implements DtoInterface
             foreach ($reflect->getProperties() as $reflectionProperty) {
                 $reflectionType = $reflectionProperty->getType();
 
-                if ($reflectionType->isBuiltin() || is_a($reflectionType->getName(), BackedEnum::class, true)) {
+                if (
+                    $reflectionType->isBuiltin() ||
+                    is_a($reflectionType->getName(), BackedEnum::class, true) ||
+                    $this->getAttribute($reflectionProperty, Internal::class)
+                ) {
                     continue;
                 }
 
