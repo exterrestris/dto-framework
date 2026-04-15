@@ -25,9 +25,11 @@ use Exterrestris\DtoFramework\Serializer\Exceptions\NullValueException;
 use Exterrestris\DtoFramework\Serializer\Exceptions\UnparsableDataTypeException;
 use Exterrestris\DtoFramework\Serializer\Exceptions\ValueParserException;
 use Exterrestris\DtoFramework\Serializer\Rules\NullIfEmpty;
-use Exterrestris\DtoFramework\Serializer\Traits\GetPropertyDateFormatTrait;
 use Exterrestris\DtoFramework\Serializer\Traits\GetPropertyMappingTrait;
+use Exterrestris\DtoFramework\Utilities\Exceptions\ParseDateException;
 use Exterrestris\DtoFramework\Utilities\GetAttributeTrait;
+use Exterrestris\DtoFramework\Utilities\GetPropertyDateFormatTrait;
+use Exterrestris\DtoFramework\Utilities\ParseDateTrait;
 use Psr\Log\LoggerInterface;
 use ReflectionObject;
 use ReflectionProperty;
@@ -43,6 +45,7 @@ class DataParser implements DataParserInterface
     use GetAttributeTrait;
     use GetPropertyMappingTrait;
     use GetPropertyDateFormatTrait;
+    use ParseDateTrait;
 
     /**
      * @var array<class-string<DtoInterface>, array<string, string>>
@@ -164,20 +167,26 @@ class DataParser implements DataParserInterface
         }
 
         if (is_a($propertyType->getName(), DateTimeInterface::class, true)) {
-            $format = $this->getDateFormat($property);
+            return function (string $value) use ($property): DateTimeImmutable {
+                $dateFormat = $this->getDateFormat($property);
 
-            return static function (string $value) use ($property, $format): DateTimeImmutable {
-                $date = DateTimeImmutable::createFromFormat($format, $value);
-
-                if (!$date) {
+                try {
+                    $date = $this->parseDate(
+                        $value,
+                        $dateFormat->getFormat(),
+                        $dateFormat->getRoundingMode(),
+                        $dateFormat->getRoundingUnit()
+                    );
+                } catch (ParseDateException $exception) {
                     throw new ValueParserException(
                         sprintf(
                             'Cannot parse value "%3$s" for DateTime property "%1$s" of "%2$s" using format "%4$s"',
                             $property->getName(),
                             $property->getDeclaringClass()->getName(),
                             $value,
-                            $format
-                        )
+                            $exception->getDateFormat()
+                        ),
+                        previous: $exception
                     );
                 }
 
@@ -213,6 +222,11 @@ class DataParser implements DataParserInterface
                 $propertyType->getName(),
             )
         );
+    }
+
+    protected function getNow(): DateTimeImmutable
+    {
+        return new DateTimeImmutable();
     }
 
     /**
