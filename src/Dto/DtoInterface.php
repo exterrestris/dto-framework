@@ -6,6 +6,8 @@ namespace Exterrestris\DtoFramework\Dto;
 
 use DateTimeInterface;
 use Exterrestris\DtoFramework\Dto\Attributes\BaseDto;
+use Exterrestris\DtoFramework\Dto\Factory\AbstractFactory;
+use Exterrestris\DtoFramework\Dto\Factory\Factory;
 
 /**
  * Base DTO interface
@@ -16,6 +18,8 @@ use Exterrestris\DtoFramework\Dto\Attributes\BaseDto;
  * - SHOULD provide getter and setter methods for their properties
  * - SHOULD be immutable, i.e. if fluid setters are provided they SHOULD return a new instance using `clone` rather
  *   than `$this`
+ * - MUST provide fluid setter methods if using any class that extends {@link AbstractFactory} (such as the default
+ *   {@link Factory} implementation), i.e. the setter must return either `$this` or (preferably) a new instance
  * - MAY provide a constructer to set their properties
  *
  * {@link AbstractDto} implements custom cloning logic to ensure immutability when dealing with nested DTOs
