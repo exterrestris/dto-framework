@@ -12,6 +12,7 @@ use Exterrestris\DtoFramework\Dto\Collection\Exceptions\InvalidIndexException;
 use Exterrestris\DtoFramework\Dto\Collection\Exceptions\InvalidTypeException;
 use Exterrestris\DtoFramework\Dto\Collection\Exceptions\NotInCollectionException;
 use Exterrestris\DtoFramework\Dto\DtoInterface;
+use Exterrestris\DtoFramework\Exceptions\Internal\TypeException;
 use Exterrestris\DtoFramework\Utilities\IdenticalComparisonTrait;
 use Exterrestris\DtoFramework\Utilities\CheckAcceptableTypeTrait;
 use IteratorAggregate;
@@ -35,7 +36,7 @@ abstract class AbstractCollection implements CollectionInterface, IteratorAggreg
     ) {
         try {
             $this->verifyIsAcceptableType($this->dtoType);
-        } catch (\Exterrestris\DtoFramework\Exceptions\Internal\TypeException $e) {
+        } catch (TypeException $e) {
             throw InvalidTypeException::from($e);
         }
     }

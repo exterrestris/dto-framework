@@ -188,6 +188,9 @@ class InterfaceComparatorTest extends ComparatorTestCase
                 return $this->name;
             }
 
+            /**
+             * @noinspection PhpHierarchyChecksInspection Suppress PhpStorm bug: {@link https://youtrack.jetbrains.com/issue/WI-69763}
+             */
             public function setName(string $name): static
             {
                 return $this->with('name', $name);
@@ -198,6 +201,9 @@ class InterfaceComparatorTest extends ComparatorTestCase
                 return $this->title;
             }
 
+            /**
+             * @noinspection PhpHierarchyChecksInspection Suppress PhpStorm bug: {@link https://youtrack.jetbrains.com/issue/WI-69763}
+             */
             public function setTitle(?string $title): static
             {
                 return $this->with('title', $title);
@@ -209,7 +215,7 @@ class InterfaceComparatorTest extends ComparatorTestCase
             }
 
             /**
-             * @noinspection PhpHierarchyChecksInspection Suppress PhpStorm bug ({@link https://youtrack.jetbrains.com/issue/WI-69763})
+             * @noinspection PhpHierarchyChecksInspection Suppress PhpStorm bug: {@link https://youtrack.jetbrains.com/issue/WI-69763}
              */
             public function setIsProcessed(?bool $isProcessed): static
             {

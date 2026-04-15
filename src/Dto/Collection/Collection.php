@@ -14,7 +14,7 @@ use Traversable;
  * @template Dto of DtoInterface
  * @extends AbstractCollection<Dto>
  */
-class Collection extends AbstractCollection implements CollectionInterface
+class Collection extends AbstractCollection
 {
     /**
      * @inheritDoc

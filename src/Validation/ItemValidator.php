@@ -15,9 +15,9 @@ use Exterrestris\DtoFramework\Validation\Exceptions\ValidationException;
 interface ItemValidator
 {
     /**
-     * @param DtoInterface|CollectionInterface $item
+     * @param Dto|Collection $item
      * @param bool $enforcePreferences
-     * @return DtoInterface|CollectionInterface
+     * @return Dto|Collection
      * @throws ValidationException
      */
     public function validate(
