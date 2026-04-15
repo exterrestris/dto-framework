@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Exterrestris\DtoFramework\Tests\Dto\Collection;
 
+use Exterrestris\DtoFramework\Dto\Collection\LazyCollection;
 use Exterrestris\DtoFramework\Comparators\EquivalentComparator;
 use Exterrestris\DtoFramework\Dto\Collection\Collection;
 use Exterrestris\DtoFramework\Dto\Collection\CollectionInterface;
@@ -15,6 +16,7 @@ use Exterrestris\DtoFramework\Dto\Collection\Exceptions\InvalidIndexException;
 use Exterrestris\DtoFramework\Dto\Collection\Exceptions\IncompatibleCollectionException;
 use Exterrestris\DtoFramework\Dto\Collection\Exceptions\IncompatibleDtoException;
 use Exterrestris\DtoFramework\Dto\AbstractProcessableDto;
+use Exterrestris\DtoFramework\Dto\Factory\Factory;
 use Exterrestris\DtoFramework\Dto\ProcessableDtoInterface;
 use Exterrestris\DtoFramework\Serializer\DataExtractor;
 use Exterrestris\DtoFramework\Tests\Mocks\TestDto;
@@ -25,8 +27,8 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(Collection::class)]
-class CollectionTest extends TestCase
+#[CoversClass(LazyCollection::class)]
+class LazyCollectionTest extends TestCase
 {
     public static function constructWithInvalidTypeProvider(): array
     {
@@ -45,48 +47,24 @@ class CollectionTest extends TestCase
     {
         $this->expectException(InvalidTypeException::class);
 
-        new Collection($entityType);
-    }
-
-    public function testConstructWithValidItems()
-    {
-        $collection = new Collection(TestEntity::class, [new TestEntity()]);
-
-        $this->assertInstanceOf(Collection::class, $collection);
-    }
-
-    public function testConstructWithInvalidItems()
-    {
-        $this->expectException(IncompatibleDtoException::class);
-
-        new Collection(TestEntity::class, [new TestDto()]);
+        new LazyCollection($entityType, new Factory(), static function () {
+            yield new TestEntity();
+        });
     }
 
     public function testIsOfType()
     {
-        $specificCollection = new Collection(TestEntity::class);
-        $typeCollection = new Collection(TestEntityInterface::class);
-        $genericCollection = new Collection(ProcessableDtoInterface::class);
+        $collection = static::createLazyCollection(5);
 
-        $this->assertTrue($specificCollection->isOfType(TestEntity::class));
-        $this->assertTrue($specificCollection->isOfType(TestEntityInterface::class));
-        $this->assertTrue($specificCollection->isOfType(AbstractProcessableDto::class));
-        $this->assertTrue($specificCollection->isOfType(ProcessableDtoInterface::class));
-
-        $this->assertFalse($typeCollection->isOfType(TestEntity::class));
-        $this->assertTrue($typeCollection->isOfType(TestEntityInterface::class));
-        $this->assertFalse($typeCollection->isOfType(AbstractProcessableDto::class));
-        $this->assertTrue($typeCollection->isOfType(ProcessableDtoInterface::class));
-
-        $this->assertFalse($genericCollection->isOfType(TestEntity::class));
-        $this->assertFalse($genericCollection->isOfType(TestEntityInterface::class));
-        $this->assertFalse($genericCollection->isOfType(AbstractProcessableDto::class));
-        $this->assertTrue($genericCollection->isOfType(ProcessableDtoInterface::class));
+        $this->assertTrue($collection->isOfType(TestEntity::class));
+        $this->assertTrue($collection->isOfType(ProcessableDtoInterface::class));
+        $this->assertTrue($collection->isOfType(AbstractProcessableDto::class));
+        $this->assertFalse($collection->isOfType(TestDto::class));
     }
 
     public function testGetEntityType()
     {
-        $collection = new Collection(TestEntity::class);
+        $collection = static::createLazyCollection(5);
 
         $this->assertEquals(TestEntity::class, $collection->getDtoType());
     }
@@ -94,7 +72,7 @@ class CollectionTest extends TestCase
     public function testContains()
     {
         $entity = new TestEntity();
-        $collection = new Collection(TestEntity::class, [$entity]);
+        $collection = static::createLazyCollectionFromEntities([$entity]);
 
         $this->assertTrue($collection->contains($entity));
         $this->assertFalse($collection->contains(new TestEntity()));
@@ -102,7 +80,7 @@ class CollectionTest extends TestCase
 
     public function testClear()
     {
-        $collection = new Collection(TestEntity::class, [new TestEntity()]);
+        $collection = static::createLazyCollection(5);
         $cleared = $collection->clear();
 
         $this->assertInstanceOf(Collection::class, $cleared);
@@ -113,26 +91,27 @@ class CollectionTest extends TestCase
 
     public function testFirst()
     {
-        $entity = new TestEntity();
-        $collection = new Collection(TestEntity::class, [$entity]);
-        $emptyCollection = new Collection(TestEntity::class);
+        $collection = static::createLazyCollection(5);
+        $emptyCollection = static::createLazyCollection(0);
 
-        $this->assertSame($entity, $collection->first());
+        $this->assertSame($collection->get(0), $collection->first());
         $this->assertNull($emptyCollection->first());
     }
 
     public function testIsEmpty()
     {
-        $emptyCollection = new Collection(TestEntity::class);
-        $collection = new Collection(TestEntity::class, [new TestEntity()]);
+        $emptyCollection = static::createLazyCollection(0);
+        $knownSizeCollection = static::createLazyCollection(5);
+        $unknownSizeCollection = static::createLazyCollection(5, false);
 
         $this->assertTrue($emptyCollection->isEmpty());
-        $this->assertFalse($collection->isEmpty());
+        $this->assertFalse($knownSizeCollection->isEmpty());
+        $this->assertFalse($unknownSizeCollection->isEmpty());
     }
 
     public function testMapToUniqueArray()
     {
-        $collection = new Collection(TestEntity::class, [
+        $collection = static::createLazyCollectionFromEntities([
             (new TestEntity())->setName('Test'),
             (new TestEntity())->setName('Test'),
             (new TestEntity())->setName('Test 2'),
@@ -150,7 +129,7 @@ class CollectionTest extends TestCase
 
     public function testMapToArray()
     {
-        $collection = new Collection(TestEntity::class, [
+        $collection = static::createLazyCollectionFromEntities([
             (new TestEntity())->setName('Test'),
             (new TestEntity())->setName('Test'),
             (new TestEntity())->setName('Test 2'),
@@ -172,7 +151,7 @@ class CollectionTest extends TestCase
         $entity2 = (new TestEntity())->setName('Test 2');
         $entity3 = (new TestEntity())->setName('Test');
 
-        $collection = new Collection(TestEntity::class, [
+        $collection = static::createLazyCollectionFromEntities([
             $entity1,
             $entity2,
             $entity3,
@@ -198,7 +177,7 @@ class CollectionTest extends TestCase
         $entity2 = (new TestEntity())->setName('Test 2');
         $entity3 = (new TestEntity())->setName('Test');
 
-        $collection = new Collection(TestEntity::class, [
+        $collection = static::createLazyCollectionFromEntities([
             $entity1,
             $entity2,
             $entity3,
@@ -223,7 +202,7 @@ class CollectionTest extends TestCase
         $entity2 = (new TestEntity())->setName('Test 2');
         $entity3 = (new TestEntity())->setName('Test');
 
-        $collection = new Collection(TestEntity::class, [
+        $collection = static::createLazyCollectionFromEntities([
             $entity1,
             $entity2,
             $entity3,
@@ -255,7 +234,7 @@ class CollectionTest extends TestCase
         $entity4 = (new TestEntity())->setName('Test 3');
         $entity5 = new TestDto();
 
-        $collection = new Collection(TestEntity::class, [
+        $collection = static::createLazyCollectionFromEntities([
             $entity1,
             $entity2,
             $entity3,
@@ -292,7 +271,7 @@ class CollectionTest extends TestCase
         $entity4 = (new TestEntity())->setName('Test 3');
         $entity5 = new TestDto();
 
-        $collection = new Collection(TestEntity::class, [
+        $collection = static::createLazyCollectionFromEntities([
             $entity2,
             $entity3,
         ]);
@@ -315,7 +294,7 @@ class CollectionTest extends TestCase
         $entity2 = (new TestEntity())->setName('Test 2');
         $entity3 = (new TestEntity())->setName('Test');
 
-        $collection = new Collection(TestEntity::class, [
+        $collection = static::createLazyCollectionFromEntities([
             $entity1,
             $entity2,
             $entity3,
@@ -345,7 +324,7 @@ class CollectionTest extends TestCase
         $entity2 = (new TestEntity())->setName('Test 2');
         $entity3 = (new TestEntity())->setName('Test');
 
-        $collection1 = new Collection(TestEntity::class, [
+        $collection1 = static::createLazyCollectionFromEntities([
             $entity1,
             $entity2,
         ]);
@@ -354,45 +333,28 @@ class CollectionTest extends TestCase
             $entity3,
         ]);
 
+        $collection3 = new Collection(TestEntity::class, [
+            $entity1,
+        ]);
+
         $this->assertSame($collection1, $collection1->merge($collection1));
         $this->assertSame($collection1, $collection1->merge(new Collection(TestEntity::class)));
+        $this->assertSame($collection1, $collection1->merge($collection3));
 
-        $merged = $collection1->merge($collection1, new Collection(TestEntity::class), $collection2);
+
+        $merged = $collection1->merge($collection1, new Collection(TestEntity::class), $collection2, $collection3);
 
         $this->assertInstanceOf(Collection::class, $merged);
-        $this->assertEquals($collection1->getDtoType(), $merged->getDtoType());
         $this->assertCount(3, $merged);
         $this->assertSame($entity1, $merged->get(0));
         $this->assertSame($entity2, $merged->get(1));
         $this->assertSame($entity3, $merged->get(2));
-
-        /**
-         * A collection of {@see TestEntity} can be merged into a collection of {@see TestEntityInterface} as
-         * {@see TestEntityInterface} is a superset of {@see TestEntity}, however the inverse is not true
-         */
-        $collection3 = new Collection(TestEntityInterface::class);
-
-        $merged = $collection3->merge($collection1);
-        $this->assertInstanceOf(Collection::class, $merged);
-        $this->assertEquals($collection3->getDtoType(), $merged->getDtoType());
-        $this->assertCount(2, $merged);
-        $this->assertSame($entity1, $merged->get(0));
-        $this->assertSame($entity2, $merged->get(1));
     }
 
-    public static function mergeIncompatibleCollectionTypeProvider(): array
+    public function testMergeDifferentCollectionType()
     {
-        return [
-            [TestDto::class],
-            [TestEntityInterface::class],
-        ];
-    }
-
-    #[DataProvider('mergeIncompatibleCollectionTypeProvider')]
-    public function testMergeIncompatibleCollectionType()
-    {
-        $collection1 = new Collection(TestEntity::class);
-        $collection2 = new Collection(TestDto::class);
+        $collection1 = static::createLazyCollection(5);
+        $collection2 = new Collection(CustomSerializationEntity::class);
 
         $this->expectException(IncompatibleCollectionException::class);
 
@@ -405,7 +367,7 @@ class CollectionTest extends TestCase
         $entity2 = (new TestEntity())->setName('Test 2');
         $entity3 = (new TestEntity())->setName('Test');
 
-        $collection1 = new Collection(TestEntity::class, [
+        $collection1 = static::createLazyCollectionFromEntities([
             $entity1,
             $entity2,
             $entity3,
@@ -430,7 +392,7 @@ class CollectionTest extends TestCase
         $entity2 = (new TestEntity())->setName('Test 2');
         $entity3 = (new TestEntity())->setName('Test');
 
-        $collection = new Collection(TestEntity::class, [
+        $collection = static::createLazyCollectionFromEntities([
             $entity1,
             $entity2,
             $entity3,
@@ -449,7 +411,7 @@ class CollectionTest extends TestCase
         $entity2 = (new TestEntity())->setName('Test 2');
         $entity3 = (new TestEntity())->setName('Test');
 
-        $collection1 = new Collection(TestEntity::class, [
+        $collection1 = static::createLazyCollectionFromEntities([
             $entity1,
             $entity2,
             $entity3,
@@ -472,12 +434,11 @@ class CollectionTest extends TestCase
     public function testDiffWithDifferentCollectionType()
     {
         $entity = (new TestEntity())->setName('Test');
-        $collection1 = new Collection(TestEntity::class, [$entity]);
+        $collection1 = static::createLazyCollectionFromEntities([$entity]);
         $collection2 = new Collection(CustomSerializationEntity::class);
 
         $diff = $collection1->diff($collection2);
 
-        $this->assertInstanceOf(Collection::class, $diff);
         $this->assertSame($collection1, $diff);
     }
 
@@ -487,7 +448,7 @@ class CollectionTest extends TestCase
         $entity2 = (new TestEntity())->setName('Test 2');
         $entity3 = (new TestEntity())->setName('Test');
 
-        $collection1 = new Collection(TestEntity::class, [
+        $collection1 = static::createLazyCollectionFromEntities([
             $entity1,
             $entity2,
             $entity3,
@@ -511,7 +472,7 @@ class CollectionTest extends TestCase
         $entity2 = (new TestEntity())->setName('Test 2');
         $entity3 = (new TestEntity())->setName('Test');
 
-        $collection = new Collection(TestEntity::class, [
+        $collection = static::createLazyCollectionFromEntities([
             $entity1,
             $entity2,
             $entity3,
@@ -528,7 +489,7 @@ class CollectionTest extends TestCase
         $entity2 = (new TestEntity())->setName('Test 2');
         $entity3 = (new TestEntity())->setName('Test');
 
-        $collection1 = new Collection(TestEntity::class, [
+        $collection1 = static::createLazyCollectionFromEntities([
             $entity1,
             $entity2,
             $entity3,
@@ -552,7 +513,7 @@ class CollectionTest extends TestCase
     public function testIntersectWithDifferentCollectionType()
     {
         $entity = (new TestEntity())->setName('Test');
-        $collection1 = new Collection(TestEntity::class, [$entity]);
+        $collection1 = static::createLazyCollectionFromEntities([$entity]);
         $collection2 = new Collection(CustomSerializationEntity::class);
 
         $intersect = $collection1->intersect($collection2);
@@ -564,15 +525,14 @@ class CollectionTest extends TestCase
 
     public function testIteration()
     {
-        $entity1 = (new TestEntity())->setName('Test');
-        $entity2 = (new TestEntity())->setName('Test 2');
-        $entity3 = (new TestEntity())->setName('Test');
+        $collection = static::createLazyCollection(5);
 
-        $collection = new Collection(TestEntity::class, [
-            $entity1,
-            $entity2,
-            $entity3,
-        ]);
+        foreach ($collection as $index => $entity) {
+            $this->assertInstanceOf(TestEntity::class, $entity);
+            $this->assertSame($collection->get($index), $entity);
+        }
+
+        // Ensure can reiterate over generator
 
         foreach ($collection as $index => $entity) {
             $this->assertInstanceOf(TestEntity::class, $entity);
@@ -583,7 +543,7 @@ class CollectionTest extends TestCase
     public function testAddEntity()
     {
         $entity = new TestEntity();
-        $emptyCollection = new Collection(TestEntity::class);
+        $emptyCollection = static::createLazyCollection(0);
         $collection = $emptyCollection->add($entity);
 
         $this->assertInstanceOf(Collection::class, $collection);
@@ -594,17 +554,16 @@ class CollectionTest extends TestCase
     public function testAddEntityAlreadyInCollection()
     {
         $entity = new TestEntity();
-        $collection = new Collection(TestEntity::class, [$entity]);
+        $collection = static::createLazyCollectionFromEntities([$entity]);
 
         $newCollection = $collection->add($entity);
 
-        $this->assertInstanceOf(Collection::class, $newCollection);
         $this->assertSame($collection, $newCollection);
     }
 
     public function testAddMultipleEntities()
     {
-        $emptyCollection = new Collection(TestEntity::class);
+        $emptyCollection = static::createLazyCollection(0);
         $collection = $emptyCollection->add(new TestEntity(), new TestEntity());
 
         $this->assertInstanceOf(Collection::class, $collection);
@@ -612,9 +571,9 @@ class CollectionTest extends TestCase
         $this->assertEquals(2, $collection->count());
     }
 
-    public function testAddInvalidEntityType()
+    public function testAddInvalidEntity()
     {
-        $collection = new Collection(TestEntity::class);
+        $collection = static::createLazyCollection(5);
 
         $this->expectException(IncompatibleDtoException::class);
 
@@ -624,7 +583,7 @@ class CollectionTest extends TestCase
     public function testRemoveEntity()
     {
         $entity = new TestEntity();
-        $collection = new Collection(TestEntity::class, [$entity]);
+        $collection = static::createLazyCollectionFromEntities([$entity]);
 
         $newCollection = $collection->remove($entity);
 
@@ -637,7 +596,7 @@ class CollectionTest extends TestCase
     {
         $entity1 = new TestEntity();
         $entity2 = new TestEntity();
-        $collection = new Collection(TestEntity::class, [$entity1, $entity2]);
+        $collection = static::createLazyCollectionFromEntities([$entity1, $entity2]);
 
         $newCollection = $collection->remove($entity1, $entity2);
 
@@ -649,7 +608,7 @@ class CollectionTest extends TestCase
     public function testRemoveEntityNotInCollection()
     {
         $entity = new TestEntity();
-        $collection = new Collection(TestEntity::class);
+        $collection = static::createLazyCollection(5);
 
         $this->expectException(NotInCollectionException::class);
 
@@ -661,7 +620,7 @@ class CollectionTest extends TestCase
         $oldEntity = new TestEntity(['name' => 'Test']);
         $newEntity = new TestEntity(['name' => 'Test 2']);
 
-        $collection = new Collection(TestEntity::class, [new TestEntity(), $oldEntity]);
+        $collection = static::createLazyCollectionFromEntities([new TestEntity(), $oldEntity]);
 
         $newCollection = $collection->replace($oldEntity, $newEntity);
 
@@ -675,7 +634,7 @@ class CollectionTest extends TestCase
     {
         $oldEntity = new TestEntity(['name' => 'Test']);
         $newEntity = new TestEntity(['name' => 'Test 2']);
-        $collection = new Collection(TestEntity::class, [$newEntity]);
+        $collection = static::createLazyCollectionFromEntities([$newEntity]);
 
         $this->expectException(NotInCollectionException::class);
 
@@ -685,7 +644,7 @@ class CollectionTest extends TestCase
     public function testReplaceEntityWithInvalidType()
     {
         $validEntity = new TestEntity();
-        $collection = new Collection(TestEntity::class, [$validEntity]);
+        $collection = static::createLazyCollectionFromEntities([$validEntity]);
 
         $this->expectException(IncompatibleDtoException::class);
 
@@ -697,7 +656,7 @@ class CollectionTest extends TestCase
         $oldEntity = new TestEntity(['name' => 'Test']);
         $newEntity = new TestEntity(['name' => 'Test 2']);
 
-        $collection = new Collection(TestEntity::class, [$oldEntity, $newEntity]);
+        $collection = static::createLazyCollectionFromEntities([$oldEntity, $newEntity]);
 
         $this->expectException(AlreadyInCollectionException::class);
 
@@ -707,7 +666,7 @@ class CollectionTest extends TestCase
     public function testGet()
     {
         $entity = new TestEntity();
-        $collection = new Collection(TestEntity::class, [$entity]);
+        $collection = static::createLazyCollectionFromEntities([$entity]);
 
         $this->assertSame($entity, $collection->get(0));
     }
@@ -716,22 +675,26 @@ class CollectionTest extends TestCase
     {
         return [
             [
-                new Collection(TestEntity::class),
+                static::createLazyCollection(0),
                 0,
             ],
             [
-                new Collection(TestEntity::class),
+                static::createLazyCollection(5),
                 -1,
             ],
             [
-                new Collection(TestEntity::class, [new TestEntity()]),
+                static::createLazyCollection(5),
+                10,
+            ],
+            [
+                static::createLazyCollection(4, false),
                 10,
             ],
         ];
     }
 
     #[DataProvider('getInvalidIndexProvider')]
-    public function testGetInvalidIndex(Collection $collection, int $index)
+    public function testGetInvalidIndex(LazyCollection $collection, int $index)
     {
         $this->expectException(InvalidIndexException::class);
 
@@ -740,32 +703,56 @@ class CollectionTest extends TestCase
 
     public function testCount()
     {
-        $collection = new Collection(TestEntity::class, [
-            new TestEntity(),
-        ]);
+        $knownSizeCollection = static::createLazyCollection(10);
+        $unknownSizeCollection1 = static::createLazyCollection(6, false);
+        $unknownSizeCollection2 = static::createLazyCollection(7, false);
 
-        $this->assertEquals(1, $collection->count());
-        $this->assertCount(1, $collection);
+        $this->assertEquals(10, $knownSizeCollection->count());
+        $this->assertCount(10, $knownSizeCollection);
+
+        $this->assertEquals(6, $unknownSizeCollection1->count());
+        $this->assertCount(7, $unknownSizeCollection2);
+    }
+
+    public function testIsCountKnown()
+    {
+        $knownSizeCollection = static::createLazyCollection(5);
+        $unknownSizeCollection1 = static::createLazyCollection(6, false);
+        $unknownSizeCollection2 = static::createLazyCollection(7, false);
+        $unknownSizeCollection3 = static::createLazyCollection(8, false);
+        $unknownSizeCollection4 = static::createLazyCollection(9, false);
+
+        $this->assertTrue($knownSizeCollection->isCountKnown());
+
+        $this->assertFalse($unknownSizeCollection1->isCountKnown());
+        $this->assertEquals(6, $unknownSizeCollection1->count());
+        $this->assertTrue($unknownSizeCollection1->isCountKnown());
+
+        $this->assertFalse($unknownSizeCollection2->isCountKnown());
+        $this->assertCount(7, $unknownSizeCollection2);
+        /** @noinspection PhpConditionAlreadyCheckedInspection */
+        $this->assertTrue($unknownSizeCollection2->isCountKnown());
+
+        $this->assertFalse($unknownSizeCollection3->isCountKnown());
+        /** @noinspection PhpStatementHasEmptyBodyInspection */
+        foreach ($unknownSizeCollection3 as $ignored) {}
+        /** @noinspection PhpConditionAlreadyCheckedInspection */
+        $this->assertTrue($unknownSizeCollection3->isCountKnown());
+
+        $this->assertFalse($unknownSizeCollection4->isCountKnown());
+        $unknownSizeCollection4->toArray();
+        $this->assertTrue($unknownSizeCollection4->isCountKnown());
     }
 
     public function testMap()
     {
-        $entity1 = (new TestEntity())->setName('Test');
-        $entity2 = (new TestEntity())->setName('Test 2');
-        $entity3 = (new TestEntity())->setName('Test');
-
-        $collection = new Collection(TestEntity::class, [
-            $entity1,
-            $entity2,
-            $entity3,
-        ]);
+        $collection = static::createLazyCollection(5);
 
         $mapped = $collection->map(static function (TestEntity $entity): TestEntity {
             return $entity->setTitle('Map');
         });
 
         $this->assertInstanceOf(Collection::class, $mapped);
-        $this->assertNotSame($collection, $mapped);
         $this->assertEquals($collection->count(), $mapped->count());
 
         foreach ($mapped as $i => $entity) {
@@ -777,40 +764,55 @@ class CollectionTest extends TestCase
 
     public function testMapToNewEntityType()
     {
-        $entity1 = (new TestEntity())->setName('Test');
-        $entity2 = (new TestEntity())->setName('Test 2');
-        $entity3 = (new TestEntity())->setName('Test');
+        $collection = static::createLazyCollection(5);
 
-        $collection = new Collection(TestEntity::class, [
-            $entity1,
-            $entity2,
-            $entity3,
-        ]);
-
-        $mapped = $collection->map(static function (TestEntity $entity): TestDto {
-            return (new TestDto())->setName($entity->getName());
-        }, TestDto::class);
+        $mapped = $collection->map(static function (TestEntity $entity): CustomSerializationEntity {
+            return (new CustomSerializationEntity())->setName($entity->getName());
+        }, CustomSerializationEntity::class);
 
         $this->assertInstanceOf(Collection::class, $mapped);
         $this->assertNotSame($collection, $mapped);
         $this->assertEquals($collection->count(), $mapped->count());
-        $this->assertEquals(TestDto::class, $mapped->getDtoType());
+        $this->assertEquals(CustomSerializationEntity::class, $mapped->getDtoType());
 
         foreach ($mapped as $i => $entity) {
-            $this->assertInstanceOf(TestDto::class, $entity);
+            $this->assertInstanceOf(CustomSerializationEntity::class, $entity);
             $this->assertEquals($collection->get($i)->getName(), $entity->getName());
         }
     }
 
     public function testToArray()
     {
-        $entity = new TestEntity();
-        $collection = new Collection(TestEntity::class, [$entity]);
+        $collection = static::createLazyCollection(5);
 
         $array = $collection->toArray();
 
         $this->assertIsArray($array);
-        $this->assertCount(1, $array);
-        $this->assertContains($entity, $array);
+        $this->assertCount(5, $array);
+    }
+
+    private static function createLazyCollectionFromEntities(array $entities, bool $knownSize = true): LazyCollection
+    {
+        return new LazyCollection(
+            TestEntity::class,
+            new Factory(),
+            static function () use ($entities) {
+                foreach ($entities as $i => $entity) {
+                    yield $i => $entity;
+                }
+            },
+            $knownSize ? count($entities) : null,
+        );
+    }
+
+    private static function createLazyCollection(int $size, bool $knownSize = true): LazyCollection
+    {
+        $entities = [];
+
+        for ($i = 0; $i < $size; $i++) {
+            $entities[] = (new TestEntity())->setName(sprintf('Item %s', $size + 1));
+        }
+
+        return static::createLazyCollectionFromEntities($entities, $knownSize);
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Exterrestris\DtoFramework\Dto\Collection;
 
 use Countable;
+use Exterrestris\DtoFramework\Comparators\ComparatorInterface;
 use Exterrestris\DtoFramework\Dto\Attributes\BaseDto;
 use Exterrestris\DtoFramework\Dto\Collection\Exceptions\AlreadyInCollectionException;
 use Exterrestris\DtoFramework\Dto\Collection\Exceptions\IncompatibleCollectionException;
@@ -146,6 +147,24 @@ interface CollectionInterface extends Countable, Traversable
     public function find(callable $callback): ?DtoInterface;
 
     /**
+     * Filters the collection by matching against the specified item using the supplied comparator
+     *
+     * @param DtoInterface $dto
+     * @param ComparatorInterface $comparator
+     * @return CollectionInterface<Dto>
+     */
+    public function matchAll(DtoInterface $dto, ComparatorInterface $comparator): CollectionInterface;
+
+    /**
+     * Finds and returns the first item in the collection that matches the specified item using the supplied comparator
+     *
+     * @param DtoInterface $dto
+     * @param ComparatorInterface $comparator
+     * @return ?DtoInterface
+     */
+    public function match(DtoInterface $dto, ComparatorInterface $comparator): ?DtoInterface;
+
+    /**
      * Splits the collection into segments
      *
      * @param callable(Dto):string $callback Function to determine the segment that each item should belong to
@@ -161,4 +180,28 @@ interface CollectionInterface extends Countable, Traversable
      * @throws IncompatibleCollectionException
      */
     public function merge(CollectionInterface ...$collections): CollectionInterface;
+
+    /**
+     * Return the items in the collection that are not in the specified collection
+     *
+     * @param CollectionInterface $collection
+     * @param ?ComparatorInterface $comparator
+     * @return CollectionInterface<Dto>
+     */
+    public function diff(
+        CollectionInterface $collection,
+        ?ComparatorInterface $comparator = null,
+    ): CollectionInterface;
+
+    /**
+     * Return the items in the collection that are also in the specified collection
+     *
+     * @param CollectionInterface $collection
+     * @param ?ComparatorInterface $comparator
+     * @return CollectionInterface<Dto>
+     */
+    public function intersect(
+        CollectionInterface $collection,
+        ?ComparatorInterface $comparator = null,
+    ): CollectionInterface;
 }

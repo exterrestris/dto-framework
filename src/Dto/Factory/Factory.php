@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Exterrestris\DtoFramework\Dto\Factory;
 
+use Closure;
 use Exterrestris\DtoFramework\Dto\Collection\Collection;
 use Exterrestris\DtoFramework\Dto\Collection\CollectionInterface;
+use Exterrestris\DtoFramework\Dto\Collection\LazyCollection;
+use Exterrestris\DtoFramework\Dto\Collection\LazyCollectionInterface;
 use Exterrestris\DtoFramework\Dto\DtoInterface;
 use Exterrestris\DtoFramework\Dto\Factory\Exceptions\UnknownTypeException;
 use Exterrestris\DtoFramework\Dto\Factory\Exceptions\UnsupportedTypeException;
@@ -72,5 +75,18 @@ class Factory extends AbstractFactory
         }
 
         return $this->createCollection($dtoType)->add(...$items);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function createLazyCollection(
+        string $ofDtoType,
+        Closure $bufferGeneratorFn,
+        ?int $dtoCount = null
+    ): LazyCollectionInterface {
+        $this->validateType($ofDtoType);
+
+        return new LazyCollection($ofDtoType, $this, $bufferGeneratorFn, $dtoCount);
     }
 }
