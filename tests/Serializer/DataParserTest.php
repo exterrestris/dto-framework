@@ -4,21 +4,40 @@ declare(strict_types=1);
 
 namespace Exterrestris\DtoFramework\Tests\Serializer;
 
+use Exterrestris\DtoFramework\Dto\AbstractDto;
+use Exterrestris\DtoFramework\Dto\Attributes\CollectionType;
+use Exterrestris\DtoFramework\Dto\Collection\AbstractCollection;
 use Exterrestris\DtoFramework\Dto\Collection\Collection;
+use Exterrestris\DtoFramework\Dto\Factory\AbstractFactory;
 use Exterrestris\DtoFramework\Dto\Factory\Factory;
+use Exterrestris\DtoFramework\Serializer\Config\UseDataParserPreprocessor;
 use Exterrestris\DtoFramework\Serializer\DataParser;
+use Exterrestris\DtoFramework\Serializer\Exceptions\AbstractDataParserException;
 use Exterrestris\DtoFramework\Serializer\Exceptions\DataParserException;
-use Exterrestris\DtoFramework\Tests\Mocks\CustomSerializationEntity;
-use Exterrestris\DtoFramework\Tests\Mocks\TestEntity;
+use Exterrestris\DtoFramework\Serializer\Rules\Map;
+use Exterrestris\DtoFramework\Serializer\Rules\MapFrom;
+use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockCustomSerializationDto;
+use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockDto;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
 #[CoversClass(DataParser::class)]
+#[UsesClass(AbstractDto::class)]
+#[UsesClass(CollectionType::class)]
+#[UsesClass(AbstractCollection::class)]
+#[UsesClass(Collection::class)]
+#[UsesClass(AbstractFactory::class)]
+#[UsesClass(Factory::class)]
+#[UsesClass(Map::class)]
+#[UsesClass(MapFrom::class)]
+#[UsesClass(AbstractDataParserException::class)]
+#[UsesClass(UseDataParserPreprocessor::class)]
 class DataParserTest extends TestCase
 {
-    public static function entityDataProvider(): array
+    public static function dtoDataProvider(): array
     {
         return [
             [
@@ -99,35 +118,35 @@ class DataParserTest extends TestCase
         ];
     }
 
-    #[DataProvider('entityDataProvider')]
-    public function testParseIntoFromEntityData($entityData)
+    #[DataProvider('dtoDataProvider')]
+    public function testParseIntoFromEntityData($dtoData)
     {
         $dataParser = $this->createDataParser();
 
-        $entity = $dataParser->parseInto($entityData, TestEntity::class);
+        $dto = $dataParser->parseInto($dtoData, MockDto::class);
 
-        $this->assertInstanceOf(TestEntity::class, $entity);
-        $this->assertEquals('test', $entity->getName());
-        $this->assertNull($entity->getTitle());
-        $this->assertFalse($entity->isProcessed());
-        $this->assertNull($entity->getProcessingErrors());
-        $this->assertInstanceOf(Collection::class, $entity->getChildren());
-        $this->assertEquals(2, $entity->getChildren()->count());
+        $this->assertInstanceOf(MockDto::class, $dto);
+        $this->assertEquals('test', $dto->getName());
+        $this->assertNull($dto->getTitle());
+        $this->assertFalse($dto->isProcessed());
+        $this->assertNull($dto->getProcessingErrors());
+        $this->assertInstanceOf(Collection::class, $dto->getChildren());
+        $this->assertEquals(2, $dto->getChildren()->count());
 
-        $this->assertEquals('test', $entity->getChildren()->get(0)->getName());
-        $this->assertEquals('test', $entity->getChildren()->get(0)->getTitle());
-        $this->assertTrue($entity->getChildren()->get(0)->isProcessed());
-        $this->assertNull($entity->getChildren()->get(0)->getProcessingErrors());
-        $this->assertNull($entity->getChildren()->get(0)->getChildren());
+        $this->assertEquals('test', $dto->getChildren()->get(0)->getName());
+        $this->assertEquals('test', $dto->getChildren()->get(0)->getTitle());
+        $this->assertTrue($dto->getChildren()->get(0)->isProcessed());
+        $this->assertNull($dto->getChildren()->get(0)->getProcessingErrors());
+        $this->assertNull($dto->getChildren()->get(0)->getChildren());
 
-        $this->assertEquals('test', $entity->getChildren()->get(1)->getName());
-        $this->assertNull($entity->getChildren()->get(1)->getTitle());
-        $this->assertFalse($entity->getChildren()->get(1)->isProcessed());
-        $this->assertNull($entity->getChildren()->get(1)->getProcessingErrors());
-        $this->assertNull($entity->getChildren()->get(1)->getChildren());
+        $this->assertEquals('test', $dto->getChildren()->get(1)->getName());
+        $this->assertNull($dto->getChildren()->get(1)->getTitle());
+        $this->assertFalse($dto->getChildren()->get(1)->isProcessed());
+        $this->assertNull($dto->getChildren()->get(1)->getProcessingErrors());
+        $this->assertNull($dto->getChildren()->get(1)->getChildren());
     }
 
-    public static function entityCollectionDataProvider(): array
+    public static function collectionDataProvider(): array
     {
         return [
             [
@@ -199,18 +218,18 @@ class DataParserTest extends TestCase
         ];
     }
 
-    #[DataProvider('entityCollectionDataProvider')]
+    #[DataProvider('collectionDataProvider')]
     public function testParseIntoFromEntityCollectionData($collectionData)
     {
         $dataParser = $this->createDataParser();
 
-        $collection = $dataParser->parseInto($collectionData, TestEntity::class);
+        $collection = $dataParser->parseInto($collectionData, MockDto::class);
 
         $this->assertInstanceOf(Collection::class, $collection);
-        $this->assertEquals(TestEntity::class, $collection->getDtoType());
+        $this->assertEquals(MockDto::class, $collection->getDtoType());
         $this->assertEquals(2, $collection->count());
 
-        $this->assertInstanceOf(TestEntity::class, $collection->get(0));
+        $this->assertInstanceOf(MockDto::class, $collection->get(0));
         $this->assertEquals('test', $collection->get(0)->getName());
         $this->assertNull($collection->get(0)->getTitle());
         $this->assertFalse($collection->get(0)->isProcessed());
@@ -218,7 +237,7 @@ class DataParserTest extends TestCase
         $this->assertInstanceOf(Collection::class, $collection->get(0)->getChildren());
         $this->assertEquals(2, $collection->get(0)->getChildren()->count());
 
-        $this->assertInstanceOf(TestEntity::class, $collection->get(1));
+        $this->assertInstanceOf(MockDto::class, $collection->get(1));
         $this->assertEquals('test 2', $collection->get(1)->getName());
         $this->assertEquals('title', $collection->get(1)->getTitle());
         $this->assertTrue($collection->get(1)->isProcessed());
@@ -229,7 +248,7 @@ class DataParserTest extends TestCase
 
     public function testParseIntoFromInvalidEntityData()
     {
-        $entityData = [
+        $dtoData = [
             'fullName' => 'test',
             'title' => null,
             'processed' => 'false',
@@ -241,7 +260,7 @@ class DataParserTest extends TestCase
 
         $this->expectException(DataParserException::class);
 
-        $dataParser->parseInto($entityData, TestEntity::class);
+        $dataParser->parseInto($dtoData, MockDto::class);
     }
 
     public static function partiallyInvalidEntityCollectionDataProvider(): array
@@ -293,49 +312,49 @@ class DataParserTest extends TestCase
 
         $this->expectException(DataParserException::class);
 
-        $dataParser->parseInto($collectionData, TestEntity::class);
+        $dataParser->parseInto($collectionData, MockDto::class);
     }
 
-    #[DataProvider('entityDataProvider')]
-    public function testTryParseIntoFromEntityData($entityData)
+    #[DataProvider('dtoDataProvider')]
+    public function testTryParseIntoFromEntityData($dtoData)
     {
         $dataParser = $this->createDataParser();
 
-        $entity = $dataParser->tryParseInto($entityData, TestEntity::class);
+        $dto = $dataParser->tryParseInto($dtoData, MockDto::class);
 
-        $this->assertInstanceOf(TestEntity::class, $entity);
-        $this->assertEquals('test', $entity->getName());
-        $this->assertNull($entity->getTitle());
-        $this->assertFalse($entity->isProcessed());
-        $this->assertNull($entity->getProcessingErrors());
-        $this->assertInstanceOf(Collection::class, $entity->getChildren());
-        $this->assertEquals(2, $entity->getChildren()->count());
+        $this->assertInstanceOf(MockDto::class, $dto);
+        $this->assertEquals('test', $dto->getName());
+        $this->assertNull($dto->getTitle());
+        $this->assertFalse($dto->isProcessed());
+        $this->assertNull($dto->getProcessingErrors());
+        $this->assertInstanceOf(Collection::class, $dto->getChildren());
+        $this->assertEquals(2, $dto->getChildren()->count());
 
-        $this->assertEquals('test', $entity->getChildren()->get(0)->getName());
-        $this->assertEquals('test', $entity->getChildren()->get(0)->getTitle());
-        $this->assertTrue($entity->getChildren()->get(0)->isProcessed());
-        $this->assertNull($entity->getChildren()->get(0)->getProcessingErrors());
-        $this->assertNull($entity->getChildren()->get(0)->getChildren());
+        $this->assertEquals('test', $dto->getChildren()->get(0)->getName());
+        $this->assertEquals('test', $dto->getChildren()->get(0)->getTitle());
+        $this->assertTrue($dto->getChildren()->get(0)->isProcessed());
+        $this->assertNull($dto->getChildren()->get(0)->getProcessingErrors());
+        $this->assertNull($dto->getChildren()->get(0)->getChildren());
 
-        $this->assertEquals('test', $entity->getChildren()->get(1)->getName());
-        $this->assertNull($entity->getChildren()->get(1)->getTitle());
-        $this->assertFalse($entity->getChildren()->get(1)->isProcessed());
-        $this->assertNull($entity->getChildren()->get(1)->getProcessingErrors());
-        $this->assertNull($entity->getChildren()->get(1)->getChildren());
+        $this->assertEquals('test', $dto->getChildren()->get(1)->getName());
+        $this->assertNull($dto->getChildren()->get(1)->getTitle());
+        $this->assertFalse($dto->getChildren()->get(1)->isProcessed());
+        $this->assertNull($dto->getChildren()->get(1)->getProcessingErrors());
+        $this->assertNull($dto->getChildren()->get(1)->getChildren());
     }
 
-    #[DataProvider('entityCollectionDataProvider')]
+    #[DataProvider('collectionDataProvider')]
     public function testTryParseIntoFromEntityCollectionData($collectionData)
     {
         $dataParser = $this->createDataParser();
 
-        $collection = $dataParser->tryParseInto($collectionData, TestEntity::class);
+        $collection = $dataParser->tryParseInto($collectionData, MockDto::class);
 
         $this->assertInstanceOf(Collection::class, $collection);
-        $this->assertEquals(TestEntity::class, $collection->getDtoType());
+        $this->assertEquals(MockDto::class, $collection->getDtoType());
         $this->assertEquals(2, $collection->count());
 
-        $this->assertInstanceOf(TestEntity::class, $collection->get(0));
+        $this->assertInstanceOf(MockDto::class, $collection->get(0));
         $this->assertEquals('test', $collection->get(0)->getName());
         $this->assertNull($collection->get(0)->getTitle());
         $this->assertFalse($collection->get(0)->isProcessed());
@@ -343,7 +362,7 @@ class DataParserTest extends TestCase
         $this->assertInstanceOf(Collection::class, $collection->get(0)->getChildren());
         $this->assertEquals(2, $collection->get(0)->getChildren()->count());
 
-        $this->assertInstanceOf(TestEntity::class, $collection->get(1));
+        $this->assertInstanceOf(MockDto::class, $collection->get(1));
         $this->assertEquals('test 2', $collection->get(1)->getName());
         $this->assertEquals('title', $collection->get(1)->getTitle());
         $this->assertTrue($collection->get(1)->isProcessed());
@@ -354,7 +373,7 @@ class DataParserTest extends TestCase
 
     public function testTryParseIntoFromInvalidEntityData()
     {
-        $entityData = [
+        $dtoData = [
             'fullName' => 'test',
             'title' => null,
             'processed' => 'false',
@@ -364,9 +383,9 @@ class DataParserTest extends TestCase
 
         $dataParser = $this->createDataParser();
 
-        $entity = $dataParser->tryParseInto($entityData, TestEntity::class);
+        $dto = $dataParser->tryParseInto($dtoData, MockDto::class);
 
-        $this->assertNull($entity);
+        $this->assertNull($dto);
     }
 
     #[DataProvider('partiallyInvalidEntityCollectionDataProvider')]
@@ -374,12 +393,12 @@ class DataParserTest extends TestCase
     {
         $dataParser = $this->createDataParser();
 
-        $collection = $dataParser->tryParseInto($collectionData, TestEntity::class);
+        $collection = $dataParser->tryParseInto($collectionData, MockDto::class);
 
         $this->assertInstanceOf(Collection::class, $collection);
         $this->assertEquals(1, $collection->count());
 
-        $this->assertInstanceOf(TestEntity::class, $collection->get(0));
+        $this->assertInstanceOf(MockDto::class, $collection->get(0));
         $this->assertEquals('test 2', $collection->get(0)->getName());
         $this->assertEquals('title', $collection->get(0)->getTitle());
         $this->assertTrue($collection->get(0)->isProcessed());
@@ -396,13 +415,13 @@ class DataParserTest extends TestCase
 
         $dataParser = $this->createDataParser();
 
-        $entity = $dataParser->parseInto($data, CustomSerializationEntity::class);
+        $dto = $dataParser->parseInto($data, MockCustomSerializationDto::class);
 
-        $this->assertInstanceOf(CustomSerializationEntity::class, $entity);
-        $this->assertEquals('test', $entity->getName());
-        $this->assertEquals('title', $entity->getTitle());
-        $this->assertNull($entity->isProcessed());
-        $this->assertNull($entity->getProcessingErrors());
+        $this->assertInstanceOf(MockCustomSerializationDto::class, $dto);
+        $this->assertEquals('test', $dto->getName());
+        $this->assertEquals('title', $dto->getTitle());
+        $this->assertNull($dto->isProcessed());
+        $this->assertNull($dto->getProcessingErrors());
     }
 
     public function testParseIntoEntityWithCustomPreprocessorCollection()
@@ -418,18 +437,18 @@ class DataParserTest extends TestCase
 
         $dataParser = $this->createDataParser();
 
-        $collection = $dataParser->parseInto($data, CustomSerializationEntity::class);
+        $collection = $dataParser->parseInto($data, MockCustomSerializationDto::class);
 
         $this->assertInstanceOf(Collection::class, $collection);
         $this->assertEquals(2, $collection->count());
 
-        $this->assertInstanceOf(CustomSerializationEntity::class, $collection->get(0));
+        $this->assertInstanceOf(MockCustomSerializationDto::class, $collection->get(0));
         $this->assertEquals('test', $collection->get(0)->getName());
         $this->assertEquals('title', $collection->get(0)->getTitle());
         $this->assertNull($collection->get(0)->isProcessed());
         $this->assertNull($collection->get(0)->getProcessingErrors());
 
-        $this->assertInstanceOf(CustomSerializationEntity::class, $collection->get(1));
+        $this->assertInstanceOf(MockCustomSerializationDto::class, $collection->get(1));
         $this->assertEquals('another', $collection->get(1)->getName());
         $this->assertEquals('long title', $collection->get(1)->getTitle());
         $this->assertNull($collection->get(1)->isProcessed());
@@ -444,13 +463,13 @@ class DataParserTest extends TestCase
 
         $dataParser = $this->createDataParser();
 
-        $entity = $dataParser->tryParseInto($data, CustomSerializationEntity::class);
+        $dto = $dataParser->tryParseInto($data, MockCustomSerializationDto::class);
 
-        $this->assertInstanceOf(CustomSerializationEntity::class, $entity);
-        $this->assertEquals('test', $entity->getName());
-        $this->assertEquals('title', $entity->getTitle());
-        $this->assertNull($entity->isProcessed());
-        $this->assertNull($entity->getProcessingErrors());
+        $this->assertInstanceOf(MockCustomSerializationDto::class, $dto);
+        $this->assertEquals('test', $dto->getName());
+        $this->assertEquals('title', $dto->getTitle());
+        $this->assertNull($dto->isProcessed());
+        $this->assertNull($dto->getProcessingErrors());
     }
 
     public function testTryParseIntoEntityWithCustomPreprocessorCollection()
@@ -466,18 +485,18 @@ class DataParserTest extends TestCase
 
         $dataParser = $this->createDataParser();
 
-        $collection = $dataParser->tryParseInto($data, CustomSerializationEntity::class);
+        $collection = $dataParser->tryParseInto($data, MockCustomSerializationDto::class);
 
         $this->assertInstanceOf(Collection::class, $collection);
         $this->assertEquals(2, $collection->count());
 
-        $this->assertInstanceOf(CustomSerializationEntity::class, $collection->get(0));
+        $this->assertInstanceOf(MockCustomSerializationDto::class, $collection->get(0));
         $this->assertEquals('test', $collection->get(0)->getName());
         $this->assertEquals('title', $collection->get(0)->getTitle());
         $this->assertNull($collection->get(0)->isProcessed());
         $this->assertNull($collection->get(0)->getProcessingErrors());
 
-        $this->assertInstanceOf(CustomSerializationEntity::class, $collection->get(1));
+        $this->assertInstanceOf(MockCustomSerializationDto::class, $collection->get(1));
         $this->assertEquals('another', $collection->get(1)->getName());
         $this->assertEquals('long title', $collection->get(1)->getTitle());
         $this->assertNull($collection->get(1)->isProcessed());

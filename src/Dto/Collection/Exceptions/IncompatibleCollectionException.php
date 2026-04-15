@@ -5,41 +5,30 @@ declare(strict_types=1);
 namespace Exterrestris\DtoFramework\Dto\Collection\Exceptions;
 
 use Exterrestris\DtoFramework\Dto\Collection\CollectionInterface;
-use Exterrestris\DtoFramework\Dto\DtoInterface;
 use Exterrestris\DtoFramework\Traits\GetShortDtoTypeTrait;
 use Throwable;
 
 /**
- * @implements IncompatibleTypeException<CollectionInterface>
+ * @extends IncompatibleItemException<CollectionInterface>
  */
-class IncompatibleCollectionException extends IncompatibleTypeException
+class IncompatibleCollectionException extends IncompatibleItemException
 {
     use GetShortDtoTypeTrait;
 
-    /**
-     * @param CollectionInterface $collection
-     * @param class-string<DtoInterface> $collectionType
-     * @param Throwable|null $previous
-     */
     public function __construct(
         CollectionInterface $collection,
-        string $collectionType,
+        CollectionInterface $incompatibleItem,
         ?Throwable $previous = null
     ) {
         parent::__construct(
             $collection,
-            $collectionType,
+            $incompatibleItem,
             sprintf(
                 "Collection of %s cannot be merged with collection of %s",
                 $this->getShortType($collection->getDtoType()),
-                $this->getShortType($collectionType),
+                $this->getShortType($incompatibleItem->getDtoType()),
             ),
             $previous
         );
-    }
-
-    public function getCollection(): CollectionInterface
-    {
-        return $this->serializable;
     }
 }

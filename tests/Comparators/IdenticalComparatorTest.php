@@ -14,12 +14,12 @@ class IdenticalComparatorTest extends ComparatorTestCase
 {
     public static function compareProvider(): array
     {
-        $mockEntity = static::createMockEntity();
+        $mockDto = static::createMockDto();
 
         return [
             [
-                $mockEntity,
-                $mockEntity,
+                $mockDto,
+                $mockDto,
                 0,
             ],
         ];
@@ -27,12 +27,12 @@ class IdenticalComparatorTest extends ComparatorTestCase
 
     public static function areEqualProvider(): array
     {
-        $mockEntity = static::createMockEntity();
+        $mockDto = static::createMockDto();
 
         return [
             [
-                $mockEntity,
-                $mockEntity,
+                $mockDto,
+                $mockDto,
             ],
         ];
     }
@@ -41,21 +41,21 @@ class IdenticalComparatorTest extends ComparatorTestCase
     {
         return [
             [
-                static::createMockEntity(),
-                static::createMockEntity(),
+                static::createMockDto(),
+                static::createMockDto(),
             ],
         ];
     }
 
     public static function generateClosureProvider(): array
     {
-        $mockEntity = static::createMockEntity();
+        $mockDto = static::createMockDto();
 
         return [
             [
-                $mockEntity,
-                $mockEntity,
-                static::createMockEntity(),
+                $mockDto,
+                $mockDto,
+                static::createMockDto(),
             ],
         ];
     }
@@ -65,7 +65,7 @@ class IdenticalComparatorTest extends ComparatorTestCase
         return new IdenticalComparator();
     }
 
-    private static function createMockEntity(): DtoInterface
+    private static function createMockDto(): DtoInterface
     {
         return new class() implements DtoInterface {};
     }

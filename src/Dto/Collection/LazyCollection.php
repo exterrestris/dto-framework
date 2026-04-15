@@ -49,8 +49,8 @@ class LazyCollection extends AbstractCollection implements LazyCollectionInterfa
      */
     public function get(int $index): DtoInterface
     {
-        if ($index < 0 || $this->dtoCount !== null && $index >= $this->dtoCount) {
-            throw new InvalidIndexException();
+        if ($index < 0 || ($this->dtoCount !== null && $index >= $this->dtoCount)) {
+            throw new InvalidIndexException($this, $index);
         }
 
         foreach ($this as $i => $item) {
@@ -59,7 +59,7 @@ class LazyCollection extends AbstractCollection implements LazyCollectionInterfa
             }
         }
 
-        throw new InvalidIndexException();
+        throw new InvalidIndexException($this, $index);
     }
 
     public function count(): int

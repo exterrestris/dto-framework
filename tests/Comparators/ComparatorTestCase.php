@@ -53,20 +53,23 @@ abstract class ComparatorTestCase extends TestCase
     }
 
     #[DataProvider('couldMatchProvider')]
-    public function testCouldMatch(string $entityType, bool $match): void
+    public function testCouldMatch(string $dtoType, bool $match): void
     {
         $comparator = $this->getComparator();
 
-        $this->assertEquals($match, $comparator->couldMatch($entityType));
+        $this->assertEquals($match, $comparator->couldMatch($dtoType));
     }
 
     abstract public static function generateClosureProvider(): array;
 
     #[DataProvider('generateClosureProvider')]
-    public function testGenerateIsEqualToClosure(DtoInterface $entity, DtoInterface $equalTo, DtoInterface $notEqualTo): void
-    {
+    public function testGenerateIsEqualToClosure(
+        DtoInterface $dto,
+        DtoInterface $equalTo,
+        DtoInterface $notEqualTo
+    ): void {
         $comparator = $this->getComparator();
-        $closure = $comparator->generateIsEqualToClosure($entity);
+        $closure = $comparator->generateIsEqualToClosure($dto);
 
         /** @noinspection PhpConditionAlreadyCheckedInspection */
         $this->assertInstanceOf(Closure::class, $closure);

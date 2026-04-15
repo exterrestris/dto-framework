@@ -11,73 +11,75 @@ use Exterrestris\DtoFramework\Dto\DtoInterface;
 use Exterrestris\DtoFramework\Serializer\DataExtractor;
 use Exterrestris\DtoFramework\Serializer\Rules\NoSerialize;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 
 #[CoversClass(EquivalentComparator::class)]
+#[UsesClass(DataExtractor::class)]
 class EquivalentComparatorTest extends ComparatorTestCase
 {
     public static function compareProvider(): array
     {
-        $mockEntity1 = static::createMockEntity('name', 'title');
-        $mockEntity2 = static::createMockEntity('name', 'title');
-        $mockEntity3 = static::createMockEntity('name2', 'title');
-        $mockEntity4 = static::createMockEntity('name', 'title2');
-        $mockEntity5 = static::createMockEntity('name', null);
-        $mockEntity6 = static::createMockEntity('name', 'title', true);
+        $mockDto1 = static::createMockDto('name', 'title');
+        $mockDto2 = static::createMockDto('name', 'title');
+        $mockDto3 = static::createMockDto('name2', 'title');
+        $mockDto4 = static::createMockDto('name', 'title2');
+        $mockDto5 = static::createMockDto('name', null);
+        $mockDto6 = static::createMockDto('name', 'title', true);
 
         return [
             [
-                $mockEntity1,
-                $mockEntity1,
+                $mockDto1,
+                $mockDto1,
                 0,
             ],
             [
-                $mockEntity1,
-                $mockEntity2,
+                $mockDto1,
+                $mockDto2,
                 0,
             ],
             [
-                $mockEntity2,
-                $mockEntity1,
+                $mockDto2,
+                $mockDto1,
                 0,
             ],
             [
-                $mockEntity3,
-                $mockEntity2,
+                $mockDto3,
+                $mockDto2,
                 1,
             ],
             [
-                $mockEntity2,
-                $mockEntity3,
+                $mockDto2,
+                $mockDto3,
                 -1,
             ],
             [
-                $mockEntity1,
-                $mockEntity4,
+                $mockDto1,
+                $mockDto4,
                 0,
             ],
             [
-                $mockEntity4,
-                $mockEntity1,
+                $mockDto4,
+                $mockDto1,
                 0,
             ],
             [
-                $mockEntity5,
-                $mockEntity2,
+                $mockDto5,
+                $mockDto2,
                 0,
             ],
             [
-                $mockEntity2,
-                $mockEntity5,
+                $mockDto2,
+                $mockDto5,
                 0,
             ],
             [
-                $mockEntity1,
-                $mockEntity6,
+                $mockDto1,
+                $mockDto6,
                 0,
             ],
             [
-                $mockEntity6,
-                $mockEntity1,
+                $mockDto6,
+                $mockDto1,
                 0,
             ],
         ];
@@ -85,29 +87,29 @@ class EquivalentComparatorTest extends ComparatorTestCase
 
     public static function areEqualProvider(): array
     {
-        $mockEntity1 = static::createMockEntity('name', 'title');
-        $mockEntity2 = static::createMockEntity('name', 'title');
+        $mockDto1 = static::createMockDto('name', 'title');
+        $mockDto2 = static::createMockDto('name', 'title');
 
         return [
             [
-                $mockEntity1,
-                $mockEntity1,
+                $mockDto1,
+                $mockDto1,
             ],
             [
-                $mockEntity1,
-                $mockEntity2,
+                $mockDto1,
+                $mockDto2,
             ],
             [
-                $mockEntity2,
-                $mockEntity1,
+                $mockDto2,
+                $mockDto1,
             ],
             [
-                $mockEntity2,
-                static::createMockEntity('name', 'title', true),
+                $mockDto2,
+                static::createMockDto('name', 'title', true),
             ],
             [
-                $mockEntity2,
-                static::createMockEntity('name', 'title1'),
+                $mockDto2,
+                static::createMockDto('name', 'title1'),
             ],
         ];
     }
@@ -116,8 +118,8 @@ class EquivalentComparatorTest extends ComparatorTestCase
     {
         return [
             [
-                static::createMockEntity('name', 'title'),
-                static::createMockEntity('name2', 'title'),
+                static::createMockDto('name', 'title'),
+                static::createMockDto('name2', 'title'),
             ],
         ];
     }
@@ -126,14 +128,14 @@ class EquivalentComparatorTest extends ComparatorTestCase
     {
         return [
             [
-                static::createMockEntity('name', 'title'),
-                static::createMockEntity('name', 'title2'),
-                static::createMockEntity('name2', 'title2'),
+                static::createMockDto('name', 'title'),
+                static::createMockDto('name', 'title2'),
+                static::createMockDto('name2', 'title2'),
             ],
             [
-                static::createMockEntity('name', 'title'),
-                static::createMockEntity('name', 'title', true),
-                static::createMockEntity('name2', 'title', true),
+                static::createMockDto('name', 'title'),
+                static::createMockDto('name', 'title', true),
+                static::createMockDto('name2', 'title', true),
             ],
         ];
     }
@@ -145,7 +147,7 @@ class EquivalentComparatorTest extends ComparatorTestCase
         return new EquivalentComparator($dataExtractor);
     }
 
-    private static function createMockEntity(?string $name, ?string $title, bool $internal = false): DtoInterface
+    private static function createMockDto(?string $name, ?string $title, bool $internal = false): DtoInterface
     {
         return new class($name, $title, $internal) implements DtoInterface {
             protected ?string $name;

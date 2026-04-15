@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Exterrestris\DtoFramework\Dto\Collection;
 
 use Exterrestris\DtoFramework\Comparators\ComparatorInterface;
-use Exterrestris\DtoFramework\Traits\IdenticalComparisonTrait;
 use Exterrestris\DtoFramework\Dto\Collection\Exceptions\AlreadyInCollectionException;
 use Exterrestris\DtoFramework\Dto\Collection\Exceptions\IncompatibleCollectionException;
 use Exterrestris\DtoFramework\Dto\Collection\Exceptions\IncompatibleDtoException;
@@ -13,6 +12,7 @@ use Exterrestris\DtoFramework\Dto\Collection\Exceptions\InvalidIndexException;
 use Exterrestris\DtoFramework\Dto\Collection\Exceptions\InvalidTypeException;
 use Exterrestris\DtoFramework\Dto\Collection\Exceptions\NotInCollectionException;
 use Exterrestris\DtoFramework\Dto\DtoInterface;
+use Exterrestris\DtoFramework\Traits\IdenticalComparisonTrait;
 use IteratorAggregate;
 use Traversable;
 
@@ -33,7 +33,9 @@ abstract class AbstractCollection implements CollectionInterface, IteratorAggreg
     ) {
         if ($dtoType === DtoInterface::class) {
             throw new InvalidTypeException('Type must be specific');
-        } elseif (!is_a($dtoType, DtoInterface::class, true)) {
+        }
+
+        if (!is_a($dtoType, DtoInterface::class, true)) {
             throw new InvalidTypeException('Type must implement DtoInterface');
         }
     }
@@ -45,7 +47,7 @@ abstract class AbstractCollection implements CollectionInterface, IteratorAggreg
     protected function checkType(DtoInterface $item): void
     {
         if (!$item instanceof $this->dtoType) {
-            throw new IncompatibleDtoException($item, $this->dtoType);
+            throw new IncompatibleDtoException($this, $item);
         }
     }
 
@@ -100,7 +102,7 @@ abstract class AbstractCollection implements CollectionInterface, IteratorAggreg
             $existing = $this->has($item);
 
             if ($existing === false) {
-                throw new NotInCollectionException($item);
+                throw new NotInCollectionException($this, $item);
             }
 
             unset($existingItems[$existing]);
@@ -117,11 +119,11 @@ abstract class AbstractCollection implements CollectionInterface, IteratorAggreg
         $existing = $this->has($item);
 
         if ($existing === false) {
-            throw new NotInCollectionException($item);
+            throw new NotInCollectionException($this, $item);
         }
 
         if ($this->has($withItem)) {
-            throw new AlreadyInCollectionException($withItem);
+            throw new AlreadyInCollectionException($this, $withItem);
         }
 
         $items = $this->toArray();
@@ -279,7 +281,7 @@ abstract class AbstractCollection implements CollectionInterface, IteratorAggreg
 
         foreach ($collections as $collection) {
             if (!$collection->isOfType($this->dtoType)) {
-                throw new IncompatibleCollectionException($collection, $this->dtoType);
+                throw new IncompatibleCollectionException($this, $collection);
             }
 
             $merged = $merged->add(...$collection->toArray());
@@ -326,7 +328,7 @@ abstract class AbstractCollection implements CollectionInterface, IteratorAggreg
 
     private function couldMatch(CollectionInterface $collection, ?ComparatorInterface $comparator): bool
     {
-        return $collection->isOfType($this->dtoType) || $comparator && $comparator->couldMatch($this->dtoType);
+        return $collection->isOfType($this->dtoType) || ($comparator && $comparator->couldMatch($this->dtoType));
     }
 
     /**

@@ -4,34 +4,30 @@ declare(strict_types=1);
 
 namespace Exterrestris\DtoFramework\Dto\Collection\Exceptions;
 
+use Exterrestris\DtoFramework\Dto\Collection\CollectionInterface;
 use Exterrestris\DtoFramework\Dto\DtoInterface;
 use Exterrestris\DtoFramework\Traits\GetShortDtoTypeTrait;
 use Throwable;
 
 /**
- * @implements IncompatibleTypeException<DtoInterface>
+ * @extends IncompatibleItemException<DtoInterface>
  */
-class IncompatibleDtoException extends IncompatibleTypeException implements CollectionItemException
+class IncompatibleDtoException extends IncompatibleItemException implements CollectionItemException
 {
     use GetShortDtoTypeTrait;
 
-    /**
-     * @param DtoInterface $dto
-     * @param class-string<DtoInterface> $collectionType
-     * @param Throwable|null $previous
-     */
     public function __construct(
+        CollectionInterface $collection,
         DtoInterface $dto,
-        string $collectionType,
         ?Throwable $previous = null
     ) {
         parent::__construct(
+            $collection,
             $dto,
-            $collectionType,
             sprintf(
                 "%s cannot be added to collection of %s",
                 $this->getShortType($dto::class),
-                $this->getShortType($collectionType),
+                $this->getShortType($collection->getDtoType()),
             ),
             $previous
         );
@@ -39,6 +35,6 @@ class IncompatibleDtoException extends IncompatibleTypeException implements Coll
 
     public function getDto(): DtoInterface
     {
-        return $this->serializable;
+        return $this->getIncompatibleItem();
     }
 }
