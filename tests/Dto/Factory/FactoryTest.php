@@ -6,15 +6,15 @@ namespace Exterrestris\DtoFramework\Tests\Dto\Factory;
 
 use Closure;
 use Exception;
-use Exterrestris\DtoFramework\Dto\AbstractDto;
 use Exterrestris\DtoFramework\Dto\Collection\Collection;
 use Exterrestris\DtoFramework\Dto\Collection\CollectionInterface;
 use Exterrestris\DtoFramework\Dto\Collection\LazyCollection;
-use Exterrestris\DtoFramework\Dto\DtoInterface;
-use Exterrestris\DtoFramework\Dto\Exceptions\InternalPropertyException;
-use Exterrestris\DtoFramework\Dto\Factory\Exceptions\FactoryException;
-use Exterrestris\DtoFramework\Dto\Factory\Exceptions\InvalidTypeException;
-use Exterrestris\DtoFramework\Dto\Factory\Exceptions\UnknownTypeException;
+use Exterrestris\DtoFramework\Dto\Dto\AbstractDto;
+use Exterrestris\DtoFramework\Dto\Dto\DtoInterface;
+use Exterrestris\DtoFramework\Dto\Factory\Exception\FactoryException;
+use Exterrestris\DtoFramework\Dto\Factory\Exception\InternalDtoPropertyException;
+use Exterrestris\DtoFramework\Dto\Factory\Exception\InvalidTypeException;
+use Exterrestris\DtoFramework\Dto\Factory\Exception\UnknownTypeException;
 use Exterrestris\DtoFramework\Dto\Factory\Factory;
 use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockDto;
 use Exterrestris\DtoFramework\Tests\Mocks\Dto\MockDtoInterface;
@@ -85,7 +85,7 @@ class FactoryTest extends TestCase
                 [
                     'internal' => 'test',
                 ],
-                InternalPropertyException::class,
+                InternalDtoPropertyException::class,
             ],
         ];
     }

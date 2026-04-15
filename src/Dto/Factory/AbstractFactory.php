@@ -4,22 +4,23 @@ declare(strict_types=1);
 
 namespace Exterrestris\DtoFramework\Dto\Factory;
 
-use Exterrestris\DtoFramework\Dto\DtoInterface;
-use Exterrestris\DtoFramework\Dto\Exceptions\InternalPropertyException;
-use Exterrestris\DtoFramework\Dto\Exceptions\NoSuchPropertyException;
-use Exterrestris\DtoFramework\Dto\Factory\Exceptions\InvalidTypeException as InvalidTypeFactoryException;
-use Exterrestris\DtoFramework\Dto\Factory\Exceptions\UnknownTypeException as UnknownTypeFactoryException;
-use Exterrestris\DtoFramework\Dto\Metadata\Internal;
-use Exterrestris\DtoFramework\Exceptions\Internal\InvalidTypeException as InvalidTypeInternalException;
-use Exterrestris\DtoFramework\Exceptions\Internal\UnknownTypeException as UnknownTypeInternalException;
-use Exterrestris\DtoFramework\Utilities\CheckAcceptableTypeTrait;
+use Exterrestris\DtoFramework\Dto\Dto\DtoInterface;
+use Exterrestris\DtoFramework\Dto\Factory\Exception\InternalDtoPropertyException as InternalPropertyFactoryException;
+use Exterrestris\DtoFramework\Dto\Factory\Exception\InvalidTypeException as InvalidTypeFactoryException;
+use Exterrestris\DtoFramework\Dto\Factory\Exception\NoSuchDtoPropertyException as NoSuchPropertyFactoryException;
+use Exterrestris\DtoFramework\Dto\Factory\Exception\UnknownTypeException as UnknownTypeFactoryException;
+use Exterrestris\DtoFramework\Dto\Dto\Utility\Exception\InternalDtoPropertyException as InternalPropertyUtilityException;
+use Exterrestris\DtoFramework\Dto\Dto\Utility\Exception\NoSuchDtoPropertyException as NoSuchPropertyUtilityException;
+use Exterrestris\DtoFramework\Dto\Dto\Utility\PopulateDtoTrait;
+use Exterrestris\DtoFramework\Exception\Internal\InvalidTypeException as InvalidTypeInternalException;
+use Exterrestris\DtoFramework\Exception\Internal\UnknownTypeException as UnknownTypeInternalException;
+use Exterrestris\DtoFramework\Utility\CheckAcceptableTypeTrait;
 use ReflectionClass;
-use ReflectionObject;
-use ReflectionProperty;
 
 abstract class AbstractFactory implements FactoryInterface
 {
     use CheckAcceptableTypeTrait;
+    use PopulateDtoTrait;
 
     protected function validateType(string $dtoType): ReflectionClass
     {
@@ -32,35 +33,14 @@ abstract class AbstractFactory implements FactoryInterface
         }
     }
 
-    /**
-     * @param DtoInterface $dto
-     * @param array<string, mixed>|object|null $data
-     * @return DtoInterface
-     */
-    protected function populateDto(DtoInterface $dto, array|object|null $data = null): DtoInterface
+    protected function populateDto(DtoInterface $dto, array|object|null $withData = null): DtoInterface
     {
-        if (!$data) {
-            return $dto;
+        try {
+            return $this->_populateDto($dto, $withData);
+        } catch (InternalPropertyUtilityException $e) {
+            throw InternalPropertyFactoryException::from($e);
+        } catch (NoSuchPropertyUtilityException $e) {
+            throw NoSuchPropertyFactoryException::from($e);
         }
-
-        $reflection = new ReflectionObject($dto);
-        $properties = array_combine(
-            array_map(static fn (ReflectionProperty $property): mixed => $property->getName(), $reflection->getProperties()),
-            $reflection->getProperties()
-        );
-
-        foreach ($data as $property => $value) {
-            if (!isset($properties[$property])) {
-                throw new NoSuchPropertyException($dto, $property);
-            }
-
-            if ($this->getAttribute($properties[$property], Internal::class)) {
-                throw new InternalPropertyException($dto, $property);
-            }
-
-            $properties[$property]->setValue($dto, $value);
-        }
-
-        return $dto;
     }
 }

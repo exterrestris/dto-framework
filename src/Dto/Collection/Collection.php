@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace Exterrestris\DtoFramework\Dto\Collection;
 
 use ArrayIterator;
-use Exterrestris\DtoFramework\Dto\Collection\Exceptions\IncompatibleDtoException;
-use Exterrestris\DtoFramework\Dto\Collection\Exceptions\InvalidIndexException;
-use Exterrestris\DtoFramework\Dto\DtoInterface;
+use Exterrestris\DtoFramework\Dto\Collection\Exception\IncompatibleDtoException;
+use Exterrestris\DtoFramework\Dto\Collection\Exception\InvalidIndexException;
+use Exterrestris\DtoFramework\Dto\Dto\DtoInterface;
 use Traversable;
 
 /**
  * @template Dto of DtoInterface
  * @extends AbstractCollection<Dto>
  */
-class Collection extends AbstractCollection implements CollectionInterface
+class Collection extends AbstractCollection
 {
     /**
      * @inheritDoc

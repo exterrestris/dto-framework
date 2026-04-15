@@ -7,8 +7,8 @@ namespace Exterrestris\DtoFramework\Dto\Factory;
 use Closure;
 use Exterrestris\DtoFramework\Dto\Collection\CollectionInterface;
 use Exterrestris\DtoFramework\Dto\Collection\LazyCollectionInterface;
-use Exterrestris\DtoFramework\Dto\DtoInterface;
-use Exterrestris\DtoFramework\Dto\Factory\Exceptions\FactoryException;
+use Exterrestris\DtoFramework\Dto\Dto\DtoInterface;
+use Exterrestris\DtoFramework\Dto\Factory\Exception\FactoryException;
 use Generator;
 
 /**
