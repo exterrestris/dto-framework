@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Exterrestris\DtoFramework\Dto\Collection;
 
-use Exterrestris\DtoFramework\Dto\DtoInterface;
+use Exterrestris\DtoFramework\Dto\Dto\DtoInterface;
 use Traversable;
 
 /**

@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Exterrestris\DtoFramework\Dto\Collection;
 
-use Exterrestris\DtoFramework\Comparators\ComparatorInterface;
-use Exterrestris\DtoFramework\Dto\Collection\Exceptions\AlreadyInCollectionException;
-use Exterrestris\DtoFramework\Dto\Collection\Exceptions\IncompatibleCollectionException;
-use Exterrestris\DtoFramework\Dto\Collection\Exceptions\IncompatibleDtoException;
-use Exterrestris\DtoFramework\Dto\Collection\Exceptions\InvalidIndexException;
-use Exterrestris\DtoFramework\Dto\Collection\Exceptions\InvalidTypeException;
-use Exterrestris\DtoFramework\Dto\Collection\Exceptions\NotInCollectionException;
-use Exterrestris\DtoFramework\Dto\DtoInterface;
-use Exterrestris\DtoFramework\Exceptions\Internal\TypeException;
-use Exterrestris\DtoFramework\Utilities\IdenticalComparisonTrait;
-use Exterrestris\DtoFramework\Utilities\CheckAcceptableTypeTrait;
+use Exterrestris\DtoFramework\Comparison\Comparator\ComparatorInterface;
+use Exterrestris\DtoFramework\Comparison\Utility\IdenticalComparisonTrait;
+use Exterrestris\DtoFramework\Dto\Collection\Exception\AlreadyInCollectionException;
+use Exterrestris\DtoFramework\Dto\Collection\Exception\IncompatibleCollectionException;
+use Exterrestris\DtoFramework\Dto\Collection\Exception\IncompatibleDtoException;
+use Exterrestris\DtoFramework\Dto\Collection\Exception\InvalidIndexException;
+use Exterrestris\DtoFramework\Dto\Collection\Exception\InvalidTypeException;
+use Exterrestris\DtoFramework\Dto\Collection\Exception\NotInCollectionException;
+use Exterrestris\DtoFramework\Dto\Dto\DtoInterface;
+use Exterrestris\DtoFramework\Exception\Internal\TypeException;
+use Exterrestris\DtoFramework\Utility\CheckAcceptableTypeTrait;
 use IteratorAggregate;
 use Traversable;
 

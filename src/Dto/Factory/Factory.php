@@ -9,9 +9,9 @@ use Exterrestris\DtoFramework\Dto\Collection\Collection;
 use Exterrestris\DtoFramework\Dto\Collection\CollectionInterface;
 use Exterrestris\DtoFramework\Dto\Collection\LazyCollection;
 use Exterrestris\DtoFramework\Dto\Collection\LazyCollectionInterface;
-use Exterrestris\DtoFramework\Dto\DtoInterface;
-use Exterrestris\DtoFramework\Dto\Factory\Exceptions\UnknownTypeException;
-use Exterrestris\DtoFramework\Dto\Factory\Exceptions\UnsupportedTypeException;
+use Exterrestris\DtoFramework\Dto\Dto\DtoInterface;
+use Exterrestris\DtoFramework\Dto\Factory\Exception\UnknownTypeException;
+use Exterrestris\DtoFramework\Dto\Factory\Exception\UnsupportedTypeException;
 use ReflectionObject;
 
 class Factory extends AbstractFactory

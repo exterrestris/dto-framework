@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace Exterrestris\DtoFramework\Dto\Collection;
 
 use Countable;
-use Exterrestris\DtoFramework\Comparators\ComparatorInterface;
-use Exterrestris\DtoFramework\Dto\Collection\Exceptions\AlreadyInCollectionException;
-use Exterrestris\DtoFramework\Dto\Collection\Exceptions\IncompatibleCollectionException;
-use Exterrestris\DtoFramework\Dto\Collection\Exceptions\IncompatibleDtoException;
-use Exterrestris\DtoFramework\Dto\Collection\Exceptions\InvalidIndexException;
-use Exterrestris\DtoFramework\Dto\Collection\Exceptions\NotInCollectionException;
-use Exterrestris\DtoFramework\Dto\DtoInterface;
-use Exterrestris\DtoFramework\Dto\Metadata\BaseDto;
+use Exterrestris\DtoFramework\Comparison\Comparator\ComparatorInterface;
+use Exterrestris\DtoFramework\Dto\Collection\Exception\AlreadyInCollectionException;
+use Exterrestris\DtoFramework\Dto\Collection\Exception\IncompatibleCollectionException;
+use Exterrestris\DtoFramework\Dto\Collection\Exception\IncompatibleDtoException;
+use Exterrestris\DtoFramework\Dto\Collection\Exception\InvalidIndexException;
+use Exterrestris\DtoFramework\Dto\Collection\Exception\NotInCollectionException;
+use Exterrestris\DtoFramework\Dto\Dto\DtoInterface;
 use Traversable;
 
 /**
@@ -29,7 +28,6 @@ use Traversable;
  * @template Dto of DtoInterface
  * @implements Traversable<int, Dto>
  */
-#[BaseDto]
 interface CollectionInterface extends Countable, Traversable
 {
     /**
